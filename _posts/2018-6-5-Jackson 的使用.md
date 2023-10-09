@@ -3,7 +3,7 @@ layout: post
 title:  "Jackson 的使用"
 categories: ['java','Jackson']
 tags: ['java','Jackson'] 
-author: Feiyizhan
+author: YJ-MoLi
 description: Jackson 的使用
 issueId: 2018-6-5 The use of Jackson
 

@@ -3,7 +3,7 @@ layout: post
 title:  "DataTables 源码解析"
 categories: ['DataTables','JavaScript']
 tags: ['DataTables','JavaScript','Bootstarp','Web front end']
-author: Feiyizhan
+author: YJ-MoLi
 description: DataTables 源码解析
 issueId: 2018-2-6 Analyse Datatables source
 ---

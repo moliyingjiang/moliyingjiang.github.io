@@ -3,7 +3,7 @@ layout: post
 title:  "Java Websocket 的使用"
 categories: ['Websocket','java']
 tags: ['Websocket','java']
-author: Feiyizhan
+author: YJ-MoLi
 description: Java Websocket 的使用
 issueId: 2018-2-6 Java Websocket
 ---
@@ -16,7 +16,7 @@ issueId: 2018-2-6 Java Websocket
 ## 简介
 
 目前主流的Java webscoket有两个，j2ee websocket, java-websocket。
-github:[github](https://github.com/Feiyizhan/pluto.maven.websocket.git)
+github:[github](https://github.com/YJ-MoLi/pluto.maven.websocket.git)
 
 
 

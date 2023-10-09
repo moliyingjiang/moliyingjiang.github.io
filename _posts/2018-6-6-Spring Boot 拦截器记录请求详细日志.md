@@ -3,7 +3,7 @@ layout: post
 title:  "Spring Boot 拦截器记录请求详细日志"
 categories: ['java','Spring','Spring Boot']
 tags: ['java','Spring','Spring Boot'] 
-author: Feiyizhan
+author: YJ-MoLi
 description: Spring Boot 拦截器记录请求详细日志
 issueId: 2018-6-6 Get Request Body In Interceptor
 

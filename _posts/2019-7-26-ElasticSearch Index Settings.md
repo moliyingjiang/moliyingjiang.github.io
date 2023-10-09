@@ -3,7 +3,7 @@ layout: post
 title:  "ElasticSearch Index Settings"
 categories: ['ElasticSearch']
 tags: ['ElasticSearch'] 
-author: Feiyizhan
+author: YJ-MoLi
 description: ElasticSearch Index Settings
 issueId: 2019-7-26 ElasticSearch Index Settings
 ---

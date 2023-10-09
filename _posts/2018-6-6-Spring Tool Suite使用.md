@@ -3,7 +3,7 @@ layout: post
 title:  "Spring Tool Suite使用"
 categories: ['java','Spring','STS']
 tags: ['java','Spring','STS','Spring Boot'] 
-author: Feiyizhan
+author: YJ-MoLi
 description: Spring Tool Suite使用
 issueId: 2018-6-6 The used for Spring Tool Suite
 

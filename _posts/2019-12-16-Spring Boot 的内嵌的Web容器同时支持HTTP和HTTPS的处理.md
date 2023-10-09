@@ -3,7 +3,7 @@ layout: post
 title:  "Spring Boot 的内嵌的Web容器同时支持HTTP和HTTPS的处理"
 categories: ['Spring Boot']
 tags: ['Spring Boot'] 
-author: Feiyizhan
+author: YJ-MoLi
 description: Spring Boot 的内嵌的Web容器同时支持HTTP和HTTPS的处理
 issueId: 2019-12-16 Spring Boot 的内嵌的Web容器同时支持HTTP和HTTPS的处理
 

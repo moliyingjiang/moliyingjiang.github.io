@@ -3,7 +3,7 @@ layout: post
 title:  "ElasticSearch 的使用-查询"
 categories: ['ElasticSearch']
 tags: ['ElasticSearch'] 
-author: Feiyizhan
+author: YJ-MoLi
 description: ElasticSearch 的使用-查询
 issueId: 2019-7-26 ElasticSearch 的使用-查询
 ---
@@ -561,16 +561,16 @@ private List<OrderSearchParameter> getRefineSearchParameter(OrderSearchParameter
 
 ## 其他相关笔记
 
-- [ElasticSearch 的使用-整体方向和调研笔记](https://feiyizhan.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%95%B4%E4%BD%93%E6%96%B9%E5%90%91%E5%92%8C%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0.html)
+- [ElasticSearch 的使用-整体方向和调研笔记](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%95%B4%E4%BD%93%E6%96%B9%E5%90%91%E5%92%8C%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0.html)
 
-- [ElasticSearch Index Settings](https://feiyizhan.github.io/elasticsearch/2019/07/26/ElasticSearch-Index-Settings.html)
+- [ElasticSearch Index Settings](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-Index-Settings.html)
 
-- [ElasticSearch Index Mappings](https://feiyizhan.github.io/elasticsearch/2019/07/26/ElasticSearch-Index-Mappings.html)
+- [ElasticSearch Index Mappings](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-Index-Mappings.html)
 
-- [ElasticSearch 的使用-查询](https://feiyizhan.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%9F%A5%E8%AF%A2.html)
+- [ElasticSearch 的使用-查询](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%9F%A5%E8%AF%A2.html)
 
-- [ElasticSearch 的使用-高亮查询](https://feiyizhan.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E9%AB%98%E4%BA%AE%E6%9F%A5%E8%AF%A2.html)
+- [ElasticSearch 的使用-高亮查询](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E9%AB%98%E4%BA%AE%E6%9F%A5%E8%AF%A2.html)
 
-- [ElasticSearch 的使用-数据导入](https://feiyizhan.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5.html)
+- [ElasticSearch 的使用-数据导入](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5.html)
 
-- [ElasticSearch 的使用-关键字补全](https://feiyizhan.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E5%85%B3%E9%94%AE%E5%AD%97%E8%A1%A5%E5%85%A8.html)
+- [ElasticSearch 的使用-关键字补全](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E5%85%B3%E9%94%AE%E5%AD%97%E8%A1%A5%E5%85%A8.html)

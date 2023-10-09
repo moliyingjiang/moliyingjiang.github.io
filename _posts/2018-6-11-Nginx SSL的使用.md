@@ -3,7 +3,7 @@ layout: post
 title:  "Nginx SSL的使用"
 categories: ['Nginx','SSL','HTTP','HTTPS']
 tags: ['Nginx','SSL','HTTP','HTTPS']
-author: Feiyizhan
+author: YJ-MoLi
 description: Nginx SSL的使用
 issueId: 2018-6-11 The use of Nginx SSL
 

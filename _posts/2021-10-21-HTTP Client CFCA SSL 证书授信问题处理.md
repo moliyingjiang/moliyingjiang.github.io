@@ -3,7 +3,7 @@ layout: post
 title:  "HTTP Client CFCA SSL证书授信问题处理"
 categories: ['Java','SSL','HTTPS']
 tags: ['Java','SSL','HTTPS'] 
-author: Feiyizhan
+author: YJ-MoLi
 description: HTTP Client CFCA SSL证书授信问题处理
 issueId: 2021-10-21 HTTP Client CFCA SSL证书授信问题处理
 

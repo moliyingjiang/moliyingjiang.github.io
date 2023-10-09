@@ -3,7 +3,7 @@ layout: post
 title:  "Github Pages & Jekyll"
 categories: ['Github Pages','Jekyll']
 tags: ['Github Pages','Jekyll','markdown']
-author: Feiyizhan
+author: YJ-MoLi
 description: Github Pages 和 Jekyll的使用
 issueId: 2018-1-25 Github Pages and Jekyll
 ---
@@ -207,7 +207,7 @@ layout: post
 title:  "Webpack2"
 categories: ['web front end','webpack']
 tags: ['webpack','source-map','javascript']
-author: Feiyizhan
+author: YJ-MoLi
 description: webpack的使用2.
 ---
 ```
@@ -230,8 +230,8 @@ layout: default
 #### 语言控制
 由`_config.yml`中的`lan: "cn" `控制使用何种语言。
 目前支持的值有`en`、`cn`。对应的资源文件：
-`en` - `C:\github\Feiyizhan.github.io\_data\values\en.yml`
-`cn` - `C:\github\Feiyizhan.github.io\_data\values\cn.yml`
+`en` - `C:\github\YJ-MoLi.github.io\_data\values\en.yml`
+`cn` - `C:\github\YJ-MoLi.github.io\_data\values\cn.yml`
 
 `cn`资源文件内容：
 ```yaml

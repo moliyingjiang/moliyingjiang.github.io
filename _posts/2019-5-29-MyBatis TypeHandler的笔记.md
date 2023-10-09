@@ -3,7 +3,7 @@ layout: post
 title:  "MyBatis TypeHandler的笔记"
 categories: ['MyBatis ']
 tags: ['MyBatis','Spring Boot'] 
-author: Feiyizhan
+author: YJ-MoLi
 description: MyBatis TypeHandler的笔记
 issueId: 2019-5-29 MyBatis TypeHandler
 

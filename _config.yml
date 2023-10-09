@@ -1,7 +1,7 @@
 # Jekyll configuration
 
-name: Feiyizhan
-description: Welcome to my blog！\n MoLiyingjiang Hailing From Taiyuan, Shanxi. I aspire to become a doctoral scholar specializing in the field of Artificial Intelligence.
+name: YJ-MoLi
+description: Welcome to my blog！MoLiyingjiang Hailing From Taiyuan, Shanxi. I aspire to become a doctoral scholar specializing in the field of Artificial Intelligence.
 
 # url is currently only used only for the RSS feed in feed.xml
 url: https://github.com/zxixia/jekyll-xixia
@@ -51,4 +51,4 @@ defaults:
 # type值可以是pages(html文件）、posts（）、drafts，不加表示对所有文件生效
 #      type: "pages"  
     values:
-      author: "Feiyizhan"
+      author: "YJ-MoLi"

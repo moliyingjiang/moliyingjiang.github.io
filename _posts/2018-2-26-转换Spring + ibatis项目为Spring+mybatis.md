@@ -3,7 +3,7 @@ layout: post
 title:  "转换Spring + ibatis项目为Spring+mybatis"
 categories: ['java','spring','ibaits','mybatis','maven']
 tags: ['java','spring','ibaits','mybatis','maven'] 
-author: Feiyizhan
+author: YJ-MoLi
 description: 转换Spring + ibatis项目为Spring+mybatis
 issueId: 2018-2-26 Convert Spring+ibaits to Spring+mybatis
 ---
@@ -444,6 +444,6 @@ issueId: 2018-2-26 Convert Spring+ibaits to Spring+mybatis
 ```
 
 ### ibatis SQLMAP 转换 mybatis SQLMAP
-使用[ibatis2mybatis](https://github.com/Feiyizhan/ibatis2mybatis)工具转换。
+使用[ibatis2mybatis](https://github.com/YJ-MoLi/ibatis2mybatis)工具转换。
 
 

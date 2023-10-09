@@ -3,7 +3,7 @@ layout: post
 title:  "Spring Boot 2.0.0 升级到2.4.1 循环依赖问题的解决"
 categories: ['Spring Boot']
 tags: ['Spring Boot'] 
-author: Feiyizhan
+author: YJ-MoLi
 description: Spring Boot 2.0.0 升级到2.4.1 循环依赖问题的解决
 issueId: 2021-04-20 Spring Boot 2.0.0 升级到2.4.1 循环依赖问题的解决
 

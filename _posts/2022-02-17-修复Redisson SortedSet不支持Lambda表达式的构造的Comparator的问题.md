@@ -3,7 +3,7 @@ layout: post
 title:  "修复Redisson SortedSet不支持Lambda表达式的构造的Comparator的问题"
 categories: ['Java']
 tags: ['Java','Redis','Redisson'] 
-author: Feiyizhan
+author: YJ-MoLi
 description: 修复Redisson SortedSet不支持Lambda表达式的构造的Comparator的问题
 issueId: 修复Redisson SortedSet Lambda Comparator问题
 

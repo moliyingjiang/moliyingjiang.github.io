@@ -3,7 +3,7 @@ layout: post
 title:  "Java POI Excel移动行和复制行的处理"
 categories: ['POI']
 tags: ['java','POI','excel'] 
-author: Feiyizhan
+author: YJ-MoLi
 description: Java POI Excel移动行和复制行的处理
 issueId: 2019-6-27 POI Excel moving and replicating rows
 
