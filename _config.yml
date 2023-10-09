@@ -1,1 +1,54 @@
-theme: jekyll-theme-cayman
+# Jekyll configuration
+
+name: Feiyizhan
+description: Welcome to my blog！
+
+# url is currently only used only for the RSS feed in feed.xml
+url: https://github.com/zxixia/jekyll-xixia
+
+# baseurl will often be '', but for a project page on gh-pages, it needs to
+# be the project name.
+# *** IMPORTANT: If your local "jekyll serve" throws errors change this to '' or
+#     run it like so: jekyll serve --baseurl=''
+baseurl: ''
+## default date_format
+date_format: 
+  title: "%Y年%-m月%-d日"
+  archive: "%-m月"
+  categories: "%Y年-%-m月"
+  tag: "%Y年-%-m月"
+# Language，控制页面是否显示资源，资源文件存放在_data\values
+# en 英文 cn 中文
+lan: "cn" 
+
+# 开启评论
+comments: true
+gitment: on
+
+#设置分页的每页文章数
+paginate: 6
+
+#[ maruku | rdiscount | kramdown | redcarpet ]
+highlighter: rouge
+markdown: kramdown
+kramdown:
+  input: GFM
+  extensions:
+    - autolink
+    - footnotes
+    - smart
+  enable_coderay: true
+  syntax_highlighter: rouge
+
+gems: ['jekyll-paginate']
+
+exclude: ['README.md', 'LICENSE', "*.bak"]
+
+defaults:
+  -
+    scope:
+      path: ""
+# type值可以是pages(html文件）、posts（）、drafts，不加表示对所有文件生效
+#      type: "pages"  
+    values:
+      author: "Feiyizhan"
