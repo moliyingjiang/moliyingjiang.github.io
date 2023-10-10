@@ -548,7 +548,7 @@ PUT /test/_settings
 
 #### 调研问题列表
 - [x] Mysql 数据迁移到ES 的方案？
-	- 编写程序手动执行，详情见笔记：[ElasticSearch 的使用-数据导入](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5.html)
+	- 编写程序手动执行，详情见笔记：[ElasticSearch 的使用-数据导入](https://moliyingjiang.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5.html)
 
 - [x] ES 索引配置多环境同步的处理方案。
 	- [x] 手动在Kibana上执行命令。
@@ -572,7 +572,7 @@ PUT /test/_settings
 				- 必须重建索引。
 
 - [x] 关键字补全的方案
-	- 使用`Suggestion` 实现，参考[search-suggesters-completion](https://www.elastic.co/guide/en/elasticsearch/reference/5.5/search-suggesters-completion.html)，详情见笔记：[ElasticSearch 的使用-关键字补全](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E5%85%B3%E9%94%AE%E5%AD%97%E8%A1%A5%E5%85%A8.html)
+	- 使用`Suggestion` 实现，参考[search-suggesters-completion](https://www.elastic.co/guide/en/elasticsearch/reference/5.5/search-suggesters-completion.html)，详情见笔记：[ElasticSearch 的使用-关键字补全](https://moliyingjiang.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E5%85%B3%E9%94%AE%E5%AD%97%E8%A1%A5%E5%85%A8.html)
 
 - [x] 查询语法
 	- [x] 查询单个doc记录
@@ -580,11 +580,11 @@ PUT /test/_settings
 	- [x] 关联查询
 		- 不推荐使用关联查询
 	- [x] 分页查询
-		- 使用from+size查询参数,详情见笔记：[ElasticSearch 的使用-查询](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%9F%A5%E8%AF%A2.html)
+		- 使用from+size查询参数,详情见笔记：[ElasticSearch 的使用-查询](https://moliyingjiang.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%9F%A5%E8%AF%A2.html)
 	- [x] 统计查询
 		- 暂不使用
 	- [x] 高亮查询
-		- 使用`Highlighter` 实现，参考[search-request-highlighting](https://www.elastic.co/guide/en/elasticsearch/reference/5.5/search-request-highlighting.html)，详情见笔记：[ElasticSearch 的使用-高亮查询](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E9%AB%98%E4%BA%AE%E6%9F%A5%E8%AF%A2.html)。
+		- 使用`Highlighter` 实现，参考[search-request-highlighting](https://www.elastic.co/guide/en/elasticsearch/reference/5.5/search-request-highlighting.html)，详情见笔记：[ElasticSearch 的使用-高亮查询](https://moliyingjiang.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E9%AB%98%E4%BA%AE%E6%9F%A5%E8%AF%A2.html)。
 - [x] 修改索引数据
 	- [x] 修改字段值
 		- [x] 非嵌套字段
@@ -698,10 +698,10 @@ Fielddata is disabled on text fields by default. Set fielddata=true on [interest
 
 ## 其他相关笔记
 
-- [ElasticSearch 的使用-查询](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%9F%A5%E8%AF%A2.html)
+- [ElasticSearch 的使用-查询](https://moliyingjiang.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%9F%A5%E8%AF%A2.html)
 
-- [ElasticSearch 的使用-高亮查询](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E9%AB%98%E4%BA%AE%E6%9F%A5%E8%AF%A2.html)
+- [ElasticSearch 的使用-高亮查询](https://moliyingjiang.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E9%AB%98%E4%BA%AE%E6%9F%A5%E8%AF%A2.html)
 
-- [ElasticSearch 的使用-数据导入](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5.html)
+- [ElasticSearch 的使用-数据导入](https://moliyingjiang.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5.html)
 
-- [ElasticSearch 的使用-关键字补全](https://YJ-MoLi.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E5%85%B3%E9%94%AE%E5%AD%97%E8%A1%A5%E5%85%A8.html)
+- [ElasticSearch 的使用-关键字补全](https://moliyingjiang.github.io/elasticsearch/2019/07/26/ElasticSearch-%E7%9A%84%E4%BD%BF%E7%94%A8-%E5%85%B3%E9%94%AE%E5%AD%97%E8%A1%A5%E5%85%A8.html)

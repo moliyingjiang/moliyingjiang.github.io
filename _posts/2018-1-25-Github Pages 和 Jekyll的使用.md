@@ -230,8 +230,8 @@ layout: default
 #### 语言控制
 由`_config.yml`中的`lan: "cn" `控制使用何种语言。
 目前支持的值有`en`、`cn`。对应的资源文件：
-`en` - `C:\github\YJ-MoLi.github.io\_data\values\en.yml`
-`cn` - `C:\github\YJ-MoLi.github.io\_data\values\cn.yml`
+`en` - `C:\github\moliyingjiang.github.io\_data\values\en.yml`
+`cn` - `C:\github\moliyingjiang.github.io\_data\values\cn.yml`
 
 `cn`资源文件内容：
 ```yaml
