@@ -3186,7 +3186,7 @@ const defaultOptions = {
 };
 {
   defaultOptions.defaultUrl = {
-    value: "iwo.pdf",
+    value: "biog/iwo.pdf",
     kind: OptionKind.VIEWER
   };
   defaultOptions.disablePreferences = {
