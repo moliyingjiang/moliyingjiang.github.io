@@ -22,7 +22,7 @@ date_format:
 lan: "cn" 
 
 # 开启评论
-comments: true
+comments: false
 gitment: on
 
 #设置分页的每页文章数
