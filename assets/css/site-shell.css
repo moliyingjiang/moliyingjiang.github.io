@@ -1,0 +1,76 @@
+/* Shared navigation and document styles. */
+.nav,.research-nav{position:relative;gap:28px;min-height:78px}
+.research-header{height:auto}
+.brand,.wordmark{white-space:nowrap;line-height:1.2;letter-spacing:0}
+.wordmark .brand-accent,.brand .brand-accent{display:inline;color:#315e85;font:inherit;margin:0}
+.nav nav,.research-nav nav{display:flex;align-items:center;gap:26px;line-height:1.4}
+.nav nav a,.research-nav nav a{display:block;font-size:14px;white-space:nowrap;padding:8px 0}
+.nav nav .language,.research-nav nav .language{padding-left:22px;font-size:13px}
+.research-footer p{font-size:12px;color:#737d85}
+.section-index{display:flex;flex-wrap:wrap;gap:22px;margin:0 0 24px;padding:0 0 16px;border-bottom:1px solid #ddd}
+.section-index a{font-size:14px}
+.section-heading{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:12px}
+.section-heading h2{margin-bottom:0}
+.record-count{font-size:12px;color:#737d85}
+.section-intro{max-width:780px;color:#60666d;font-size:15px;line-height:1.8;margin:0 0 28px}
+.award-stage h2,.record-section h2,.record-detail h2{font:600 24px/1.4 Arial,"Microsoft YaHei",sans-serif;letter-spacing:0}
+.award-stage .timeline{max-width:none}
+.award-stage .timeline article{grid-template-columns:160px minmax(0,1fr);gap:32px;padding:20px 0;margin:0}
+.award-stage .timeline article:first-child{border-top:1px solid #d9dce0}
+.award-stage .timeline h3{font:600 17px/1.5 Arial,"Microsoft YaHei",sans-serif}
+.award-stage .timeline time{font-variant-numeric:tabular-nums;color:#315e85;line-height:1.8}
+.award-stage .timeline p{font-size:14px;line-height:1.8}
+.award-stage{scroll-margin-top:110px}
+.academic-facts{margin:0;max-width:900px}
+.academic-facts>div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;border-top:1px solid #e4e6e8;padding:16px 0}
+.academic-facts dt{color:#68727a;font-size:14px}
+.academic-facts dd{margin:0;font-size:16px}
+.record-section{max-width:1000px}
+.record-section>p{max-width:800px;color:#454c53}
+.record-section .publication-record{padding-bottom:0}
+.record-detail .timeline{max-width:none}
+.date-guide{margin-left:auto;order:3;font-size:12px;color:#68727a}
+.date-guide summary{cursor:pointer;padding:8px 0;list-style:none}
+.date-guide summary::-webkit-details-marker{display:none}
+.date-guide summary::after{content:" +";color:#315e85}
+.date-guide[open] summary::after{content:" −"}
+.date-guide p{max-width:460px;font-size:12px;line-height:1.7;margin:0 0 12px}
+.date-guide[open]{flex-basis:100%;margin-left:0}
+.news-heading h2{margin-right:0}.news-heading>a{margin-right:auto}
+.news-row time,.milestone-list time{font-variant-numeric:tabular-nums}
+#publications{scroll-margin-top:110px}
+@media(min-width:1100px){
+ .nav,.research-nav{min-height:84px}
+ .nav nav,.research-nav nav{gap:28px}
+ .nav nav a,.research-nav nav a{font-size:15px}
+}
+@media(max-width:1000px){
+ .nav,.research-nav{display:flex;flex-wrap:wrap;gap:12px;padding:18px 24px 12px;min-height:0}
+ .nav nav,.research-nav nav{display:flex;width:100%;flex-wrap:wrap;gap:10px 24px}
+ .nav nav .language,.research-nav nav .language{position:absolute;right:24px;top:16px;border-left:0;margin:0;padding:8px 0;font-size:12px}
+ .nav nav a,.research-nav nav a{display:block!important;font-size:13px}
+ .brand,.wordmark{font-size:23px}
+}
+@media(max-width:560px){
+ .nav,.research-nav{padding:17px 20px 10px;gap:10px}
+ .nav nav,.research-nav nav{gap:6px 0;justify-content:space-between}
+ .nav nav .language,.research-nav nav .language{right:20px;top:15px}
+ .nav nav a,.research-nav nav a{font-size:12px}
+ .award-stage .timeline article{grid-template-columns:1fr;gap:5px;padding:20px 0}
+ .award-stage .timeline h3{font-size:16px}
+ .academic-facts>div{grid-template-columns:76px minmax(0,1fr);gap:16px}
+ .academic-facts dd{font-size:15px}
+ .section-heading{display:block}.record-count{display:block;margin-top:7px}
+ .date-guide{font-size:11px}.news-heading{gap:0 12px}
+ .news-heading h2{font-size:23px}
+ .news-heading>a{font-size:12px}
+ .news-heading .date-guide{flex-basis:100%;text-align:right}
+ .news-heading .date-guide p{text-align:left}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{
+ header,.section-index,.research-footer,.date-guide,.profile-links{display:none!important}
+ main,.page-shell{max-width:none;padding:0!important}
+ .news-window{height:auto!important;overflow:visible!important;border:0}
+ article{break-inside:avoid}.phase-break{break-after:avoid}
+}
