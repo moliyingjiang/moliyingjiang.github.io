@@ -1,10 +1,10 @@
 # Jekyll configuration
 
 name: YJ-MoLi
-description: Welcome to my blog！MoLiyingjiang Hailing From Taiyuan, Shanxi. I aspire to become a doctoral scholar specializing in the field of Artificial Intelligence.
+description: 机器人、机械臂、计算机视觉与人工智能本科项目作品集。
 
 # url is currently only used only for the RSS feed in feed.xml
-url: https://github.com/zxixia/jekyll-xixia
+url: https://moliyingjiang.github.io
 
 # baseurl will often be '', but for a project page on gh-pages, it needs to
 # be the project name.
