@@ -1,0 +1,5 @@
+@media (max-width:780px){
+  .research-nav nav{gap:0}
+  .research-nav nav a:not(.language){display:none}
+  .research-nav .language{white-space:nowrap}
+}
