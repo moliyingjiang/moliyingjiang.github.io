@@ -17,3 +17,6 @@
  .education-row h3{font-size:18px}.education-row p{font-size:15px}
  footer{max-width:1160px;font-size:13px}
 }
+nav a[aria-current="page"]{color:#315e85;text-decoration:underline;text-underline-offset:7px}
+a:focus-visible,[tabindex]:focus-visible{outline:2px solid #315e85;outline-offset:5px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

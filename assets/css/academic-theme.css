@@ -1,1 +1,50 @@
 .research-home{color:#252525;font-family:Arial,"Microsoft YaHei",sans-serif}.research-nav,.page-shell{max-width:1000px}.research-header{height:78px}.wordmark{font:700 25px Georgia,serif}.wordmark span{display:none}.research-nav nav a{font-size:14px}.page-shell{padding-top:48px}.page-shell>h1{font:600 32px/1.25 Arial,sans-serif;letter-spacing:0}.eyebrow{color:#777;letter-spacing:.07em}.page-lead{margin-bottom:32px;font-size:16px}.focus-grid,.record-grid{border:0;gap:24px}.focus-grid article,.record-grid article{border:0;border-top:1px solid #ddd;padding:23px 0;min-height:0}.focus-grid h2,.record-grid h2,.project-page-list h2{font:600 21px/1.4 Arial,sans-serif;letter-spacing:0}.number{margin-bottom:16px}.research-footer{background:#fff;color:#888;border-top:1px solid #e5e5e5}.research-footer strong{color:#555;font-size:16px}.research-footer a{color:#315e85}.phase-label{background:#f3f5f7;color:#526678}.graduate-phase .phase-label{background:#f3f5f7;color:#526678}.milestone-list h2{font-size:17px}.research-nav nav .language{display:block!important}@media(max-width:780px){.research-header{height:auto}.research-nav{flex-wrap:wrap;padding-top:15px;padding-bottom:15px;gap:15px}.research-nav nav{display:flex;width:100%;gap:18px;flex-wrap:wrap}.research-nav nav a{display:block!important;font-size:12px}.research-nav nav .language{margin-left:auto}.page-shell{padding-top:32px}.page-shell>h1{font-size:28px}}
+/* Shared editorial layout for research, projects, timeline and CV. */
+.research-home{--text:#454c53;--blue:#315e85;line-height:1.75}
+.research-nav{max-width:1080px;padding:0 28px}
+.research-nav nav{align-items:center}
+.research-nav nav .language{border-left:1px solid #ddd;padding-left:22px}
+.research-nav nav a.active{color:#315e85;text-decoration:underline;text-underline-offset:7px}
+.page-shell{padding-left:28px;padding-right:28px;padding-bottom:64px}
+.page-shell section{padding:28px 0;border-bottom:0}
+.page-shell p{overflow-wrap:break-word}
+.page-shell .page-lead{max-width:780px;color:#666}
+.research-evidence{margin-top:32px}
+.research-evidence h2{font:600 24px/1.4 Arial,"Microsoft YaHei",sans-serif}
+.project-page-list article>p:not(.number){max-width:800px;font-size:16px}
+.project-page-list article>div,.record-grid article>div{flex-wrap:wrap;gap:12px 24px}
+.focus-grid article>p:last-child,.record-grid article>p:not(.number){font-size:16px}
+.focus-grid article,.record-grid article{border-right:0;border-bottom:0}
+.research-footer{max-width:944px;padding:24px 0 30px;flex-wrap:wrap;gap:14px}
+.research-footer div:last-child{display:flex;flex-wrap:wrap;gap:14px 22px}
+.research-footer a{margin:0}
+a:focus-visible,[tabindex]:focus-visible{outline:2px solid #315e85;outline-offset:5px}
+@media(min-width:1100px){
+ .research-header{height:84px}.research-nav{max-width:1280px;padding:0 40px}
+ .research-nav nav{gap:32px}.research-nav nav a{font-size:15px}
+ .page-shell{max-width:1240px;padding:54px 40px 64px}
+ .page-shell>h1{font-size:39px}.page-lead{font-size:18px}
+ .focus-grid{gap:38px}.record-grid{gap:48px;max-width:none}
+ .project-page-list,.research-evidence,.milestone-section,.phase-break{max-width:none}
+ .project-page-list article{display:grid;grid-template-columns:200px minmax(0,1fr);column-gap:30px}
+ .project-page-list article .number{grid-column:1;grid-row:1/4;padding-top:4px}
+ .project-page-list article h2,.project-page-list article>p:not(.number),.project-page-list article>div{grid-column:2}
+ .project-page-list article>div{margin-top:12px}
+ .milestone-list p{font-size:16px}.milestone-list h2{font-size:19px}
+ .research-footer{max-width:1160px}
+}
+@media(max-width:780px){
+ .research-nav{padding:16px 20px}.research-nav nav{gap:14px 18px}
+ .research-nav nav .language{padding-left:12px}
+ .page-shell{padding:30px 20px 44px}
+ .focus-grid,.record-grid{gap:10px}
+ .research-footer{margin:0 20px;display:block;padding:22px 0}
+ .research-footer div:last-child{margin-top:12px}
+ .phase-break span{letter-spacing:0;line-height:1.8}
+}
+.publications{margin-top:24px}
+.publications>h2{font:600 24px/1.4 Arial,"Microsoft YaHei",sans-serif;margin-bottom:20px}
+.publication-record{border-top:1px solid #ddd;padding:22px 0}
+.publication-record h3{font-size:20px;line-height:1.5;max-width:950px}
+.publication-record p{margin:8px 0;color:#59616a;font-size:15px}
+.publication-record .publication-status{font-size:12px;letter-spacing:.04em;color:#315e85}
