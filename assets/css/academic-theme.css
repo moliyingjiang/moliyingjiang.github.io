@@ -48,3 +48,6 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid #315e85;outline-offse
 .publication-record h3{font-size:20px;line-height:1.5;max-width:950px}
 .publication-record p{margin:8px 0;color:#59616a;font-size:15px}
 .publication-record .publication-status{font-size:12px;letter-spacing:.04em;color:#315e85}
+.journal-metrics,.date-note,.project-period{font-size:12px!important;color:#66717b!important;line-height:1.8}
+.project-page-list .project-period{margin:0 0 12px}
+.timeline-date-key{float:right}.date-legend{font-size:11px;color:#526678}.date-legend span,.estimated-date{color:#92723c!important}.estimated-date{font-style:italic}.milestone-list time{overflow-wrap:anywhere}
