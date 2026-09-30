@@ -6,6 +6,7 @@
   <meta name="description" content="YJ-MoLi 的本科科研与工程项目主页。">
   <title>YJ-MoLi | Academic Portfolio</title>
   <link rel="stylesheet" href="/assets/css/portfolio.css">
+  <link rel="stylesheet" href="/assets/css/academic-additions.css">
 </head>
 <body>
   <header class="site-header">
@@ -13,7 +14,8 @@
       <a class="site-name" href="/">YJ-MoLi</a>
       <nav aria-label="页面导航">
         <a href="#about">简介</a>
-        <a href="#research">研究与成果</a>
+        <a href="#research">科研</a>
+        <a href="#competitions">竞赛</a>
         <a href="#projects">项目</a>
         <a href="#education">经历</a>
       </nav>
@@ -30,6 +32,9 @@
       </div>
       <aside class="profile-links" aria-label="平台入口">
         <p><strong>Repository access</strong></p>
+        <a href="/files/undergraduate-cv.pdf">本科简历 PDF</a>
+        <a href="/undergraduate-cv.html">本科电子简历</a>
+        <a href="/graduate-cv.html">硕士阶段档案</a>
         <a href="https://gitee.com/YJ-MoLi">Gitee（国内访问）</a>
         <a href="https://github.com/moliyingjiang">GitHub（国际访问）</a>
         <small>个人主页经 Cloudflare 加速时，项目仓库仍可按访问环境选择 Gitee 或 GitHub。</small>
@@ -37,30 +42,20 @@
     </section>
 
     <section id="research">
-      <h2>研究兴趣与代表成果</h2>
-      <div class="research-grid">
-        <div>
-          <h3>研究兴趣</h3>
-          <p>机器人感知与操作、手眼协调、目标检测与分割、关键点估计、医学图像分析、模型部署与系统集成。</p>
-        </div>
-        <div>
-          <h3>论文与科研</h3>
-          <ul>
-            <li>工业仪表自动读数大/小模型级联方法：一作论文在投。</li>
-            <li>基于 YOLOv8 的轻量化道路裂缝检测模型：二作，已发表。</li>
-            <li>参与智能手诊系统研究：完成视觉特征提取、科研绘图与辅助诊断相关工作。</li>
-          </ul>
-        </div>
-        <div>
-          <h3>项目与竞赛</h3>
-          <ul>
-            <li>基于手眼协调的机器狗目标抓取系统：优秀毕业设计、优秀毕业论文。</li>
-            <li>中国高校智能机器人创意大赛全国一等奖；中国机器人大赛全国二等奖。</li>
-            <li>五项软件著作权实际主创；参与国家级、省级大学生创新创业训练项目。</li>
-          </ul>
-        </div>
+      <h2>科研</h2>
+      <div class="stage-grid">
+        <article><p class="stage">UNDERGRADUATE</p><h3>本科阶段 · 人工智能与智能诊疗</h3><ul><li>工业仪表自动读数大/小模型级联方法：一作论文在投。</li><li>基于 YOLOv8 的轻量化道路裂缝检测模型：二作，已发表。</li><li>参与智能手诊系统研究：完成视觉特征提取、科研绘图与辅助诊断相关工作。</li><li>毕业设计“基于手眼协调的机器狗目标抓取系统”，获优秀毕业设计、优秀毕业论文。</li></ul><p><a href="/undergraduate-cv.html">查看本科电子简历 →</a></p></article>
+        <article><p class="stage">GRADUATE</p><h3>硕士阶段 · 机器学习 × 环境科学</h3><p>当前为研一培养初期，尚无独立列出的硕士阶段论文或项目成果。</p><p>将围绕环境数据分析、预测建模、智能感知和决策支持，逐步建立可复现的研究档案。</p><p><a href="/graduate-cv.html">查看硕士阶段档案 →</a></p></article>
       </div>
-      <p class="note">本页仅列本科阶段可公开展示的代表性内容；论文状态、奖项和项目细节将随证明材料持续更新。</p>
+    </section>
+
+    <section id="competitions">
+      <h2>竞赛与工程实践</h2>
+      <div class="stage-grid">
+        <article><p class="stage">UNDERGRADUATE</p><h3>机器人、视觉与系统集成</h3><ul><li>中国高校智能机器人创意大赛全国一等奖。</li><li>中国机器人大赛全国二等奖。</li><li>睿抗机器人开发者大赛全国二等奖等。</li><li>五项软件著作权实际主创；参与国家级、省级大学生创新创业训练项目。</li></ul><p><a href="/undergraduate-cv.html">查看本科成果档案 →</a></p></article>
+        <article><p class="stage">GRADUATE</p><h3>成果持续积累中</h3><p>硕士阶段将仅在获得可公开验证的竞赛、项目、软件或数据成果后补充本栏。</p><p>当前重点是完成研究训练、建立规范的代码与实验记录，并形成稳定的交叉研究方向。</p><p><a href="/graduate-cv.html">查看硕士阶段档案 →</a></p></article>
+      </div>
+      <p class="note">项目与成果均按所属培养阶段归档；后续更新时保持本科、硕士两条主线清晰独立。</p>
     </section>
 
     <section id="projects">
@@ -93,7 +88,7 @@
     <section id="education">
       <h2>教育与科研经历</h2>
       <div class="timeline">
-        <article><time>2021 — 2025</time><div><h3>太原学院 · 物联网工程</h3><p>专业排名前 10%（13/137）。本科阶段接受陈志贤老师、张光华老师指导；曾任大数据与人工智能实验室组长、TYU 登枢战队机器人队队长。</p></div></article>
+        <article><time>2021 — 2025</time><div><h3>太原学院 · 物联网工程</h3><p>专业排名前 10%（13/137）。本科阶段接受陈志贤老师、张光华老师（清华大学博士）指导；曾任大数据与人工智能实验室组长、TYU 登枢战队机器人队队长。</p></div></article>
         <article><time>2025 — Present</time><div><h3>广西师范大学 · 环境科学与工程</h3><p>硕士研究生。持续探索机器学习与环境科学交叉方向的研究可能性。</p></div></article>
       </div>
     </section>
