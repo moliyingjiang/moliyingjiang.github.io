@@ -41,6 +41,23 @@
 .news-date-symbol{font-size:12px;color:#92723c;margin-left:auto}
 .news-cumulative{display:block;font-size:10px;line-height:1.6;color:#78828b;margin-top:4px;font-weight:400;letter-spacing:0}
 .news-row strong,.news-row p>a:first-child{font-weight:600}
+.news-stage{position:sticky;top:0;z-index:2;display:flex;flex-wrap:wrap;align-items:baseline;gap:5px 16px;padding:12px 0;background:#fff;border-bottom:2px solid #c8d2db;font-family:Arial,"Microsoft YaHei",sans-serif}
+.news-stage strong{font-size:15px;color:#264d70}
+.news-stage span{font-size:11px;color:#6a7782}
+.news-stage-group+.news-stage-group{margin-top:18px}
+.study-stage-heading{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 24px;border-bottom:2px solid #b8c7d3;padding-bottom:14px;margin:28px 0 22px}
+.study-stage-heading h2{margin:0!important;font:600 25px/1.4 Arial,"Microsoft YaHei",sans-serif;color:#264d70}
+.study-stage-heading p{margin:0;font-size:13px;color:#6a7782}
+.study-stage{scroll-margin-top:125px}
+.study-stage .focus-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.study-stage .focus-grid article{padding-top:5px;border-top:0}
+.study-stage .focus-grid h3{font:600 20px/1.4 Arial,"Microsoft YaHei",sans-serif}
+.study-stage .focus-grid p{font-size:15px;color:#59616a}
+.study-stage .publication-record{margin-top:18px}
+.study-timeline .milestone-section{scroll-margin-top:130px}
+.study-timeline .phase-label{font-size:13px}
+#news{scroll-margin-top:110px}
+@media(max-width:560px){.study-stage .focus-grid{grid-template-columns:1fr}.study-stage-heading h2{font-size:22px}.news-stage{gap:4px 10px}.news-stage span{font-size:10px}}
 .repo-links{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:12px;font-size:14px}
 .repo-links a{color:#566a7c}
 .profile-links a,.repo-links a{line-height:1.6}

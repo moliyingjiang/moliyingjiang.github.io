@@ -465,14 +465,14 @@
     {
       "id": "measurement",
       "date": "2026.09.30",
-      "stage": "graduate",
+      "stage": "continuation",
       "award": "",
       "en": {
-        "title": "Industrial pointer-meter authorship notification",
+        "title": "Undergraduate research follow-up · Measurement manuscript",
         "text": "Received a contributing-author notification for the manuscript on reliability-gated selective reading of industrial pointer meters, submitted to Measurement."
       },
       "zh": {
-        "title": "收到工业指针仪表论文作者确认通知",
+        "title": "本科研究后续 · Measurement 论文作者确认",
         "text": "收到工业指针仪表可靠性门控选择性读数论文的共同作者确认通知，稿件已投稿至 Measurement。"
       }
     }
