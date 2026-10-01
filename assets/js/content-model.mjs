@@ -87,8 +87,9 @@ export function linkedNews(kind, record) {
 }
 export function syncLinkedNews(news, kind, record) {
   const next = linkedNews(kind, record);
+  const legacyId = kind === 'publications' && record.id === 'road-crack' ? 'road-paper' : record.id;
   for (const bucket of ['events', 'grouped']) {
-    const index = news[bucket].findIndex(item => item.sourceType === kind && item.sourceId === record.id || kind === 'publications' && item.id === record.id || kind === 'awards' && item.award === record.id);
+    const index = news[bucket].findIndex(item => item.sourceType === kind && item.sourceId === record.id || kind === 'publications' && item.id === legacyId || kind === 'awards' && item.award === record.id);
     if (index >= 0) {
       const old = news[bucket][index];
       news[bucket][index] = { ...old, ...next, id: old.id };
