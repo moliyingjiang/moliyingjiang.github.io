@@ -38,6 +38,14 @@
 .date-guide[open]{flex-basis:100%;margin-left:0}
 .news-heading h2{margin-right:0}.news-heading>a{margin-right:auto}
 .news-row time,.milestone-list time{font-variant-numeric:tabular-nums}
+.repo-links{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:12px;font-size:14px}
+.repo-links a{color:#566a7c}
+.profile-links a,.repo-links a{line-height:1.6}
+main a:hover{text-decoration:underline;text-underline-offset:3px}
+.page-shell .cv-lead{max-width:780px;color:#666;font-size:16px;line-height:1.85}
+.page-shell .project-page-list .number{color:#66717b;letter-spacing:.04em;font-size:11px}
+.profile figcaption{letter-spacing:.02em}
+@media(min-width:1100px){.repo-links{font-size:15px}}
 #publications{scroll-margin-top:110px}
 @media(min-width:1100px){
  .nav,.research-nav{min-height:84px}
