@@ -38,6 +38,9 @@
 .date-guide[open]{flex-basis:100%;margin-left:0}
 .news-heading h2{margin-right:0}.news-heading>a{margin-right:auto}
 .news-row time,.milestone-list time{font-variant-numeric:tabular-nums}
+.news-date-symbol{font-size:12px;color:#92723c;margin-left:auto}
+.news-cumulative{display:block;font-size:10px;line-height:1.6;color:#78828b;margin-top:4px;font-weight:400;letter-spacing:0}
+.news-row strong,.news-row p>a:first-child{font-weight:600}
 .repo-links{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:12px;font-size:14px}
 .repo-links a{color:#566a7c}
 .profile-links a,.repo-links a{line-height:1.6}

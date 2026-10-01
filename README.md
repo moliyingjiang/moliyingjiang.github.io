@@ -15,6 +15,8 @@ Home, News, Research, Projects, Awards, and CV have English and Chinese versions
 
 This is a static HTML/CSS site with no build step. Shared navigation and document styling is in `assets/css/site-shell.css`; homepage and inner-page layouts use their existing CSS files. Keep navigation and language counterparts consistent when adding a page.
 
+News records for both languages live in `assets/data/news.json`. After editing records, `node scripts/render-news.mjs` emits an apply_patch patch for the two homepages and two timeline pages. Apply that patch, then run `node scripts/render-news.mjs --check` to verify synchronization. The deployed pages remain static and do not fetch this data at runtime.
+
 Keep English and Chinese records aligned. Distinguish submitted manuscripts from accepted or published articles, and include the year and subject category with journal quartiles. Preserve date precision: certificate dates, competition periods, and submission dates are distinct. Approximate months must retain the visible `≈` marker and explanation.
 
 The public identity is YJ-MoLi. The existing authorized CV PDF is the exception; certificate images, private contact details, and manuscript identifiers are not published as site assets.
