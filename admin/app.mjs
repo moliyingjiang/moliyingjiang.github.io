@@ -81,8 +81,8 @@ $('#publish').onclick = async () => {
   if (dirty) return status('请先保存当前表单。');
   if (!client || !snapshot) return $('#auth').showModal();
   if (!confirm('将当前草稿发布到 GitHub？网页部署需要几分钟。')) return;
-  $('#publish').disabled=true;
-  try { const output=renderSite(files,news,portfolio); const sha=await client.publish(snapshot,output); files=output; base=fingerprint(); draft=false; localStorage.removeItem(key); status('已提交 GitHub：' + sha.slice(0,7) + '。等待 Pages 部署后查看主页；Gitee 同步结果请查看 GitHub Actions。'); } catch(error) { status(error.message); } finally { $('#publish').disabled=false; }
+  $('#publish').disabled=true; $('main').inert=true; $('header').inert=true;
+  try { const output=renderSite(files,news,portfolio); const sha=await client.publish(snapshot,output); files=output; base=fingerprint(); draft=false; try { localStorage.removeItem(key); } catch {} status('已提交 GitHub：' + sha.slice(0,7) + '。等待 Pages 部署后查看主页；Gitee 同步结果请查看 GitHub Actions。'); } catch(error) { status(error.message); } finally { $('#publish').disabled=false; $('main').inert=false; $('header').inert=false; }
 };
 window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue=''; } });
 try {

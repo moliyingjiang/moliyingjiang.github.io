@@ -46,13 +46,13 @@ function researchStage(page, stage, data, lang) {
   const records = data.publications.filter(item => item.stage === stage).sort(byDate).map(item => publicationRow(item, lang)).join('\n');
   const marker = '<!-- publications:start -->\n' + records + '\n<!-- publications:end -->';
   let next;
-  if (section.includes('<!-- publications:start -->')) next = section.replace(/<!-- publications:start -->[\s\S]*?<!-- publications:end -->/, marker);
+  if (section.includes('<!-- publications:start -->')) next = section.replace(/<!-- publications:start -->[\s\S]*?<!-- publications:end -->/, () => marker);
   else {
     let first = true;
     next = section.replace(/<article class="publication-record"[^>]*>[\s\S]*?<\/article>/g, () => { if (!first) return ''; first = false; return marker; });
     if (first) throw new Error('Publication template missing: ' + stage);
   }
-  return page.replace(section, next);
+  return page.replace(section, () => next);
 }
 function projectRow(record, lang) {
   const content = record[lang];
@@ -63,11 +63,11 @@ function renderProjects(page, data, lang) {
   const rows = stage => data.projects.filter(item => item.stage === stage).map(item => projectRow(item, lang)).join('\n');
   const pattern = /<div class="project-page-list">[\s\S]*?<\/div>(?=<p class="all-projects">)/;
   if (!pattern.test(page)) throw new Error('Undergraduate project template missing.');
-  let next = page.replace(pattern, '<div class="project-page-list">' + rows('undergraduate') + '</div>');
+  let next = page.replace(pattern, () => '<div class="project-page-list">' + rows('undergraduate') + '</div>');
   const graduate = /<section (?:id="graduate-projects" )?class="study-stage">[\s\S]*?<\/section>/;
   if (!graduate.test(next)) throw new Error('Graduate project template missing.');
   const body = '<section id="graduate-projects" class="study-stage">' + stageHeading('graduate', lang) + '<div class="project-page-list">' + rows('graduate') + '</div><p><a href="' + recordLink(lang) + '">' + (lang === 'zh' ? '硕士阶段档案 →' : 'Graduate record →') + '</a></p></section>';
-  return next.replace(graduate, body);
+  return next.replace(graduate, () => body);
 }
 function renderGraduateRecord(page, data, lang) {
   const publications = data.publications.filter(item => item.stage === 'graduate').sort(byDate).map(item => publicationRow(item, lang)).join('\n');
@@ -83,7 +83,7 @@ function renderGraduateRecord(page, data, lang) {
 }
 function replaceMain(page, main) {
   if (!/<main[\s\S]*?<\/main>/.test(page)) throw new Error('Page template missing.');
-  return page.replace(/<main[\s\S]*?<\/main>/, main);
+  return page.replace(/<main[\s\S]*?<\/main>/, () => main);
 }
 export function renderSite(pages, news, portfolio) {
   const errors = validateContent(news, portfolio);

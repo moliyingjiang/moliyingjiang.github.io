@@ -38,7 +38,7 @@ for (const lang of ['en', 'zh']) {
   ]) {
     const old = pages[file];
     if (!pattern.test(old)) throw new Error('Missing replacement target: ' + file);
-    const next = old.replace(pattern, replacement).replace(/site-shell\.css\?v=[^"]+/g, 'site-shell.css?v=20261001-stages');
+    const next = old.replace(pattern, () => replacement).replace(/site-shell\.css\?v=[^"]+/g, 'site-shell.css?v=20261001-stages');
     changes[file] = next;
   }
 }
