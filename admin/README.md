@@ -1,0 +1,25 @@
+# 内容管理
+
+入口：`https://blog.dengshu.cloud/admin/`。仅维护动态、荣誉、论文和项目；中英文分别填写。本科与硕士是独立阶段。现有页面布局、个人资料和 PDF 不在表单编辑范围内。
+
+1. 选择栏目、记录或“新增记录”，填写中英文内容并保存草稿。
+2. 论文、荣誉、项目可勾选同步 News。项目需填写可识别日期；约定日期以 `≈` 开头。
+3. 预览对应中英文页面，确认后连接 GitHub 并发布。
+
+## GitHub 连接
+
+在 GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens 创建令牌。Resource owner 选择自己；Repository access 仅选择 `moliyingjiang.github.io`；Repository permissions → Contents 设为 Read and write。设置合理有效期。将令牌输入管理页的连接窗口，不要写进仓库或聊天。
+
+令牌只在当前页面内存中存在，不会进入草稿、导出文件或版本库。刷新后需要重新连接。公开管理页本身不提供写入权限；只有具备仓库写权限的令牌可以发布。
+
+## 草稿与冲突
+
+草稿只在本设备、当前域名浏览器中保存；换手机或电脑可导出/导入 JSON。草稿不会自动跨设备同步。旧版本草稿遇到远程内容变化时，发布会停止：先导出备份，再放弃本地草稿、刷新连接，将需要的修改重新合并。没有自动强制覆盖。
+
+旧荣誉汇总包含尚未逐条具名的记录。补录原来已统计的荣誉不要勾“计入汇总”；新增荣誉才勾选。删除已有 News 不会删除对应论文或荣誉。
+
+## 发布与恢复
+
+一次发布以一个 Git commit 原子更新内容 JSON 与生成页面。GitHub Pages 随后部署。Mirror website to Gitee 工作流同步本网站的 main 分支，不强制覆盖 Gitee 独立修改；失败可在仓库 Actions 中查看并重试。该工作流不负责其他项目仓库。
+
+误发布可以通过 GitHub 版本历史恢复；不自动重写历史。开发检查：`npm test`、`npm run check`。渲染脚本 `node scripts/render-site.mjs` 输出 apply_patch 格式更新。

@@ -1,0 +1,9 @@
+{
+  "name": "yj-moli-academic-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/render-site.mjs --check",
+    "test": "node --test tests/*.test.mjs"
+  }
+}

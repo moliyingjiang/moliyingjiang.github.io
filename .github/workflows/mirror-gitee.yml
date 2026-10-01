@@ -1,0 +1,34 @@
+name: Mirror website to Gitee
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mirror-gitee
+  cancel-in-progress: false
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Push main without overwriting divergent history
+        env:
+          GITEE_USERNAME: ${{ secrets.GITEE_USERNAME }}
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+          GIT_TERMINAL_PROMPT: '0'
+        shell: bash
+        run: |
+          test -n "$GITEE_USERNAME"
+          test -n "$GITEE_TOKEN"
+          helper="$(mktemp)"
+          trap 'rm -f "$helper"' EXIT
+          printf '%s\n' '#!/bin/sh' 'case "$1" in *Username*) printf "%s\n" "$GITEE_USERNAME";; *) printf "%s\n" "$GITEE_TOKEN";; esac' > "$helper"
+          chmod 700 "$helper"
+          GIT_ASKPASS="$helper" git push https://gitee.com/YJ-MoLi/moliyingjiang.github.io.git HEAD:refs/heads/main
