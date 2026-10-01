@@ -1,6 +1,6 @@
 import { EDITABLE_PATHS } from '../assets/js/content-model.mjs';
 export class GitHub {
-  constructor(token, fetcher = fetch) { this.token = token; this.fetcher = fetcher; }
+  constructor(token, fetcher = (...args) => globalThis.fetch(...args)) { this.token = token; this.fetcher = fetcher; }
   async request(path, method = 'GET', body) {
     const response = await this.fetcher('https://api.github.com/repos/moliyingjiang/moliyingjiang.github.io/' + path, { method, headers: { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + this.token, 'X-GitHub-Api-Version': '2026-03-10' }, ...(body ? { body: JSON.stringify(body) } : {}) });
     if (!response.ok) throw new Error('GitHub 请求失败（' + response.status + '）。请检查令牌权限或网络；草稿仍保留。');

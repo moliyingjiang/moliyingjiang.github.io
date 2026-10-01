@@ -1,6 +1,6 @@
 import { EDITABLE_PATHS, PAGE_PATHS, TYPES, STATUSES, ROLES, DATE_TYPES, esc, clone, newId, today, validateContent, adjustAwardTotals, syncLinkedNews } from '../assets/js/content-model.mjs';
 import { renderSite } from '../assets/js/site-renderer.mjs';
-import { GitHub } from './github.mjs';
+import { GitHub } from './github.mjs?v=20261001-fetch-binding';
 const $ = selector => document.querySelector(selector), key = 'portfolio-editor-v1';
 const names = { news: '动态', awards: '荣誉', publications: '论文', projects: '项目' };
 const labels = { title:'标题', text:'正文', result:'奖项 / 等级', rankLabel:'排名说明', rank:'名次（如 3 / 65）', journal:'期刊', metrics:'分区与年份（如 JCR 2025 · Q1）', summary:'摘要说明', category:'方向', moreLabel:'附加链接文字', moreUrl:'附加链接' };

@@ -7,6 +7,12 @@ import { GitHub } from '../admin/github.mjs';
 const news=JSON.parse(fs.readFileSync('assets/data/news.json'));
 const portfolio=JSON.parse(fs.readFileSync('assets/data/portfolio.json'));
 const pages=Object.fromEntries(PAGE_PATHS.map(path=>[path,fs.readFileSync(path,'utf8')]));
+test('default fetch retains the browser global receiver',async()=>{
+  const original=globalThis.fetch;
+  globalThis.fetch=async function(){ assert.equal(this,globalThis,'native Window.fetch requires the global receiver'); return {ok:true,json:async()=>({ok:true})}; };
+  try { assert.deepEqual(await new GitHub('test').request('git/ref/heads/main'),{ok:true}); }
+  finally { globalThis.fetch=original; }
+});
 test('existing bilingual records validate and rendering is stable',()=>{ assert.deepEqual(validateContent(news,portfolio),[]); const out=renderSite(pages,news,portfolio); assert.deepEqual(renderSite(out,news,portfolio),out); });
 test('reject invalid dates and unsafe links',()=>{ assert.equal(validDate('2026.02.30'),false); assert.equal(validDate('≈2026.09'),true); for(const url of ['javascript:alert(1)','//evil.test','/\\evil.test','data:text/html,x']) assert.equal(safeUrl(url),false); const p=clone(portfolio); p.awards[0].stage='unknown'; assert.ok(validateContent(news,p).length); });
 test('rendered text is escaped and Measurement remains undergraduate',()=>{ const p=clone(portfolio); p.publications[0].en.title='<img src=x onerror=alert(1)>'; const out=renderSite(pages,news,p); assert.ok(out['research.html'].includes('&lt;img')); assert.ok(!out['research.html'].includes('<img src=x')); const measurement=portfolio.publications.find(r=>r.id==='measurement'); assert.equal(measurement.stage,'undergraduate'); assert.ok(!out['graduate-record.html'].includes('publication-measurement')); });
