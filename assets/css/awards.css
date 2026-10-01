@@ -1,0 +1,70 @@
+/* A document-style award register; no cards, carousels, or runtime scripts. */
+.awards-page .page-lead{max-width:860px;margin-bottom:30px}
+.awards-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;border-top:1px solid #b8c3cd;border-bottom:1px solid #d9dfe4;padding:22px 0;gap:24px}
+.awards-overview>div{display:flex;flex-direction:column-reverse;gap:4px}
+.awards-overview dt{font-size:13px;line-height:1.5;color:#606b75}
+.awards-overview dd{margin:0;font:400 34px/1.15 Georgia,serif;color:#264d70;font-variant-numeric:lining-nums}
+.awards-context{display:flex;align-items:baseline;justify-content:space-between;gap:12px 28px;flex-wrap:wrap;margin:12px 0 38px}
+.awards-context>p{flex:1;min-width:220px;margin:0;color:#75808a;font-size:12px;line-height:1.7}
+.awards-context .date-guide{flex-shrink:0;white-space:nowrap}
+.awards-context .date-guide p{white-space:normal;max-width:760px}
+.awards-layout{display:grid;grid-template-columns:185px minmax(0,1fr);gap:50px;align-items:start}
+.awards-directory{position:sticky;top:112px;border-left:2px solid #d8e0e7;padding-left:18px}
+.awards-directory nav{display:flex;flex-direction:column;gap:14px}
+.awards-directory nav>p{margin:0 0 4px;color:#78838d;font-size:10px;letter-spacing:.045em}
+.awards-directory a{font-size:13px;line-height:1.55;color:#4c6173;text-decoration:none}
+.awards-directory .graduate-link{border-top:1px dashed #ccd3d9;padding-top:15px;margin-top:3px}
+.awards-content{min-width:0}
+.awards-page .award-stage{padding:0 0 42px;scroll-margin-top:112px}
+.awards-page .section-heading{align-items:baseline;flex-wrap:wrap;gap:5px 18px;margin-bottom:10px}
+.awards-page .section-heading h2{font-size:22px}
+.awards-page .section-intro{font-size:13px;line-height:1.8;margin-bottom:20px;max-width:none;color:#75808a}
+.awards-page .record-count{font-size:11px}
+.awards-page .timeline article{grid-template-columns:135px minmax(0,1fr);gap:20px;padding:19px 0}
+.awards-page .timeline h3{margin:0 0 5px;font-size:16px;line-height:1.6;color:#293b4b}
+.awards-page .timeline .award-result{margin:0;font-size:14px;color:#3b454e;line-height:1.8}
+.awards-page .timeline .award-note{margin:5px 0 0;font-size:12px;line-height:1.75;color:#7b8289}
+.awards-page .timeline .award-rank{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;margin:7px 0 0;font-size:12px;line-height:1.6;color:#697985}
+.award-rank strong{font-size:14px;font-weight:600;color:#315e85;font-variant-numeric:tabular-nums}
+.award-date{font-size:13px;line-height:1.8;color:#617587;font-variant-numeric:tabular-nums}
+.award-date small{display:block;margin-top:3px;font-size:10px;color:#7b8289}
+.awards-page .phase-break{margin-top:4px;margin-bottom:26px}
+.awards-page #graduate h2{font-size:22px;margin-bottom:12px}
+.awards-page #graduate p{font-size:14px;color:#66717b}
+.awards-source{border-top:1px solid #d9dfe4;padding-top:18px;margin-top:0;color:#7b8289;font-size:12px;line-height:1.85}
+@media(max-width:1000px){
+ .awards-layout{grid-template-columns:155px minmax(0,1fr);gap:30px}
+ .awards-directory{top:134px;padding-left:14px}
+ .awards-page .award-stage{scroll-margin-top:134px}
+ .awards-page .timeline article{grid-template-columns:115px minmax(0,1fr);gap:16px}
+ .awards-page .section-heading h2{font-size:21px}
+}
+@media(max-width:780px){
+ .awards-layout{display:block}
+ .awards-directory{position:static;border-left:0;border-bottom:1px solid #ddd;padding:0 0 20px;margin-bottom:28px}
+ .awards-directory nav{flex-direction:row;flex-wrap:wrap;gap:10px 22px}
+ .awards-directory nav>p{flex-basis:100%;font-size:11px}
+ .awards-directory .graduate-link{border:0;padding:0;margin:0}
+ .awards-context{margin-bottom:24px}
+ .awards-page .timeline article{grid-template-columns:130px minmax(0,1fr)}
+}
+@media(max-width:560px){
+ .awards-overview{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 20px;padding:20px 0}
+ .awards-overview dd{font-size:32px}
+ .awards-overview dt{font-size:12px}
+ .awards-context{gap:2px}
+ .awards-context>p{flex-basis:100%;font-size:11px}
+ .awards-page .timeline article{grid-template-columns:minmax(0,1fr);gap:5px;padding:20px 0}
+ .awards-page .timeline h3{font-size:16px}
+ .awards-page .record-count{display:inline}
+ .award-date{font-size:12px}
+ .award-date small{display:inline;margin-left:8px}
+ .awards-page .award-stage{padding-bottom:34px}
+}
+@media print{
+ .awards-directory{display:none}
+ .awards-layout{display:block}
+ .awards-overview{grid-template-columns:repeat(4,1fr)}
+ .awards-page .award-stage{padding-bottom:24px}
+ .award-date,.awards-page .timeline .award-note{color:#555}
+}
