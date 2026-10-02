@@ -40,7 +40,9 @@
       "zh": {
         "title": "智能手诊项目获国家级大创立项",
         "text": "国家级大学生创新创业训练项目，立项排序 1/289。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "innovation-4"
     },
     {
       "id": "eye-2022",
@@ -54,7 +56,9 @@
       "zh": {
         "title": "眼球运动障碍诊断项目获国家级大创立项",
         "text": "眼球运动障碍诊断方向获国家级大学生创新创业训练项目立项。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "innovation-5"
     },
     {
       "id": "meter-start",
@@ -110,7 +114,9 @@
       "zh": {
         "title": "眼动辅诊项目获国家级大创立项",
         "text": "担任国家级大创项目负责人，立项排序 3/218。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "innovation-3"
     },
     {
       "id": "computer-2023",
@@ -124,7 +130,9 @@
       "zh": {
         "title": "中国大学生计算机设计大赛全国二等奖",
         "text": "医护机器狗专项挑战赛，全国第 3 名。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "national-8"
     },
     {
       "id": "creative-2023",
@@ -138,7 +146,9 @@
       "zh": {
         "title": "中国高校智能机器人创意大赛全国二等奖",
         "text": "巡检机器狗相关项目，初赛第 4/65。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "national-7"
     },
     {
       "id": "raicom-2023",
@@ -152,7 +162,9 @@
       "zh": {
         "title": "睿抗机器人开发者大赛全国二等奖",
         "text": "如影随形项目，北方赛区亚军。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "national-6"
     },
     {
       "id": "palm-start",
@@ -180,7 +192,9 @@
       "zh": {
         "title": "获评校 2023 年度人物",
         "text": "太原学院校级荣誉。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "university-3"
     },
     {
       "id": "road-paper",
@@ -194,7 +208,9 @@
       "zh": {
         "title": "道路裂缝检测论文发表",
         "text": "《基于 YOLOv8 的轻量化道路裂缝检测模型》发表于《山西电子技术》，本人为第二作者。"
-      }
+      },
+      "sourceType": "publications",
+      "sourceId": "road-crack"
     },
     {
       "id": "grasp-start",
@@ -222,7 +238,9 @@
       "zh": {
         "title": "中国机器人大赛全国二等奖",
         "text": "中国机器人大赛暨 RoboCup 机器人世界杯中国赛，智能四足救援机器人赛项。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "national-5"
     },
     {
       "id": "creative-2024",
@@ -236,7 +254,9 @@
       "zh": {
         "title": "中国高校智能机器人创意大赛全国一等奖",
         "text": "通用机器人手眼协调抓取系统相关成果获奖。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "national-4"
     },
     {
       "id": "palm-2024",
@@ -250,7 +270,9 @@
       "zh": {
         "title": "智能手诊项目再次获国家级大创立项",
         "text": "智能手诊相关工作获 2024 年国家级大学生创新创业训练项目立项。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "innovation-1"
     },
     {
       "id": "meter-innovation",
@@ -264,7 +286,9 @@
       "zh": {
         "title": "仪表读数项目获省级大创立项",
         "text": "暗光环境与表盘污染条件下的仪表读数项目获省级立项。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "innovation-2"
     },
     {
       "id": "challenge-2024",
@@ -292,7 +316,9 @@
       "zh": {
         "title": "EyeMoveAI 软件著作权",
         "text": "眼球运动障碍 AI 辅助诊断系统软件著作权，实际主创；包含在 5 项软著汇总中。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "software-5"
     },
     {
       "id": "raicom-2024",
@@ -306,7 +332,9 @@
       "zh": {
         "title": "睿抗机器人开发者大赛全国二等奖",
         "text": "智能系统赛项。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "national-3"
     },
     {
       "id": "graduation-honors",
@@ -320,7 +348,9 @@
       "zh": {
         "title": "优秀毕业设计、优秀毕业论文",
         "text": "基于手眼协调的机器狗目标抓取系统获校级荣誉。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "university-1"
     },
     {
       "id": "meter-graduation",
@@ -334,7 +364,9 @@
       "zh": {
         "title": "仪表读数研究获优秀毕业设计相关荣誉",
         "text": "工业仪表读数研究获校优秀毕业设计相关荣誉。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "university-2"
     },
     {
       "id": "computer-2025",
@@ -348,7 +380,9 @@
       "zh": {
         "title": "中国大学生计算机设计大赛省级一等奖",
         "text": "工业仪表读数项目，全省第 8/206。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "provincial-2"
     },
     {
       "id": "teaching-case",
@@ -362,7 +396,9 @@
       "zh": {
         "title": "省人工智能优秀课例",
         "text": "省级评选第 44 名。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "provincial-3"
     },
     {
       "id": "raicom-prov-2025",
@@ -376,7 +412,9 @@
       "zh": {
         "title": "睿抗机器人开发者大赛省级一等奖",
         "text": "智灌采收赛项，全省第 2/18。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "provincial-1"
     },
     {
       "id": "graduation",
@@ -404,7 +442,9 @@
       "zh": {
         "title": "睿抗机器人开发者大赛全国二等奖",
         "text": "智灌采收赛项，本科项目延续。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "national-2"
     },
     {
       "id": "creative-2025",
@@ -418,7 +458,9 @@
       "zh": {
         "title": "中国高校智能机器人创意大赛全国二等奖",
         "text": "足式机器人挑战赛，本科项目延续。"
-      }
+      },
+      "sourceType": "awards",
+      "sourceId": "national-1"
     },
     {
       "id": "palm-completion",
@@ -460,7 +502,9 @@
       "zh": {
         "title": "饮用水处理方向论文投稿",
         "text": "合作撰写机器学习预测与解释饮用水处理中铝盐、铁盐混凝剂投加量的论文，投稿至 Sustainability。"
-      }
+      },
+      "sourceType": "publications",
+      "sourceId": "sustainability"
     },
     {
       "id": "measurement",
@@ -474,7 +518,9 @@
       "zh": {
         "title": "本科研究后续 · Measurement 论文作者确认",
         "text": "收到工业指针仪表可靠性门控选择性读数论文的共同作者确认通知，稿件已投稿至 Measurement。"
-      }
+      },
+      "sourceType": "publications",
+      "sourceId": "measurement"
     }
   ],
   "grouped": [
@@ -536,7 +582,9 @@
       },
       "date": "≈2023.06",
       "stage": "undergraduate",
-      "cumulative": false
+      "cumulative": false,
+      "sourceType": "awards",
+      "sourceId": "provincial-5"
     },
     {
       "id": "challenge-total",
@@ -551,7 +599,9 @@
       },
       "date": "≈2025.08",
       "stage": "continuation",
-      "cumulative": true
+      "cumulative": true,
+      "sourceType": "awards",
+      "sourceId": "provincial-4"
     },
     {
       "id": "regional-total",
@@ -566,7 +616,9 @@
       },
       "date": "≈2025.08",
       "stage": "continuation",
-      "cumulative": true
+      "cumulative": true,
+      "sourceType": "awards",
+      "sourceId": "provincial-6"
     },
     {
       "id": "software-total",

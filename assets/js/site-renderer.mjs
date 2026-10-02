@@ -36,15 +36,34 @@ function renderAwards(page, data, lang) {
 }
 export function publicationRow(record, lang) {
   const zh = lang === 'zh', content = record[lang], index = zh ? 0 : 1;
-  const status = [record.followUp ? zh ? '本科研究后续' : 'Undergraduate research follow-up' : '', STATUSES[record.status][index], ROLES[record.role][index]].filter(Boolean).join(' · ');
-  return '<article class="publication-record" id="publication-' + record.id + '"><p class="publication-status">' + esc(status) + '</p><h3>' + (record.url ? '<a href="' + esc(record.url) + '">' + esc(content.title) + '</a>' : esc(content.title)) + '</h3><p><em>' + esc(content.journal) + '</em> · ' + DATE_TYPES[record.dateType][index] + ': ' + time(record.date) + '</p>' + (content.metrics ? '<p class="journal-metrics">' + esc(content.metrics) + (record.metricsSource ? ' · <a href="' + esc(record.metricsSource) + '">' + (zh ? '分区来源' : 'Source') + '</a>' : '') + '</p>' : '') + (content.summary ? '<p>' + esc(content.summary) + '</p>' : '') + '</article>';
+  const meta = '<div class="publication-meta"><span class="publication-state" data-status="' + record.status + '">' + STATUSES[record.status][index] + '</span><span>' + ROLES[record.role][index] + '</span>' + (record.followUp ? '<span>' + (zh ? '本科研究后续' : 'Undergraduate research follow-up') + '</span>' : '') + '</div>';
+  return '<article class="publication-record" id="publication-' + record.id + '">' + meta + '<h3>' + (record.url ? '<a href="' + esc(record.url) + '">' + esc(content.title) + '</a>' : esc(content.title)) + '</h3><p class="publication-venue"><em>' + esc(content.journal) + '</em> · ' + DATE_TYPES[record.dateType][index] + ': ' + time(record.date) + '</p>' + (content.summary ? '<p>' + esc(content.summary) + '</p>' : '') + (content.metrics ? '<details class="publication-metrics"><summary>' + (zh ? '期刊分区 · JCR' : 'Journal classification · JCR') + '</summary><p class="journal-metrics">' + esc(content.metrics) + (record.metricsSource ? ' · <a href="' + esc(record.metricsSource) + '">' + (zh ? '分区来源' : 'Source') + '</a>' : '') + '</p></details>' : '') + '</article>';
+}
+function publicationCounts(data, stage, lang) {
+  const records = data.publications.filter(item => item.stage === stage);
+  return Object.entries(STATUSES).map(([status, label]) => {
+    const count = records.filter(item => item.status === status).length;
+    if (!count) return '';
+    return lang === 'zh' ? count + ' 篇' + label[0] : count + ' ' + label[1].toLowerCase() + (status === 'published' ? count === 1 ? ' article' : ' articles' : count === 1 ? ' manuscript' : ' manuscripts');
+  }).filter(Boolean).join(' · ');
+}
+function renderHomeOverview(page, data, lang) {
+  const zh = lang === 'zh', prefix = zh ? '/zh' : '';
+  const items = [
+    ['graduate', zh ? '硕士 · 环境科学与工程' : 'MASTER’S · ENVIRONMENTAL SCIENCE &amp; ENGINEERING', zh ? '机器学习与环境系统' : 'Machine learning for environmental systems', zh ? '饮用水处理中的预测建模与模型解释。' : 'Predictive modelling and interpretation for drinking-water treatment.'],
+    ['undergraduate', zh ? '本科 · 物联网工程' : 'UNDERGRADUATE · INTERNET OF THINGS ENGINEERING', zh ? '视觉感知与机器人系统' : 'Visual perception and robotic systems', zh ? '工业仪表读数、智能诊疗与手眼协调。' : 'Industrial meter reading, AI-assisted diagnosis, and hand-eye coordination.']
+  ];
+  const body = '<section class="home-research" id="research-overview"><div class="news-heading"><h2>' + (zh ? '研究概览' : 'Research overview') + '</h2><a href="' + prefix + '/research.html">' + (zh ? '研究与论文 →' : 'Research &amp; papers →') + '</a></div><div class="research-brief-grid">' + items.map(([stage, label, title, text]) => '<article><p class="brief-stage">' + label + '</p><h3><a href="' + prefix + '/research.html#' + stage + '-research">' + title + '</a></h3><p>' + text + '</p><p class="brief-evidence">' + esc(publicationCounts(data, stage, lang)) + '</p></article>').join('') + '</div></section>';
+  if (page.includes('id="research-overview"')) return page.replace(/<section class="home-research"[\s\S]*?<\/section>/, () => body);
+  return page.replace(/<section class="news-section"/, () => body + '<section class="news-section"');
 }
 function researchStage(page, stage, data, lang) {
   const pattern = new RegExp('<section id="' + stage + '-research"[\\s\\S]*?<\\/section>');
   const section = page.match(pattern)?.[0];
   if (!section) throw new Error('Research template missing: ' + stage);
   const records = data.publications.filter(item => item.stage === stage).sort(byDate).map(item => publicationRow(item, lang)).join('\n');
-  const marker = '<!-- publications:start -->\n' + records + '\n<!-- publications:end -->';
+  const counts = publicationCounts(data, stage, lang);
+  const marker = '<!-- publications:start -->\n' + (counts ? '<p class="publication-overview">' + esc(counts) + '</p>\n' : '') + records + '\n<!-- publications:end -->';
   let next;
   if (section.includes('<!-- publications:start -->')) next = section.replace(/<!-- publications:start -->[\s\S]*?<!-- publications:end -->/, () => marker);
   else {
@@ -81,6 +100,31 @@ function renderGraduateRecord(page, data, lang) {
   if (!replaced) throw new Error('Graduate publication template missing.');
   return next;
 }
+function renderUndergraduateRecord(page, data, lang) {
+  const zh = lang === 'zh', prefix = zh ? '/zh' : '';
+  const publications = data.publications.filter(item => item.stage === 'undergraduate').sort(byDate).map(item => publicationRow(item, lang)).join('\n');
+  const section = '<section id="undergraduate-publications" class="record-section"><h2>' + (zh ? '论文与研究成果' : 'Manuscripts &amp; publications') + '</h2>' + publications + '</section>';
+  let next = page;
+  if (next.includes('id="undergraduate-publications"')) next = next.replace(/<section id="undergraduate-publications"[\s\S]*?<\/section>/, () => section);
+  else {
+    if (zh) {
+      next = next.replace(/<article><div><h3>(?:工业仪表自动读数大\/小模型级联方法|基于 YOLOv8 的轻量化道路裂缝检测模型)<\/h3>[\s\S]*?<\/article>/g, '');
+      next = next.replace('<h2>论文、毕业设计与科研项目</h2>', '<h2>毕业设计与科研项目</h2>');
+    } else next = next.replace(/<p>Co-authored industrial pointer-meter manuscript[\s\S]*?<\/p>/, '');
+    next = next.replace('<section class="dated-experience">', () => section + '<section class="dated-experience">');
+  }
+  const totals = data.totals.undergraduate;
+  const honors = '<section class="award-summary"><h2>' + (zh ? '竞赛与荣誉' : 'Awards and distinctions') + '</h2>' + overview(totals, lang) + '<p><a href="' + prefix + '/awards.html">' + (zh ? '完整荣誉记录 →' : 'Full award record →') + '</a></p></section>';
+  next = next.replace(/<section class="award-summary">[\s\S]*?<\/section>/, () => honors);
+  if (zh) next = next.replace(/<section><h2>代表性竞赛与成果<\/h2>[\s\S]*?<\/section>/, '');
+  return next;
+}
+function renderCvOverview(page, data, lang) {
+  const prefix = lang === 'zh' ? '/zh' : '';
+  let next = page.replace(/<!-- cv-summary:start -->[\s\S]*?<!-- cv-summary:end -->/g, '');
+  const summary = '<!-- cv-summary:start --><section class="record-section"><h2>' + (lang === 'zh' ? '阶段成果索引' : 'Research record by stage') + '</h2><div class="research-brief-grid">' + ['graduate', 'undergraduate'].map(stage => '<article><p class="brief-stage">' + school(stage, lang) + '</p><p>' + esc(publicationCounts(data, stage, lang)) + '</p><a href="' + prefix + '/research.html#' + stage + '-research">' + (lang === 'zh' ? '论文与研究 →' : 'Manuscripts &amp; research →') + '</a></article>').join('') + '</div></section><!-- cv-summary:end -->';
+  return next.replace('</main>', () => summary + '</main>');
+}
 function replaceMain(page, main) {
   if (!/<main[\s\S]*?<\/main>/.test(page)) throw new Error('Page template missing.');
   return page.replace(/<main[\s\S]*?<\/main>/, () => main);
@@ -88,12 +132,16 @@ function replaceMain(page, main) {
 export function renderSite(pages, news, portfolio) {
   const errors = validateContent(news, portfolio);
   if (errors.length) throw new Error(errors.join('\n'));
-  const out = { ...pages, ...renderNewsPages(pages, news) };
+  const out = { ...pages, ...renderNewsPages(pages, news, portfolio) };
   for (const lang of ['en', 'zh']) {
     const prefix = lang === 'zh' ? 'zh/' : '';
     out[prefix + 'awards.html'] = renderAwards(pages[prefix + 'awards.html'], portfolio, lang);
     out[prefix + 'research.html'] = researchStage(researchStage(pages[prefix + 'research.html'], 'graduate', portfolio, lang), 'undergraduate', portfolio, lang);
     out[prefix + 'projects.html'] = renderProjects(pages[prefix + 'projects.html'], portfolio, lang);
+    out[prefix + 'index.html'] = renderHomeOverview(out[prefix + 'index.html'], portfolio, lang);
+    out[prefix + 'cv.html'] = renderCvOverview(pages[prefix + 'cv.html'], portfolio, lang);
+    const undergraduate = lang === 'zh' ? 'undergraduate-cv.html' : 'undergraduate-record.html';
+    out[undergraduate] = renderUndergraduateRecord(pages[undergraduate], portfolio, lang);
     const graduate = lang === 'zh' ? 'graduate-cv.html' : 'graduate-record.html';
     out[graduate] = renderGraduateRecord(pages[graduate], portfolio, lang);
   }

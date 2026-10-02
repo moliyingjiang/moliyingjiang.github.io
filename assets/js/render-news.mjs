@@ -1,4 +1,4 @@
-export function renderNewsPages(pages, data) {
+export function renderNewsPages(pages, data, portfolio) {
 const escape = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 const records = [...data.events, ...data.grouped].map((record, order) => ({ ...record, order }));
 const byDate = (a, b) => a.date.replace('≈', '').localeCompare(b.date.replace('≈', ''), 'en') || a.order - b.order;
@@ -8,16 +8,26 @@ for (const lang of ['en', 'zh']) {
   const zh = lang === 'zh';
   const prefix = zh ? '/zh' : '';
   const approximate = zh ? '暂估日期' : 'Approximate date';
-  const cumulative = zh ? '本科累计' : 'Undergraduate total';
-  const date = record => '<div class="news-date"><time' + (record.date.startsWith('≈') ? ' class="estimated-date" title="' + approximate + '"' : '') + '>' + escape(record.date) + '</time>' + (record.cumulative ? '<small class="news-cumulative">' + cumulative + '</small>' : record.stage === 'continuation' ? '<small class="news-cumulative">' + (zh ? '本科项目后续' : 'Undergraduate follow-up') + '</small>' : '') + '</div>';
+  const cumulative = record => record.stage === 'graduate' ? zh ? '硕士累计' : 'Graduate total' : zh ? '本科累计' : 'Undergraduate total';
+  const date = record => '<div class="news-date"><time' + (record.date.startsWith('≈') ? ' class="estimated-date" title="' + approximate + '"' : '') + '>' + escape(record.date) + '</time>' + (record.cumulative ? '<small class="news-cumulative">' + cumulative(record) + '</small>' : record.stage === 'continuation' ? '<small class="news-cumulative">' + (zh ? '本科项目后续' : 'Undergraduate follow-up') + '</small>' : '') + '</div>';
+  const target = record => {
+    if (record.award) return [prefix + '/awards.html#' + record.award, zh ? '荣誉记录 →' : 'Award record →'];
+    const legacy = { sustainability: 'sustainability', measurement: 'measurement', 'road-paper': 'road-crack' };
+    const paperId = record.sourceType === 'publications' ? record.sourceId : legacy[record.id];
+    if (paperId && (!portfolio || portfolio.publications.some(item => item.id === paperId))) return [prefix + '/research.html#publication-' + paperId, zh ? '论文记录 →' : 'Publication record →'];
+    if (record.sourceType === 'projects' && record.sourceId && (!portfolio || portfolio.projects.some(item => item.id === record.sourceId))) return [prefix + '/projects.html#project-' + record.sourceId, zh ? '项目记录 →' : 'Project record →'];
+    return null;
+  };
   const homeRow = record => {
     const content = record[lang];
-    const title = record.award ? '<a href="' + prefix + '/awards.html#' + record.award + '">' + escape(content.title) + '</a>' : '<strong>' + escape(content.title) + '</strong>';
+    const link = target(record);
+    const title = link ? '<a href="' + escape(link[0]) + '">' + escape(content.title) + '</a>' : '<strong>' + escape(content.title) + '</strong>';
     return '<article class="news-row" id="news-' + record.id + '">' + date(record) + '<p>' + title + '<br>' + escape(content.text) + '</p></article>';
   };
   const timelineRow = record => {
     const content = record[lang];
-    const link = record.award ? ' <a href="' + prefix + '/awards.html#' + record.award + '">' + (zh ? '荣誉记录 →' : 'Award record →') + '</a>' : '';
+    const detail = target(record);
+    const link = detail ? ' <a href="' + escape(detail[0]) + '">' + detail[1] + '</a>' : '';
     return '<li id="news-' + record.id + '">' + date(record) + '<div><h2>' + escape(content.title) + '</h2><p>' + escape(content.text) + link + '</p></div></li>';
   };
   const stage = name => records.filter(record => record.stage === name).sort(byDate);

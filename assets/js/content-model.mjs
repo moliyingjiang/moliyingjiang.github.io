@@ -1,5 +1,5 @@
 export const DATA_PATHS = ['assets/data/news.json', 'assets/data/portfolio.json'];
-export const PAGE_PATHS = ['index.html', 'zh/index.html', 'milestones.html', 'zh/milestones.html', 'awards.html', 'zh/awards.html', 'research.html', 'zh/research.html', 'projects.html', 'zh/projects.html', 'graduate-record.html', 'graduate-cv.html'];
+export const PAGE_PATHS = ['index.html', 'zh/index.html', 'milestones.html', 'zh/milestones.html', 'awards.html', 'zh/awards.html', 'research.html', 'zh/research.html', 'projects.html', 'zh/projects.html', 'graduate-record.html', 'graduate-cv.html', 'cv.html', 'zh/cv.html', 'undergraduate-record.html', 'undergraduate-cv.html'];
 export const EDITABLE_PATHS = [...DATA_PATHS, ...PAGE_PATHS];
 export const TYPES = {
   'national-award': ['国家级竞赛奖', 'national', 'nationalAwards'],
@@ -78,22 +78,35 @@ export function adjustAwardTotals(portfolio, oldRecord, newRecord) {
 export function linkedNews(kind, record) {
   const stage = record.stage === 'graduate' ? 'graduate' : record.followUp ? 'continuation' : 'undergraduate';
   const date = record.date || (record.period || '').split(/[—–]/)[0].trim();
-  const item = { id: 'update-' + record.id, date, stage, award: kind === 'awards' ? record.id : '', sourceType: kind, sourceId: record.id, en: {}, zh: {} };
+  const item = { id: 'update-' + record.id, date, stage, cumulative: Boolean(record.cumulative), award: kind === 'awards' ? record.id : '', sourceType: kind, sourceId: record.id, en: {}, zh: {} };
   for (const lang of ['en', 'zh']) {
     const text = record[lang];
     item[lang] = { title: text.title, text: kind === 'awards' ? [text.result, text.rank ? text.rankLabel + ' ' + text.rank : ''].filter(Boolean).join(' · ') : kind === 'publications' ? [text.journal, STATUSES[record.status][lang === 'zh' ? 0 : 1], ROLES[record.role][lang === 'zh' ? 0 : 1], text.summary].filter(Boolean).join(' · ') : text.text };
   }
   return item;
 }
+export function findLinkedNews(news, kind, record) {
+  const records = [...news.events, ...news.grouped];
+  const exact = records.find(item => item.sourceType === kind && item.sourceId === record.id);
+  if (exact) return exact;
+  if (kind === 'publications') {
+    const legacyId = record.id === 'road-crack' ? 'road-paper' : record.id;
+    return records.find(item => item.id === legacyId);
+  }
+  if (kind === 'awards' && !record.cumulative) {
+    const candidates = records.filter(item => item.award === record.id && !item.cumulative && item.date === record.date);
+    if (candidates.length === 1) return candidates[0];
+  }
+  return undefined;
+}
 export function syncLinkedNews(news, kind, record) {
-  const next = linkedNews(kind, record);
-  const legacyId = kind === 'publications' && record.id === 'road-crack' ? 'road-paper' : record.id;
-  for (const bucket of ['events', 'grouped']) {
-    const index = news[bucket].findIndex(item => item.sourceType === kind && item.sourceId === record.id || kind === 'publications' && item.id === legacyId || kind === 'awards' && item.award === record.id);
-    if (index >= 0) {
-      const old = news[bucket][index];
-      news[bucket][index] = { ...old, ...next, id: old.id };
-      return;
+  const next = linkedNews(kind, record), old = findLinkedNews(news, kind, record);
+  if (old) {
+    // Award/project forms retain undergraduate ownership without redefining a historical follow-up phase.
+    if (kind !== 'publications' && old.stage === 'continuation' && record.stage === 'undergraduate') next.stage = 'continuation';
+    for (const bucket of ['events', 'grouped']) {
+      const index = news[bucket].indexOf(old);
+      if (index >= 0) { news[bucket][index] = { ...old, ...next, id: old.id }; return; }
     }
   }
   news.events.push(next);
