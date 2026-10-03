@@ -1,38 +1,47 @@
-import { EDITABLE_PATHS, PAGE_PATHS, TYPES, STATUSES, ROLES, DATE_TYPES, esc, clone, newId, today, validDate, byDate, validateContent, adjustAwardTotals, syncLinkedNews, findLinkedNews } from '../assets/js/content-model.mjs';
-import { renderSite } from '../assets/js/site-renderer.mjs';
-import { GitHub } from './github.mjs?v=20261001-fetch-binding';
-import { KIND_NAMES, PAGE_NAMES, previewPath, recordAnchor, findSource, destination, changeCount } from './editor-model.mjs?v=20261003-editor';
+import { EDITABLE_PATHS, PAGE_PATHS, TYPES, STATUSES, ROLES, DATE_TYPES, esc, clone, newId, today, validDate, byDate, validateContent, adjustAwardTotals, syncLinkedNews, findLinkedNews } from '../assets/js/content-model.mjs?v=20261003-profile';
+import { renderSite } from '../assets/js/site-renderer.mjs?v=20261003-profile';
+import { PROFILE_PATH, PROFILE_GROUPS, validateProfile, profileFromForm, upgradeDraftBase } from '../assets/js/profile-model.mjs?v=20261003-profile';
+import { GitHub } from './github.mjs?v=20261003-profile';
+import { KIND_NAMES, PAGE_NAMES, previewPath, recordAnchor, findSource, destination, changeCount } from './editor-model.mjs?v=20261003-profile';
 
 const $ = selector => document.querySelector(selector);
 const key = 'portfolio-editor-v1';
 const labels = { title:'标题', text:'正文', result:'奖项 / 等级 / 成绩', rankLabel:'排名说明', rank:'名次（如 3 / 65）', journal:'期刊', metrics:'分区与年份（如 JCR 2025 · Q1）', summary:'研究说明', category:'研究方向', moreLabel:'附加链接文字', moreUrl:'附加链接' };
-let files, news, portfolio, base, client, snapshot, kind = 'news', editing, bucket;
+let files, news, portfolio, profile, base, client, snapshot, kind = 'profile', editing, bucket;
 let dirty = false, draft = false;
 const status = message => { $('#status').textContent = message; };
-const parse = source => ({ news: JSON.parse(source['assets/data/news.json']), portfolio: JSON.parse(source['assets/data/portfolio.json']) });
-const fingerprint = () => JSON.stringify([news, portfolio]);
+const parse = source => ({ news: JSON.parse(source['assets/data/news.json']), portfolio: JSON.parse(source['assets/data/portfolio.json']), profile: JSON.parse(source[PROFILE_PATH]) });
+const fingerprint = () => JSON.stringify([news, portfolio, profile]);
 const allNews = () => [...news.events, ...news.grouped];
 function updateState() {
-  const count = changeCount(base, news, portfolio);
+  const count = changeCount(base, news, portfolio, profile);
   $('#draft-state').textContent = dirty ? '当前表单未保存' : count ? count + ' 项草稿修改' : draft ? '草稿与线上内容一致' : '与线上内容一致';
   $('#draft-state').classList.toggle('pending', dirty || !!count);
   $('#connect').textContent = client ? 'GitHub 已连接' : '连接 GitHub';
+  if (profile) { $('.brand a').textContent = profile.zh.name; document.title = '内容管理 · ' + profile.zh.name; }
 }
 function saveDraft(message = '已保存到本设备草稿，尚未发布。') {
   draft = true;
-  try { localStorage.setItem(key, JSON.stringify({ news, portfolio, base })); status(message); }
+  try { localStorage.setItem(key, JSON.stringify({ news, portfolio, profile, base })); status(message); }
   catch { status('本设备无法保存草稿，请导出备份后再关闭页面。'); }
   updateState();
 }
-function assertValid(n, p) {
-  const errors = validateContent(n, p);
+function assertValid(n, p, pr = profile) {
+  const errors = [...validateContent(n, p), ...validateProfile(pr)];
   if (errors.length) throw new Error(errors.join('\n'));
 }
-function records() { return kind === 'news' ? allNews() : portfolio[kind]; }
+function records() { return kind === 'profile' ? Object.keys(PROFILE_GROUPS).map(id => ({id})) : kind === 'news' ? allNews() : portfolio[kind]; }
 function list() {
-  const count = id => id === 'news' ? allNews().length : portfolio[id].length;
+  const count = id => id === 'profile' ? '4' : id === 'news' ? allNews().length : portfolio[id].length;
   $('#nav').innerHTML = Object.entries(KIND_NAMES).map(([id, name]) =>
     '<button type="button" data-kind="' + id + '" class="' + (id === kind ? 'selected' : '') + '" aria-pressed="' + (id === kind) + '">' + name + '<span>' + count(id) + '</span></button>').join('');
+  $('.filters').hidden = kind === 'profile';
+  $('#add').hidden = kind === 'profile';
+  if (kind === 'profile') {
+    $('#list').innerHTML = Object.entries(PROFILE_GROUPS).map(([id, names]) => '<button type="button" data-id="' + id + '" class="' + (editing?.id === id ? 'selected' : '') + '">' + names[0] + '<small>' + names[1] + '</small></button>').join('');
+    $('#list-caption').textContent = '个人资料 · 中英文分别维护';
+    return;
+  }
   const stage = $('#filter').value, query = $('#search').value.trim().toLowerCase();
   const filtered = records().filter(record =>
     (!stage || (stage === 'undergraduate' ? record.stage !== 'graduate' : record.stage === stage)) &&
@@ -52,6 +61,25 @@ const select = (name, value, label, options) =>
   '<label>' + esc(label) + '<select name="' + name + '">' + Object.entries(options).map(([v, l]) =>
     '<option value="' + esc(v) + '" ' + (value === v ? 'selected' : '') + '>' + esc(Array.isArray(l) ? l[0] : l) + '</option>'
   ).join('') + '</select></label>';
+
+function editProfile(id = 'identity') {
+  editing = { id }; dirty = false;
+  const group = PROFILE_GROUPS[id];
+  let html = '<div class="editor-heading"><div><p class="overline">PROFILE & IDENTITY</p><h2>' + group[0] + '</h2></div><span class="record-id">中英文同步发布</span></div><div class="destination"><strong>显示位置：' + group[1] + '</strong><p>姓名、介绍、教育背景与研究方向统一维护。中英文分别填写；保存草稿后预览，再发布到网站。</p></div>';
+  if (id === 'links') {
+    html += '<div class="profile-avatar-preview"><img src="' + esc(profile.avatar) + '" alt="当前肖像"><div>' + field('avatar', profile.avatar, '肖像图片地址') + '<p class="field-help">填写已有图片的站内地址（如 /assets/images/profile.png）或 HTTPS 链接。</p></div></div><div class="form-grid">' + Object.entries({ orcid:'ORCID', scholar:'Google Scholar', github:'GitHub 主页 · 国际访问', gitee:'Gitee 主页 · 国内访问' }).map(([key, label]) => field('links.' + key, profile.links[key], label)).join('') + '</div>';
+  } else {
+    html += '<div class="languages">' + ['zh', 'en'].map(lang => {
+      const prefix = id === 'identity' ? lang : 'stages.' + id + '.' + lang;
+      const item = id === 'identity' ? profile[lang] : profile.stages[id][lang];
+      const definitions = id === 'identity' ? [['name','公开署名'], ['role','身份与专业'], ['affiliation','所在学校 / 机构'], ['bio','个人介绍（空行分段）', true], ['description','搜索与分享摘要', true], ['footer','页脚文字']] : [['school','学校'], ['degree','学历与专业'], ['period','阶段时间'], ['advisor','导师与学术背景', true], ['researchTitle','研究方向标题'], ['researchSummary','研究方向说明', true], ['cvSummary','简历介绍', true], ['cvUrl','简历 PDF 地址（可留空）'], ['recordUrl','电子档案地址']];
+      return '<div><h3>' + (lang === 'zh' ? '中文版本' : 'English version') + '</h3>' + definitions.map(([key, label, area]) => field(prefix + '.' + key, key === 'bio' ? item.bio.join('\n\n') : item[key], label, area)).join('') + '</div>';
+    }).join('') + '</div>';
+    if (id !== 'identity') html += '<p class="field-help">简历 PDF 可填写已有文件的站内地址或 HTTPS 地址；留空时只展示电子档案入口。</p>';
+  }
+  html += '<div class="actions"><small>保存后可预览中文与英文页面。</small><button class="primary" type="submit">保存草稿</button><button type="button" id="editor-preview">预览页面</button></div>';
+  $('#editor').innerHTML = html; list(); updateState();
+}
 
 function context(record) {
   const source = kind === 'news' ? findSource(record, portfolio) : null;
@@ -94,6 +122,7 @@ function edit(record) {
   list(); updateState();
 }
 function clearEditor() {
+  if (kind === 'profile') return editProfile();
   editing = null; dirty = false;
   const help = {news:'动态显示在首页与完整时间线；语言成绩、证书和奖项请在“荣誉与资格”中维护。',awards:'竞赛奖项、奖学金、资格证书和语言成绩均在这里维护，可同步生成首页动态。',publications:'按本科与硕士阶段维护论文，准确填写投稿、审稿、接收或发表状态。',projects:'维护研究项目介绍，以及 Gitee 与 GitHub 的代码入口。'}[kind];
   $('#editor').innerHTML = '<div class="empty-editor"><p class="overline">PERSONAL ACADEMIC RECORD</p><h1>' + KIND_NAMES[kind] + '</h1><p>' + help + '</p><p>选择一条记录，或点击“新增”。中英文分别填写，预览确认后发布。</p></div>';
@@ -104,6 +133,7 @@ function choose(nextKind, id) {
   if (!leave()) return;
   if (nextKind !== kind) $('#search').value = '';
   kind = nextKind;
+  if (kind === 'profile') return editProfile(id || 'identity');
   const record = records().find(item => item.id === id);
   if (record) {
     $('#search').value = '';
@@ -142,6 +172,13 @@ $('#editor').onsubmit = event => {
   event.preventDefault();
   if (!editing) return;
   try {
+    if (kind === 'profile') {
+      const id = editing.id;
+      profile = profileFromForm(profile, new FormData(event.target));
+      editProfile(id);
+      saveDraft('个人资料草稿已保存。预览中英文页面，发布后全站资料一起更新。');
+      return;
+    }
     const next = clone(editing), form = new FormData(event.target), n = clone(news), p = clone(portfolio);
     for (const [name,value] of form) {
       if (name.includes('.')) { const [lang, field] = name.split('.'); next[lang][field] = value.trim(); }
@@ -185,7 +222,7 @@ $('#reset').onclick = () => {
 };
 $('#export').onclick = () => {
   if (dirty) return status('请先保存当前表单，再导出完整草稿。');
-  const url = URL.createObjectURL(new Blob([JSON.stringify({news,portfolio,base},null,2)],{type:'application/json'}));
+  const url = URL.createObjectURL(new Blob([JSON.stringify({news,portfolio,profile,base},null,2)],{type:'application/json'}));
   const anchor = document.createElement('a'); anchor.href = url; anchor.download = 'portfolio-draft-' + today().replaceAll('.','-') + '.json'; anchor.click();
   setTimeout(() => URL.revokeObjectURL(url),1000);
   status('草稿已导出，包含所有已保存内容，可在其他设备导入。');
@@ -194,9 +231,9 @@ $('#import').onchange = async event => {
   try {
     const file = event.target.files[0]; if (!file) return;
     if (file.size > 5e6) throw Error('文件过大。');
-    const data = JSON.parse(await file.text()); assertValid(data.news,data.portfolio);
+    const data = JSON.parse(await file.text()), incomingProfile = data.profile || parse(files).profile; assertValid(data.news,data.portfolio,incomingProfile);
     if (!confirm('使用导入内容替换本设备草稿？')) return;
-    news = data.news; portfolio = data.portfolio; base = data.base || '';
+    news = data.news; portfolio = data.portfolio; profile = incomingProfile; base = upgradeDraftBase(data.base || '', parse(files).profile);
     clearEditor(); list(); saveDraft('已导入草稿，预览后连接 GitHub 发布。');
   } catch(error) { status(error.message); }
   finally { event.target.value = ''; }
@@ -212,18 +249,18 @@ $('#login').onclick = async () => {
     const token = $('#token').value.trim();
     if (!token) throw Error('请填写 GitHub 访问令牌。');
     const candidate = new GitHub(token); $('#token').value = '';
-    const remote = await candidate.snapshot(), content = parse(remote.files); assertValid(content.news,content.portfolio);
-    if (draft && base !== JSON.stringify([content.news,content.portfolio])) throw Error('线上内容已有更新。你的草稿已保留：先导出，再放弃本地草稿并重新连接，按需要合并修改。');
-    if (!draft) { news = content.news; portfolio = content.portfolio; base = fingerprint(); }
+    const remote = await candidate.snapshot(), content = parse(remote.files); assertValid(content.news,content.portfolio,content.profile);
+    if (draft && base !== JSON.stringify([content.news,content.portfolio,content.profile])) throw Error('线上内容已有更新。你的草稿已保留：先导出，再放弃本地草稿并重新连接，按需要合并修改。');
+    if (!draft) { news = content.news; portfolio = content.portfolio; profile = content.profile; base = fingerprint(); }
     client = candidate; snapshot = remote; files = remote.files;
     $('#auth').close();
-    if (editing) { const current = records().find(record => record.id === editing.id); if (current) edit(current); else clearEditor(); }
+    if (editing) { const current = records().find(record => record.id === editing.id); if (current) kind === 'profile' ? editProfile(current.id) : edit(current); else clearEditor(); }
     list(); updateState(); status('GitHub 已连接。预览确认后，点击“发布更新”。');
   } catch(error) { status(error.message); $('#auth').close(); }
   finally { $('#login').disabled = false; }
 };
 function preview() {
-  const path = $('#preview-page').value, output = renderSite(files,news,portfolio);
+  const path = $('#preview-page').value, output = renderSite(files,news,portfolio,profile);
   const doc = new DOMParser().parseFromString(output[path], 'text/html');
   doc.querySelectorAll('script, base').forEach(node => node.remove());
   const baseElement = doc.createElement('base'); baseElement.href = new URL(path, location.origin + '/').href; doc.head.prepend(baseElement);
@@ -238,7 +275,7 @@ function preview() {
     doc.body.append(script);
   }
   $('iframe').srcdoc = '<!doctype html>\n' + doc.documentElement.outerHTML;
-  $('#preview-note').textContent = editing ? target ? '已定位当前记录，蓝色边框仅用于预览。' : '此页面不展示当前记录；对应位置：' + destination(kind, editing) + '。' : '预览已保存草稿；发布后才会更新线上页面。';
+  $('#preview-note').textContent = kind === 'profile' ? '正在预览已保存的个人资料；可切换语言与页面检查效果。' : editing ? target ? '已定位当前记录，蓝色边框仅用于预览。' : '此页面不展示当前记录；对应位置：' + destination(kind, editing) + '。' : '预览已保存草稿；发布后才会更新线上页面。';
 }
 function showPreview() {
   try {
@@ -255,11 +292,11 @@ $('#close-preview').onclick = () => $('#preview-dialog').close();
 $('#publish').onclick = async () => {
   if (dirty) return status('请先保存当前表单，再发布更新。');
   if (!client || !snapshot) return $('#auth').showModal();
-  const count = changeCount(base, news, portfolio);
+  const count = changeCount(base, news, portfolio, profile);
   if (!confirm('将' + (count ? '当前 ' + count + ' 项草稿修改' : '当前内容') + '发布到 GitHub？部署完成后网站更新，Gitee 自动同步。')) return;
   $('#publish').disabled = true; $('main').inert = true; $('header').inert = true;
   try {
-    const output = renderSite(files,news,portfolio), sha = await client.publish(snapshot,output);
+    const output = renderSite(files,news,portfolio,profile), sha = await client.publish(snapshot,output);
     files = output; base = fingerprint(); draft = false;
     try { localStorage.removeItem(key); } catch {}
     updateState();
@@ -274,11 +311,11 @@ try {
     if (!response.ok) throw Error('加载失败：' + (PAGE_NAMES[path] || path));
     return [path,await response.text()];
   })));
-  ({news,portfolio} = parse(files)); assertValid(news,portfolio); base = fingerprint();
+  ({news,portfolio,profile} = parse(files)); assertValid(news,portfolio,profile); base = fingerprint();
   let failedDraft = false;
   try {
     const saved = JSON.parse(localStorage.getItem(key));
-    if (saved) { assertValid(saved.news,saved.portfolio); news = saved.news; portfolio = saved.portfolio; base = saved.base; draft = true; }
+    if (saved) { const savedProfile = saved.profile || profile; assertValid(saved.news,saved.portfolio,savedProfile); base = upgradeDraftBase(saved.base,profile); news = saved.news; portfolio = saved.portfolio; profile = savedProfile; draft = true; }
   } catch { failedDraft = true; }
   clearEditor(); list();
   status(failedDraft ? '旧草稿无法读取，已加载线上内容。原草稿未删除。' : draft ? '已恢复本设备草稿。预览确认后连接 GitHub 发布。' : '已加载线上内容。编辑 → 保存草稿 → 预览 → 发布更新。');

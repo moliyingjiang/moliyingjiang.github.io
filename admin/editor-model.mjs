@@ -1,4 +1,4 @@
-export const KIND_NAMES = { news: '动态与足迹', awards: '荣誉与资格', publications: '论文记录', projects: '研究项目' };
+export const KIND_NAMES = { profile: '个人资料', news: '动态与足迹', awards: '荣誉与资格', publications: '论文记录', projects: '研究项目' };
 export const PAGE_NAMES = {
   'index.html': '首页 · English', 'zh/index.html': '首页 · 中文',
   'milestones.html': '完整时间线 · English', 'zh/milestones.html': '完整时间线 · 中文',
@@ -10,11 +10,11 @@ export const PAGE_NAMES = {
   'undergraduate-record.html': '本科档案 · English', 'undergraduate-cv.html': '本科档案 · 中文'
 };
 export function previewPath(kind, language = 'en') {
-  const page = { news: 'index.html', awards: 'awards.html', publications: 'research.html', projects: 'projects.html' }[kind];
+  const page = { profile: 'index.html', news: 'index.html', awards: 'awards.html', publications: 'research.html', projects: 'projects.html' }[kind];
   return (language === 'zh' ? 'zh/' : '') + page;
 }
 export function recordAnchor(kind, record) {
-  if (!record) return '';
+  if (!record || kind === 'profile') return '';
   return kind === 'awards' ? record.id : ({ news: 'news-', publications: 'publication-', projects: 'project-' }[kind] || '') + record.id;
 }
 export function findSource(item, portfolio) {
@@ -32,19 +32,21 @@ export function findSource(item, portfolio) {
   return record ? { kind: 'publications', record } : null;
 }
 export function destination(kind, record) {
+  if (kind === 'profile') return '首页、研究介绍、简历与全站个人资料';
   const stage = record?.stage === 'graduate' ? '硕士阶段' : record?.stage === 'continuation' || record?.followUp ? '本科项目后续' : '本科阶段';
   const page = { news: '首页动态、完整时间线', awards: '荣誉与资格页', publications: '研究与论文页', projects: '研究项目页' }[kind];
   return page + (record ? ' · ' + stage : '');
 }
-export function changeCount(base, news, portfolio) {
+export function changeCount(base, news, portfolio, profile) {
   let original;
   try { original = JSON.parse(base); } catch { return null; }
-  if (!Array.isArray(original) || original.length !== 2) return null;
-  const flatten = (n, p) => new Map([
+  if (!Array.isArray(original) || ![2, 3].includes(original.length)) return null;
+  const flatten = (n, p, profileData) => new Map([
     ...[...n.events, ...n.grouped].map(record => ['news/' + record.id, JSON.stringify(record)]),
     ...['awards', 'publications', 'projects'].flatMap(kind => p[kind].map(record => [kind + '/' + record.id, JSON.stringify(record)])),
-    ['totals', JSON.stringify(p.totals)]
+    ['totals', JSON.stringify(p.totals)],
+    ...(profileData ? [['profile', JSON.stringify(profileData)]] : [])
   ]);
-  const before = flatten(...original), after = flatten(news, portfolio);
+  const before = flatten(...original), after = flatten(news, portfolio, profile);
   return [...new Set([...before.keys(), ...after.keys()])].filter(id => before.get(id) !== after.get(id)).length;
 }

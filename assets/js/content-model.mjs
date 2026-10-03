@@ -1,4 +1,4 @@
-export const DATA_PATHS = ['assets/data/news.json', 'assets/data/portfolio.json'];
+export const DATA_PATHS = ['assets/data/news.json', 'assets/data/portfolio.json', 'assets/data/profile.json'];
 export const PAGE_PATHS = ['index.html', 'zh/index.html', 'milestones.html', 'zh/milestones.html', 'awards.html', 'zh/awards.html', 'research.html', 'zh/research.html', 'projects.html', 'zh/projects.html', 'graduate-record.html', 'graduate-cv.html', 'cv.html', 'zh/cv.html', 'undergraduate-record.html', 'undergraduate-cv.html'];
 export const EDITABLE_PATHS = [...DATA_PATHS, ...PAGE_PATHS];
 export const TYPES = {

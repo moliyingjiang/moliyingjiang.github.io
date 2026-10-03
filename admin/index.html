@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
-  <title>内容管理 · YJ-MoLi</title><link rel="stylesheet" href="admin.css?v=20261003-editor">
+  <title>内容管理 · 许源知</title><link rel="stylesheet" href="admin.css?v=20261003-profile">
 </head>
 <body>
   <header>
-    <div class="brand"><a href="/">YJ-MoLi</a><strong>学术主页 · 内容管理</strong></div>
+    <div class="brand"><a href="/">许源知</a><strong>学术主页 · 内容管理</strong></div>
     <div class="toolbar"><button id="connect">连接 GitHub</button><button id="preview">预览页面</button><button id="publish" class="primary">发布更新</button></div>
   </header>
   <div class="state-bar"><p id="status" role="status">正在加载内容…</p><span id="draft-state">加载中</span></div>
@@ -23,6 +23,6 @@
   </main>
   <dialog id="auth"><form method="dialog"><p class="overline">GITHUB CONNECTION</p><h2>连接你的主页仓库</h2><p>创建仅限 <code>moliyingjiang.github.io</code> 的 fine-grained token，将 Contents 权限设为 Read and write。</p><p><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">前往 GitHub 创建令牌 ↗</a></p><label>访问令牌<input id="token" type="password" autocomplete="off" spellcheck="false"></label><p class="field-help">令牌只保留在当前页面，刷新后需重新连接。草稿保存在本设备，可导出后带到其他设备。</p><div class="dialog-actions"><button value="cancel">取消</button><button id="login" type="button" class="primary">连接仓库</button></div></form></dialog>
   <dialog id="preview-dialog"><div class="preview-toolbar"><div><strong>发布前预览</strong><p id="preview-note"></p></div><select id="preview-page" aria-label="预览页面"></select><button id="close-preview">关闭</button></div><iframe sandbox="allow-scripts" title="网站预览"></iframe></dialog>
-  <script type="module" src="app.mjs?v=20261003-editor"></script>
+  <script type="module" src="app.mjs?v=20261003-profile"></script>
 </body>
 </html>

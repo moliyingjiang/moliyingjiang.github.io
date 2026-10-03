@@ -1,7 +1,7 @@
 # Jekyll configuration
 
-name: YJ-MoLi
-description: 机器人、机械臂、计算机视觉与人工智能本科项目作品集。
+name: 许源知
+description: 机器学习与环境科学、计算机视觉、机器人方向的研究与成长记录。
 
 # url is currently only used only for the RSS feed in feed.xml
 url: https://moliyingjiang.github.io
@@ -51,4 +51,4 @@ defaults:
 # type值可以是pages(html文件）、posts（）、drafts，不加表示对所有文件生效
 #      type: "pages"  
     values:
-      author: "YJ-MoLi"
+      author: "许源知"

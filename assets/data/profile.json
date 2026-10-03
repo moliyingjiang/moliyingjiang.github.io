@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "avatar": "/assets/images/profile.png",
+  "en": {
+    "name": "Yuanzhi Xu",
+    "role": "M.Sc. Student · Environmental Science & Engineering",
+    "affiliation": "Guangxi Normal University",
+    "bio": [
+      "I am a master’s student in Environmental Science and Engineering at Guangxi Normal University. My current work explores machine learning for drinking-water treatment, with an emphasis on prediction and model interpretation.",
+      "My undergraduate work at Taiyuan University focused on computer vision, robotic manipulation, and AI-assisted diagnosis. I document the research, systems, and experiences that shape my work here."
+    ],
+    "description": "Academic research and personal milestones in machine learning for environmental science, computer vision, and robotics.",
+    "footer": "Research & personal journey"
+  },
+  "zh": {
+    "name": "许源知",
+    "role": "硕士研究生 · 环境科学与工程",
+    "affiliation": "广西师范大学",
+    "bio": [
+      "我目前在广西师范大学攻读环境科学与工程硕士，关注机器学习在饮用水处理中的应用，重点包括预测建模与模型解释。",
+      "本科就读于太原学院物联网工程专业，围绕计算机视觉、机器人操作与人工智能辅助诊断开展科研和工程实践。这里记录我的研究、项目与成长经历。"
+    ],
+    "description": "个人学术主页，记录机器学习与环境科学、计算机视觉、机器人方向的研究、项目与成长经历。",
+    "footer": "个人成长与研究记录"
+  },
+  "links": {
+    "orcid": "https://orcid.org/0009-0007-5488-3557",
+    "scholar": "https://scholar.google.com/citations?user=emqGrgMAAAAJ",
+    "github": "https://github.com/moliyingjiang",
+    "gitee": "https://gitee.com/YJ-MoLi"
+  },
+  "stages": {
+    "graduate": {
+      "en": {
+        "school": "Guangxi Normal University",
+        "degree": "M.Sc. · Environmental Science and Engineering",
+        "period": "2026.08.30 — present",
+        "advisor": "Associate Professor Wenjie Fu (Ph.D., Tsinghua University)",
+        "researchTitle": "Machine learning for environmental systems",
+        "researchSummary": "Predictive modelling and interpretation for drinking-water treatment.",
+        "cvSummary": "M.Sc. student with research interests in machine learning, environmental-data modelling, and drinking-water treatment.",
+        "cvUrl": "",
+        "recordUrl": "/graduate-record.html"
+      },
+      "zh": {
+        "school": "广西师范大学",
+        "degree": "硕士 · 环境科学与工程",
+        "period": "2026.08.30 — 至今",
+        "advisor": "傅雯洁副教授（清华大学博士）",
+        "researchTitle": "环境系统中的机器学习",
+        "researchSummary": "面向饮用水处理的预测建模与模型解释。",
+        "cvSummary": "硕士研究生，研究兴趣包括机器学习、环境数据建模与饮用水处理。",
+        "cvUrl": "",
+        "recordUrl": "/graduate-cv.html"
+      }
+    },
+    "undergraduate": {
+      "en": {
+        "school": "Taiyuan University",
+        "degree": "B.Eng. · Internet of Things Engineering",
+        "period": "2021.10 — 2025.07",
+        "advisor": "Zhixian Chen (postdoctoral research, Peking University); Associate Professor Guanghua Zhang (Ph.D., Tsinghua University)",
+        "researchTitle": "Visual perception and robotic systems",
+        "researchSummary": "Industrial meter reading, AI-assisted diagnosis, and hand-eye coordination.",
+        "cvSummary": "Top 10% in the major (13/137). Research training and engineering practice in robotics, robotic manipulation, computer vision, and artificial intelligence.",
+        "cvUrl": "/files/undergraduate-cv.pdf",
+        "recordUrl": "/undergraduate-record.html"
+      },
+      "zh": {
+        "school": "太原学院",
+        "degree": "本科 · 物联网工程",
+        "period": "2021.10 — 2025.07",
+        "advisor": "陈志贤老师（北京大学博士后）；张光华副教授（清华大学博士）",
+        "researchTitle": "视觉感知与机器人系统",
+        "researchSummary": "工业仪表读数、人工智能辅助诊断与手眼协调。",
+        "cvSummary": "专业排名前 10%（13/137）。机器人、机械臂、计算机视觉与人工智能方向的科研训练和工程实践。",
+        "cvUrl": "/files/undergraduate-cv.pdf",
+        "recordUrl": "/undergraduate-cv.html"
+      }
+    }
+  }
+}

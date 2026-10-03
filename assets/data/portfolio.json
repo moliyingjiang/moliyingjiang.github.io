@@ -863,22 +863,22 @@
     {
       "id": "robocup",
       "stage": "undergraduate",
-      "period": "",
-      "github": "https://github.com/moliyingjiang/RoboCup-Master",
+      "period": "2022.11 — 2025.07",
+      "github": "",
       "gitee": "",
       "en": {
-        "title": "RoboCup & Robot Coordination",
+        "title": "Competition Robotics · TYU Team",
         "category": "ROBOTICS",
-        "text": "Robot competition tasks, visual perception algorithms, communication, and system integration; extended toward hand-eye coordinated manipulation.",
-        "moreLabel": "",
-        "moreUrl": ""
+        "text": "Led the robot-dog team in competition preparation and system development, working on visual perception, communication, and robot coordination.",
+        "moreLabel": "Team experience →",
+        "moreUrl": "/undergraduate-record.html"
       },
       "zh": {
-        "title": "RoboCup 与机器人协同",
+        "title": "竞赛机器人 · TYU 登枢战队",
         "category": "机器人系统",
-        "text": "机器人比赛任务、视觉算法、通信与整机联调；延展至机械臂手眼协调探索。",
-        "moreLabel": "",
-        "moreUrl": ""
+        "text": "担任机器狗队长，组织竞赛训练与系统开发，开展视觉感知、通信与机器人协同调试。",
+        "moreLabel": "团队经历 →",
+        "moreUrl": "/undergraduate-cv.html"
       }
     },
     {

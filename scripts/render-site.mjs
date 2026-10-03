@@ -7,7 +7,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pages = Object.fromEntries(PAGE_PATHS.map(file => [file, fs.readFileSync(path.join(root, file), 'utf8')]));
 const news = JSON.parse(fs.readFileSync(path.join(root, 'assets/data/news.json'), 'utf8'));
 const portfolio = JSON.parse(fs.readFileSync(path.join(root, 'assets/data/portfolio.json'), 'utf8'));
-const output = renderSite(pages, news, portfolio);
+const profile = JSON.parse(fs.readFileSync(path.join(root, 'assets/data/profile.json'), 'utf8'));
+const output = renderSite(pages, news, portfolio, profile);
 const requested = process.argv.find(arg => arg.startsWith('--file='))?.slice(7);
 const changes = Object.entries(output).filter(([file, next]) => (!requested || file === requested) && fs.readFileSync(path.join(root, file), 'utf8') !== next);
 if (process.argv.includes('--check')) {
