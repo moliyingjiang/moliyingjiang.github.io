@@ -31,4 +31,14 @@ jobs:
           trap 'rm -f "$helper"' EXIT
           printf '%s\n' '#!/bin/sh' 'case "$1" in *Username*) printf "%s\n" "$GITEE_USERNAME";; *) printf "%s\n" "$GITEE_TOKEN";; esac' > "$helper"
           chmod 700 "$helper"
-          GIT_ASKPASS="$helper" git push https://gitee.com/YJ-MoLi/moliyingjiang.github.io.git HEAD:refs/heads/main
+          for attempt in 1 2 3; do
+            if GIT_ASKPASS="$helper" git push https://gitee.com/YJ-MoLi/moliyingjiang.github.io.git HEAD:refs/heads/main; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "Gitee push failed; retrying in 10 seconds (attempt $attempt/3)."
+              sleep 10
+            fi
+          done
+          echo "Gitee synchronization failed after three attempts."
+          exit 1
