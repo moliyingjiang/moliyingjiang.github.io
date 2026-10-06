@@ -3,13 +3,19 @@
 Personal academic website covering research, engineering projects, education, and competition experience.
 
 - Website: https://blog.dengshu.cloud/
-- English is the default language; Chinese pages are under `/zh/`.
+- First-time visitors to the public custom domain are routed by IP region: mainland China (`CN`) to Chinese, other regions to English. English is the fallback; explicit Chinese links remain Chinese.
 - GitHub is the source repository; Gitee is its synchronized mirror.
 - Hosting is GitHub Pages, with Cloudflare in front of the custom domain.
 
 ## Pages
 
 Home, News, Research, Projects, Awards, and CV have English and Chinese versions. Detailed undergraduate and graduate records are linked from CV. The homepage news section uses a fixed-height, manually scrollable region.
+
+## Language selection
+
+The shared `assets/js/language-routing.mjs` reads the country field from the existing, same-origin Cloudflare `/cdn-cgi/trace` endpoint. It never stores IP addresses or sends them to an additional geolocation service. `CN` selects Chinese; `HK`, `MO`, `TW`, and other located regions select English. A VPN or proxy changes the apparent region. The request has a 1.8-second timeout, and an unavailable or unknown location leaves the English page in place. Automatic results are cached for one hour in the tab session; failures for five minutes.
+
+The Language link records a manual preference in the current browser and carries an explicit `?lang=en` or `?lang=zh` marker. An explicit query overrides detection; a direct Chinese URL stays Chinese for that visit; otherwise a saved manual preference takes priority over IP detection. Queries, fragments, and the corresponding page are preserved, including both electronic CV routes. With browser storage disabled, the URL carries the choice through same-language navigation. The editor, its iframe previews, PDFs, local previews, and GitHub's non-Cloudflare origin do not make geolocation requests. The script is retained by the web editor's normal content publishing process.
 
 ## Editing
 

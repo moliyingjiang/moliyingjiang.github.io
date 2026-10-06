@@ -1,5 +1,5 @@
 import { EDITABLE_PATHS, PAGE_PATHS, TYPES, STATUSES, ROLES, DATE_TYPES, esc, clone, newId, today, validDate, byDate, validateContent, adjustAwardTotals, syncLinkedNews, findLinkedNews } from '../assets/js/content-model.mjs?v=20261003-profile';
-import { renderSite } from '../assets/js/site-renderer.mjs?v=20261003-profile';
+import { renderSite } from '../assets/js/site-renderer.mjs?v=20261006-language';
 import { PROFILE_PATH, PROFILE_GROUPS, validateProfile, profileFromForm, upgradeDraftBase } from '../assets/js/profile-model.mjs?v=20261003-profile';
 import { GitHub } from './github.mjs?v=20261003-profile';
 import { KIND_NAMES, PAGE_NAMES, previewPath, recordAnchor, findSource, destination, changeCount } from './editor-model.mjs?v=20261003-profile';

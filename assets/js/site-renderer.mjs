@@ -161,5 +161,9 @@ export function renderSite(pages, news, portfolio, profile) {
     }
     out['assets/data/profile.json'] = JSON.stringify(profile, null, 2) + '\n';
   }
+  const languageScript = '<script type="module" src="/assets/js/language-routing.mjs?v=20261006"></script>';
+  for (const path of Object.keys(out).filter(path => path.endsWith('.html'))) {
+    out[path] = out[path].replace(/<script\b[^>]*src="\/assets\/js\/language-routing\.mjs(?:\?[^\"]*)?"[^>]*><\/script>/g, '').replace('</head>', () => languageScript + '</head>');
+  }
   return out;
 }
