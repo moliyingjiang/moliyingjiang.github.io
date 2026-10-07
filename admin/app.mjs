@@ -1,11 +1,16 @@
-import { EDITABLE_PATHS, PAGE_PATHS, TYPES, STATUSES, ROLES, DATE_TYPES, NEWS_CATEGORIES, esc, clone, newId, today, validDate, byDate, validateContent, adjustAwardTotals, syncLinkedNews, findLinkedNews, canLinkNews, sourceEvent, newsCategory, detachLinkedNews, upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261007-events';
-import { renderSite } from '../assets/js/site-renderer.mjs?v=20261007-events';
-import { PROFILE_PATH, PROFILE_GROUPS, validateProfile, profileFromForm, upgradeDraftBase } from '../assets/js/profile-model.mjs?v=20261007-events';
+import { EDITABLE_PATHS, PAGE_PATHS, TYPES, STATUSES, ROLES, DATE_TYPES, NEWS_CATEGORIES, esc, clone, newId, today, validDate, byDate, validateContent, adjustAwardTotals, syncLinkedNews, findLinkedNews, canLinkNews, sourceEvent, newsCategory, detachLinkedNews, upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261007-integrity';
+import { renderSite } from '../assets/js/site-renderer.mjs?v=20261007-integrity';
+import { PROFILE_PATH, PROFILE_GROUPS, validateProfile, profileFromForm, upgradeDraftBase, syncEducationNews } from '../assets/js/profile-model.mjs?v=20261007-integrity';
 import { GitHub } from './github.mjs?v=20261003-profile';
-import { KIND_NAMES, PAGE_NAMES, previewPath, recordAnchor, findSource, destination, changeCount, newsState, upgradeContentBase, createConfirmation } from './editor-model.mjs?v=20261007-dialog';
+import { KIND_NAMES, PAGE_NAMES, previewPath, recordAnchor, findSource, destination, changeCount, newsState, upgradeContentBase, createConfirmation, assertPublicationBaseline, createConnectionAttempts } from './editor-model.mjs?v=20261007-integrity';
 
 const $ = selector => document.querySelector(selector);
-const confirmAction = createConfirmation($('#confirm-dialog'), $('#confirm-message'));
+const requestConfirmation = createConfirmation($('#confirm-dialog'), $('#confirm-message'));
+const connectionAttempts = createConnectionAttempts();
+const confirmAction = async message => {
+  try { return await requestConfirmation(message); }
+  catch (error) { status(error.message); return false; }
+};
 const key = 'portfolio-editor-v1';
 const labels = { title:'完整名称 / 具体事件标题', text:'这次事件的具体内容', result:'奖项 / 等级 / 成绩', rankLabel:'排名口径（如全国决赛 / 省级评选）', rank:'名次（如 3 / 65）', journal:'期刊', metrics:'分区与年份（如 JCR 2025 · Q1）', summary:'研究说明', category:'研究方向', moreLabel:'附加链接文字', moreUrl:'附加链接' };
 const eventStates = { linked: '关联来源', independent: '独立事件', detached: '独立历史 · 已解除关联', archived: '旧版汇总归档' };
@@ -57,7 +62,7 @@ function list() {
   ).slice().sort(byDate);
   $('#list').innerHTML = filtered.length ? filtered.map(record =>
     '<button type="button" data-id="' + esc(record.id) + '" class="' + (editing?.id === record.id ? 'selected' : '') + '">' + esc(record.zh.title) +
-    '<small>' + (record.stage === 'graduate' ? '硕士' : record.stage === 'continuation' || record.followUp ? '本科研究后续' : '本科') + ' · ' + esc(record.date || record.period || '时间未填写') + '</small>' + (kind === 'news' ? '<span class="record-state">' + esc(NEWS_CATEGORIES[newsCategory(record, portfolio)]) + ' · ' + eventStates[newsState(record, portfolio)] + '</span>' : '') + '</button>'
+    '<small>' + (record.stage === 'graduate' ? '硕士' : record.stage === 'continuation' || record.followUp ? kind === 'awards' && record.type === 'qualification' || kind === 'news' && newsCategory(record, portfolio) === 'qualification' ? '毕业后 · 入硕前' : '本科研究后续' : '本科') + ' · ' + esc(record.date || record.period || '时间未填写') + '</small>' + (kind === 'news' ? '<span class="record-state">' + esc(NEWS_CATEGORIES[newsCategory(record, portfolio)]) + ' · ' + eventStates[newsState(record, portfolio)] + '</span>' : '') + '</button>'
   ).join('') : '<p class="empty-list">没有匹配的记录，试试其他阶段或关键词。</p>';
   $('#list-caption').textContent = filtered.length + ' 条记录 · 按时间排序';
   $('#add').textContent = '＋ 新增' + ({news:'动态',awards:'荣誉 / 资格',publications:'论文',projects:'项目'})[kind];
@@ -83,7 +88,7 @@ function editProfile(id = 'identity') {
       const definitions = id === 'identity' ? [['name','公开署名'], ['role','身份与专业'], ['affiliation','所在学校 / 机构'], ['bio','个人介绍（空行分段）', true], ['description','搜索与分享摘要', true], ['footer','页脚文字']] : [['school','学校'], ['degree','学历与专业'], ['period','阶段时间'], ['advisor','导师与学术背景', true], ['researchTitle','研究方向标题'], ['researchSummary','研究方向说明', true], ['cvSummary','简历介绍', true], ['cvUrl','简历 PDF 地址（可留空）'], ['recordUrl','电子档案地址']];
       return '<div><h3>' + (lang === 'zh' ? '中文版本' : 'English version') + '</h3>' + definitions.map(([key, label, area]) => field(prefix + '.' + key, key === 'bio' ? item.bio.join('\n\n') : item[key], label, area)).join('') + '</div>';
     }).join('') + '</div>';
-    if (id !== 'identity') html += '<p class="field-help">简历 PDF 可填写已有文件的站内地址或 HTTPS 地址；留空时只展示电子档案入口。</p>';
+    if (id !== 'identity') html += '<p class="field-help">阶段时间请至少填写到月份，例如 2021.10 — 2025.07 或 2026.08.30 — 至今。中英文日期自动对齐，并同步对应入学、毕业动态。简历 PDF 可填写已有文件的站内地址或 HTTPS 地址；留空时只展示电子档案入口。</p>';
   }
   html += '<div class="actions"><small>保存后可预览中文与英文页面。</small><button class="primary" type="submit">保存草稿</button><button type="button" id="editor-preview">预览页面</button></div>';
   $('#editor').innerHTML = html; list(); updateState();
@@ -94,11 +99,13 @@ function context(record) {
   const linked = kind !== 'news' ? findLinkedNews(news, kind, record) : null;
   let hint;
   if (kind === 'news') hint = record.cumulative ? '这条旧版汇总已归档，不出现在首页动态或时间线。原文字仍保存在草稿中；具体经历请分别添加为事件。' : record.detachedSource ? '原来源已解除关联，本条作为独立历史保留。可以继续编辑，或单独删除这次事件。' : '一条动态对应一次入学、获奖、立项、投稿或其他具体事件。比赛请填写完整名称，并写清赛项、奖级和排名。';
-  else hint = record.cumulative ? '累计数字仅保留在荣誉栏目。每次具体获奖或立项须另建记录，才能关联首页动态。' : '关联动态保留手动编辑的文案；新论文节点会新增事件，同一节点更新已有事件。';
+  else hint = record.cumulative ? '累计数字仅保留在荣誉栏目。每次具体获奖或立项须另建记录，才能关联首页动态。' : kind === 'publications' ? '关联动态保留手动编辑的文案；新论文节点会新增事件，同一节点更新已有事件。' : '关联动态保留手动编辑的日期与文案；同一事件更新已有动态。';
   const link = source ? '<button type="button" data-open-kind="' + source.kind + '" data-open-id="' + esc(source.record.id) + '">' + (source.referenceOnly ? '编辑引用的' : '编辑关联的') + KIND_NAMES[source.kind] + ' →</button>' :
     linked ? '<button type="button" data-open-kind="news" data-open-id="' + esc(linked.id) + '">编辑关联动态 →</button>' : '';
   const history = kind === 'news' && record.detachedSource ? '<p class="source-history">原来源：' + esc(KIND_NAMES[record.detachedSource.kind] || '历史记录') + ' · ' + esc(record.detachedSource.id) + '</p>' : '';
-  const refresh = source && !source.referenceOnly && canLinkNews(source.kind, source.record) ? '<button type="button" id="refresh-news">从来源重新生成本条文案</button>' : '';
+  const historicalPaper = source?.kind === 'publications' && record.sourceEvent && record.sourceEvent !== sourceEvent('publications', source.record);
+  const refresh = source && !source.referenceOnly && !historicalPaper && canLinkNews(source.kind, source.record) ? '<button type="button" id="refresh-news">从来源重新生成本条文案</button>' : '';
+  if (historicalPaper) hint += ' 这条论文历史事件保留当时的标题、作者身份和日期；当前论文变化不回写本条。';
   return '<div class="destination"><strong id="destination-text">显示位置：' + esc(record.cumulative && kind === 'news' ? '旧版汇总归档（不对外展示）' : destination(kind, record)) + '</strong><p>' + hint + '</p>' + history + link + refresh + '</div>';
 }
 function edit(record) {
@@ -115,10 +122,11 @@ function edit(record) {
   if (kind === 'awards') {
     html += '<div class="form-section"><h3>荣誉、资格与汇总</h3><div class="form-grid">' + select('type', record.type, '记录类型（语言成绩请选择资格证书）', TYPES) + field('quantity', record.quantity, '数量', false, 'number') + '</div>';
     html += '<label class="check-row"><input type="checkbox" name="counted" ' + (record.counted ? 'checked' : '') + '>新增荣誉计入汇总</label><p class="field-help">补录已统计的旧荣誉时取消勾选。资格证书、校级荣誉不改变竞赛奖项汇总。</p><label class="check-row"><input type="checkbox" name="cumulative" ' + (record.cumulative ? 'checked' : '') + '>这是一条累计记录</label></div>';
+    html += '<label class="check-row"><input type="checkbox" name="followUp" ' + (record.followUp ? 'checked' : '') + (record.stage === 'graduate' ? ' disabled' : '') + '>本科阶段结束后的记录</label><p class="field-help">毕业后、入硕前的语言成绩或本科延续竞赛仍归本科档案；硕士阶段不勾选。</p>';
   }
   if (kind === 'publications') {
     html += '<div class="form-section"><h3>论文信息</h3><div class="form-grid">' + select('status', record.status, '论文状态', STATUSES) + select('role', record.role, '作者身份', ROLES) + select('dateType', record.dateType, '日期含义', DATE_TYPES) + field('url', record.url, '论文链接（可选）') + field('metricsSource', record.metricsSource, '分区来源链接（可选）') + '</div>';
-    html += '<label class="check-row"><input type="checkbox" name="followUp" ' + (record.followUp ? 'checked' : '') + '>本科项目后续成果</label><p class="field-help">本科项目延续形成的论文仍归入本科；硕士记录不勾选这一项。</p></div>';
+    html += '<label class="check-row"><input type="checkbox" name="followUp" ' + (record.followUp ? 'checked' : '') + (record.stage === 'graduate' ? ' disabled' : '') + '>本科项目后续成果</label><p class="field-help">本科项目延续形成的论文仍归入本科；硕士记录不勾选这一项。</p></div>';
   }
   if (kind === 'projects') html += '<div class="form-section"><h3>代码与材料</h3><div class="form-grid">' + field('gitee', record.gitee, 'Gitee 仓库（国内访问）') + field('github', record.github, 'GitHub 仓库（国际访问）') + '</div></div>';
   if (kind === 'news') html += '<div class="form-section"><div class="form-grid">' + select('category', record.category || '', '事件分类', { '': '按关联来源自动分类', ...NEWS_CATEGORIES }) + select('award', record.award || '', '引用具体荣誉（可选）', { '':'无', ...Object.fromEntries(portfolio.awards.filter(item => !item.cumulative).map(item => [item.id, item.zh.title])) }) + '</div><p class="field-help">只引用本次具体获奖、立项或证书；累计汇总不作为新闻。</p>' + (record.sourceType === 'publications' ? '<p class="source-history">论文节点：' + esc(DATE_TYPES[record.sourceEvent]?.[0] || '历史事件') + ' · 修改本条不改变其他投稿、接收或发表事件。</p>' : '') + '</div>';
@@ -126,7 +134,7 @@ function edit(record) {
   html += '<div class="languages">' + ['zh','en'].map(lang =>
     '<div><h3>' + (lang === 'zh' ? '中文版本' : 'English version') + '</h3>' + fields.map(name => field(lang + '.' + name, record[lang]?.[name] || '', labels[name], ['text','summary','title'].includes(name))).join('') + '</div>'
   ).join('') + '</div>';
-  if (kind !== 'news') html += '<div class="sync-panel"><label><input type="checkbox" name="sync" ' + (sync && !record.cumulative ? 'checked' : '') + (record.cumulative ? ' disabled' : '') + '><span id="sync-action">' + (linked ? '同步当前节点的关联动态' : '为本次事件新增关联动态') + '</span></label><p class="field-help" id="sync-explanation">' + (record.cumulative ? '汇总记录不生成动态。请添加每一次具体事件。' : linked ? '同一事件只保留一条动态；修改未手动编辑的文案，保留已有自定义文字。' : '保存时新增一条具体事件；论文后续接收、发表各有独立日期，先前事件会保留。') + '</p></div>';
+  if (kind !== 'news') html += '<div class="sync-panel"><label><input type="checkbox" name="sync" ' + (sync && !record.cumulative ? 'checked' : '') + (record.cumulative ? ' disabled' : '') + '><span id="sync-action">' + (linked ? '同步当前节点的关联动态' : '为本次事件新增关联动态') + '</span></label><p class="field-help" id="sync-explanation">' + (record.cumulative ? '汇总记录不生成动态。请添加每一次具体事件。' : linked ? '同一事件只保留一条动态；修改未手动编辑的文案，保留已有自定义文字。' : (kind === 'publications' ? '保存时新增一条具体事件；论文后续接收、发表各有独立日期，先前事件会保留。' : '保存时为本次事件新增一条动态，已有事件和汇总数字保留。')) + '</p></div>';
   html += '<div class="actions"><small>保存为本地草稿，发布后才会更新网站。</small><button class="primary" type="submit">保存草稿</button><button type="button" id="editor-preview">预览这条记录</button>' + (existing ? '<button type="button" id="delete">删除</button>' : '') + '</div>';
   $('#editor').innerHTML = html;
   list(); updateState();
@@ -176,6 +184,10 @@ $('#add').onclick = async () => {
 };
 $('#editor').oninput = event => {
   dirty = true;
+  if (event.target.name === 'stage' && $('[name="followUp"]')) {
+    $('[name="followUp"]').disabled = event.target.value === 'graduate';
+    if (event.target.value === 'graduate') $('[name="followUp"]').checked = false;
+  }
   if (kind === 'publications' && event.target.name === 'status') $('[name="dateType"]').value = event.target.value;
   if (kind === 'publications' && event.target.name === 'dateType') $('[name="status"]').value = event.target.value === 'authorship' ? 'submitted' : event.target.value;
   if (['stage','followUp'].includes(event.target.name)) {
@@ -199,7 +211,9 @@ $('#editor').onsubmit = event => {
   try {
     if (kind === 'profile') {
       const id = editing.id;
-      profile = profileFromForm(profile, new FormData(event.target));
+      const nextProfile = profileFromForm(profile, new FormData(event.target)), n = clone(news);
+      syncEducationNews(n, profile, nextProfile); assertValid(n, portfolio, nextProfile);
+      news = n; profile = nextProfile;
       editProfile(id);
       saveDraft('个人资料草稿已保存。预览中英文页面，发布后全站资料一起更新。');
       return;
@@ -214,7 +228,11 @@ $('#editor').onsubmit = event => {
       next.detachedSource = { kind: 'awards', id: editing.sourceId, event: editing.sourceEvent || '' };
       delete next.sourceType; delete next.sourceId; delete next.sourceEvent; delete next.sourceSnapshot;
     }
-    if (kind === 'awards') { next.quantity = Number(next.quantity); next.section = TYPES[next.type][1]; next.counted = form.has('counted'); next.cumulative = form.has('cumulative'); }
+    if (kind === 'news') {
+      if (next.historical || !next.sourceType && next.award) next.referenceOnly = true;
+      else delete next.referenceOnly;
+    }
+    if (kind === 'awards') { next.quantity = Number(next.quantity); next.section = TYPES[next.type][1]; next.counted = form.has('counted'); next.cumulative = form.has('cumulative'); next.followUp = next.stage === 'undergraduate' && form.has('followUp'); }
     if (kind === 'publications') { next.followUp = next.stage === 'undergraduate' && form.has('followUp'); next.dateType = sourceEvent(kind, next); }
     const target = kind === 'news' ? n[bucket] : p[kind], index = target.findIndex(record => record.id === next.id);
     if (kind === 'awards') adjustAwardTotals(p, index < 0 ? null : target[index], next);
@@ -276,7 +294,8 @@ $('#import').onchange = async event => {
     upgradeLinkedNews(data.news, data.portfolio); assertValid(data.news,data.portfolio,incomingProfile);
     if (!await confirmAction('使用导入内容替换本设备草稿？')) return;
     news = data.news; portfolio = data.portfolio; profile = incomingProfile; base = upgradeContentBase(upgradeDraftBase(data.base || '', parse(files).profile), parse(files).profile);
-    clearEditor(); list(); saveDraft('已导入草稿，预览后连接 GitHub 发布。');
+    client = null; snapshot = null;
+    clearEditor(); list(); saveDraft('已导入草稿，现有 GitHub 连接已解除。预览后重新连接 GitHub，核对版本再发布。');
   } catch(error) { status(error.message); }
   finally { event.target.value = ''; }
 };
@@ -284,22 +303,33 @@ $('#connect').onclick = () => {
   if (dirty) return status('请先保存当前表单，再连接 GitHub。');
   $('#auth').showModal();
 };
-$('#auth').addEventListener('close', () => { $('#token').value = ''; });
+const cancelConnection = () => { connectionAttempts.invalidate(); $('#login').disabled = false; };
+$('#auth').addEventListener('cancel', cancelConnection);
+$('#auth').addEventListener('submit', cancelConnection);
+$('#auth').addEventListener('close', () => {
+  if (!$('#auth').open) { cancelConnection(); $('#token').value = ''; }
+});
 $('#login').onclick = async () => {
+  const attempt = connectionAttempts.begin();
   $('#login').disabled = true;
   try {
     const token = $('#token').value.trim();
     if (!token) throw Error('请填写 GitHub 访问令牌。');
     const candidate = new GitHub(token); $('#token').value = '';
-    const remote = await candidate.snapshot(), content = parse(remote.files); assertValid(content.news,content.portfolio,content.profile);
-    if (draft && base !== JSON.stringify([content.news,content.portfolio,content.profile])) throw Error('线上内容已有更新。你的草稿已保留：先导出，再放弃本地草稿并重新连接，按需要合并修改。');
+    const remote = await candidate.snapshot();
+    if (!connectionAttempts.isCurrent(attempt) || !$('#auth').open) return;
+    const content = parse(remote.files); assertValid(content.news,content.portfolio,content.profile);
+    if (draft) assertPublicationBaseline(base, content);
     if (!draft) { news = content.news; portfolio = content.portfolio; profile = content.profile; base = fingerprint(); }
     client = candidate; snapshot = remote; files = remote.files;
     $('#auth').close();
     if (editing) { const current = records().find(record => record.id === editing.id); if (current) kind === 'profile' ? editProfile(current.id) : edit(current); else clearEditor(); }
     list(); updateState(); status('GitHub 已连接。预览确认后，点击“发布更新”。');
-  } catch(error) { status(error.message); $('#auth').close(); }
-  finally { $('#login').disabled = false; }
+  } catch(error) {
+    if (!connectionAttempts.isCurrent(attempt) || !$('#auth').open) return;
+    status(error.message); $('#auth').close();
+  }
+  finally { if (connectionAttempts.isCurrent(attempt)) $('#login').disabled = false; }
 };
 function preview() {
   const path = $('#preview-page').value, output = renderSite(files,news,portfolio,profile);
@@ -334,10 +364,13 @@ $('#close-preview').onclick = () => $('#preview-dialog').close();
 $('#publish').onclick = async () => {
   if (dirty) return status('请先保存当前表单，再发布更新。');
   if (!client || !snapshot) return $('#auth').showModal();
+  try { assertPublicationBaseline(base, parse(snapshot.files)); }
+  catch (error) { return status(error.message); }
   const count = changeCount(base, news, portfolio, profile);
   if (!await confirmAction('将' + (count ? '当前 ' + count + ' 项草稿修改' : '当前内容') + '发布到 GitHub？部署完成后网站更新，Gitee 自动同步。')) return;
   $('#publish').disabled = true; $('main').inert = true; $('header').inert = true;
   try {
+    assertPublicationBaseline(base, parse(snapshot.files));
     const output = renderSite(files,news,portfolio,profile), sha = await client.publish(snapshot,output);
     files = output; base = fingerprint(); draft = false;
     try { localStorage.removeItem(key); } catch {}

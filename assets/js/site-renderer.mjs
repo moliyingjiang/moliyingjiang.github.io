@@ -1,6 +1,6 @@
-import { esc, byDate, SECTIONS, STATUSES, ROLES, DATE_TYPES, validateContent } from './content-model.mjs?v=20261007-events';
-import { renderNewsPages } from './render-news.mjs?v=20261007-events';
-import { applyProfile, validateProfile } from './profile-model.mjs?v=20261007-events';
+import { esc, byDate, SECTIONS, STATUSES, ROLES, DATE_TYPES, validateContent } from './content-model.mjs?v=20261007-integrity';
+import { renderNewsPages } from './render-news.mjs?v=20261007-integrity';
+import { applyProfile, validateProfile, parseEducationPeriod } from './profile-model.mjs?v=20261007-integrity';
 
 const profileMark = (slot, value) => '<!-- profile:' + slot + ' -->' + esc(value) + '<!-- /profile:' + slot + ' -->';
 
@@ -19,22 +19,25 @@ function overview(totals, lang) {
   ];
   return '<dl class="awards-overview">' + records.map(([number, label, detail]) => '<div><dt>' + esc(label) + (detail ? '<small>' + esc(detail) + '</small>' : '') + '</dt><dd>' + number + '</dd></div>').join('') + '</dl>';
 }
-function awardRow(record, lang) {
+function awardRow(record, lang, profile) {
   const content = record[lang];
-  return '<article id="' + record.id + '"><div class="award-date">' + time(record.date) + (record.cumulative ? '<small>' + (lang === 'zh' ? '累计' : 'Cumulative') + '</small>' : '') + '</div><div><h3>' + esc(content.title) + '</h3><p class="award-result">' + esc(content.result) + '</p>' + (content.rank ? '<p class="award-rank"><span>' + esc(content.rankLabel) + '</span><strong>' + esc(content.rank) + '</strong></p>' : '') + '</div></article>';
+  const enrollment = profile && parseEducationPeriod(profile.stages.graduate[lang].period)?.start;
+  const beforeGraduate = enrollment && record.date.replace('≈', '') < enrollment.replace('≈', '');
+  const followup = record.followUp ? '<small>' + (beforeGraduate ? lang === 'zh' ? '毕业后 · 入硕前' : 'After graduation · before master’s' : lang === 'zh' ? '本科后续' : 'Undergraduate follow-up') + '</small>' : '';
+  return '<article id="' + record.id + '"><div class="award-date">' + time(record.date) + (record.cumulative ? '<small>' + (lang === 'zh' ? '累计' : 'Cumulative') + '</small>' : '') + followup + '</div><div><h3>' + esc(content.title) + '</h3><p class="award-result">' + esc(content.result) + '</p>' + (content.rank ? '<p class="award-rank"><span>' + esc(content.rankLabel) + '</span><strong>' + esc(content.rank) + '</strong></p>' : '') + '</div></article>';
 }
-function awardSections(data, stage, lang) {
+function awardSections(data, stage, lang, profile) {
   return Object.entries(SECTIONS).map(([key, title]) => {
     const records = data.awards.filter(item => item.stage === stage && item.section === key).sort(byDate);
     if (!records.length && stage === 'graduate') return '';
     const id = stage === 'graduate' ? 'graduate-' + key : key;
-    return '<section id="' + id + '" class="award-stage"><div class="section-heading"><h2>' + esc(title[lang]) + '</h2></div><div class="timeline">\n' + records.map(item => awardRow(item, lang)).join('\n') + '\n</div></section>';
+    return '<section id="' + id + '" class="award-stage"><div class="section-heading"><h2>' + esc(title[lang]) + '</h2></div><div class="timeline">\n' + records.map(item => awardRow(item, lang, profile)).join('\n') + '\n</div></section>';
   }).join('\n');
 }
-function renderAwards(page, data, lang) {
+function renderAwards(page, data, lang, profile) {
   const zh = lang === 'zh';
   const graduate = data.awards.some(item => item.stage === 'graduate');
-  const main = '<main class="page-shell awards-page"><p class="eyebrow">' + (zh ? '竞赛、荣誉与创新实践' : 'AWARDS &amp; DISTINCTIONS') + '</p><h1>' + (zh ? '竞赛与荣誉' : 'Awards &amp; distinctions') + '</h1><p class="page-lead">' + (zh ? '按本科与硕士阶段记录竞赛、学业荣誉和创新成果。' : 'Competition results, academic honors, and innovation work, organized by undergraduate and graduate stages.') + '</p>' + stageHeading('undergraduate', lang) + overview(data.totals.undergraduate, lang) + '<div class="awards-context"><span class="news-date-symbol" title="≈">≈</span></div><div class="awards-layout"><aside class="awards-directory"><nav aria-label="' + (zh ? '荣誉分类' : 'Award categories') + '"><p>' + (zh ? '本科 · 太原学院' : 'UNDERGRADUATE · TYU') + '</p>' + Object.entries(SECTIONS).map(([key, title]) => '<a href="#' + key + '">' + esc(title[lang]) + '</a>').join('') + '<a class="graduate-link" href="#graduate">' + (zh ? '硕士阶段' : 'Master’s') + '</a></nav></aside><div class="awards-content" id="undergraduate">' + awardSections(data, 'undergraduate', lang) + '<div class="phase-break"><span>' + (zh ? '硕士阶段 · 2026.08.30 起' : 'GRADUATE STAGE · FROM 2026.08.30') + '</span></div><section id="graduate" class="award-stage">' + stageHeading('graduate', lang) + (graduate ? '' : '<p><a href="' + recordLink(lang) + '">' + (zh ? '硕士阶段档案 →' : 'Graduate record →') + '</a></p>') + '</section>' + (graduate ? (Object.values(data.totals.graduate).some(Boolean) ? overview(data.totals.graduate, lang) : '') + awardSections(data, 'graduate', lang) : '') + '<p class="awards-source"><!-- profile:undergraduate-pdf-link --><a href="/files/undergraduate-cv.pdf">' + (zh ? '本科简历 PDF' : 'Undergraduate CV · PDF') + '</a><!-- /profile:undergraduate-pdf-link --></p></div></div></main>';
+  const main = '<main class="page-shell awards-page"><p class="eyebrow">' + (zh ? '竞赛、荣誉与创新实践' : 'AWARDS &amp; DISTINCTIONS') + '</p><h1>' + (zh ? '竞赛与荣誉' : 'Awards &amp; distinctions') + '</h1><p class="page-lead">' + (zh ? '按本科与硕士阶段记录竞赛、学业荣誉和创新成果。' : 'Competition results, academic honors, and innovation work, organized by undergraduate and graduate stages.') + '</p>' + stageHeading('undergraduate', lang) + overview(data.totals.undergraduate, lang) + '<div class="awards-context"><span class="news-date-symbol" title="≈">≈</span></div><div class="awards-layout"><aside class="awards-directory"><nav aria-label="' + (zh ? '荣誉分类' : 'Award categories') + '"><p>' + (zh ? '本科 · 太原学院' : 'UNDERGRADUATE · TYU') + '</p>' + Object.entries(SECTIONS).map(([key, title]) => '<a href="#' + key + '">' + esc(title[lang]) + '</a>').join('') + '<a class="graduate-link" href="#graduate">' + (zh ? '硕士阶段' : 'Master’s') + '</a></nav></aside><div class="awards-content" id="undergraduate">' + awardSections(data, 'undergraduate', lang, profile) + '<div class="phase-break"><span>' + (zh ? '硕士阶段 · 2026.08.30 起' : 'GRADUATE STAGE · FROM 2026.08.30') + '</span></div><section id="graduate" class="award-stage">' + stageHeading('graduate', lang) + (graduate ? '' : '<p><a href="' + recordLink(lang) + '">' + (zh ? '硕士阶段档案 →' : 'Graduate record →') + '</a></p>') + '</section>' + (graduate ? (Object.values(data.totals.graduate).some(Boolean) ? overview(data.totals.graduate, lang) : '') + awardSections(data, 'graduate', lang, profile) : '') + '<p class="awards-source"><!-- profile:undergraduate-pdf-link --><a href="/files/undergraduate-cv.pdf">' + (zh ? '本科简历 PDF' : 'Undergraduate CV · PDF') + '</a><!-- /profile:undergraduate-pdf-link --></p></div></div></main>';
   return replaceMain(page, main);
 }
 export function publicationRow(record, lang) {
@@ -131,7 +134,7 @@ export function renderSite(pages, news, portfolio, profile) {
   const out = { ...pages, ...renderNewsPages(pages, news, portfolio, profile) };
   for (const lang of ['en', 'zh']) {
     const prefix = lang === 'zh' ? 'zh/' : '';
-    out[prefix + 'awards.html'] = renderAwards(pages[prefix + 'awards.html'], portfolio, lang);
+    out[prefix + 'awards.html'] = renderAwards(pages[prefix + 'awards.html'], portfolio, lang, profile);
     out[prefix + 'research.html'] = researchStage(researchStage(pages[prefix + 'research.html'], 'graduate', portfolio, lang), 'undergraduate', portfolio, lang);
     out[prefix + 'projects.html'] = renderProjects(pages[prefix + 'projects.html'], portfolio, lang);
     out[prefix + 'index.html'] = renderHomeOverview(out[prefix + 'index.html'], portfolio, lang);
@@ -152,7 +155,7 @@ export function renderSite(pages, news, portfolio, profile) {
   }
   const languageScript = '<script type="module" src="/assets/js/language-routing.mjs?v=20261006"></script>';
   for (const path of Object.keys(out).filter(path => path.endsWith('.html'))) {
-    out[path] = out[path].replace(/<script\b[^>]*src="\/assets\/js\/language-routing\.mjs(?:\?[^\"]*)?"[^>]*><\/script>/g, '').replace('</head>', () => languageScript + '</head>').replace(/editorial\.css\?v=[^"]+/g, 'editorial.css?v=20261007-events');
+    out[path] = out[path].replace(/<script\b[^>]*src="\/assets\/js\/language-routing\.mjs(?:\?[^\"]*)?"[^>]*><\/script>/g, '').replace('</head>', () => languageScript + '</head>').replace(/editorial\.css\?v=[^"]+/g, 'editorial.css?v=20261007-integrity');
   }
   return out;
 }

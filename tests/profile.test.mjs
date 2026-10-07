@@ -3,13 +3,47 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { EDITABLE_PATHS, PAGE_PATHS } from '../assets/js/content-model.mjs';
 import { renderSite } from '../assets/js/site-renderer.mjs';
-import { applyProfile, profileSlot, profileFromForm, validateProfile, upgradeDraftBase, PROFILE_PATH } from '../assets/js/profile-model.mjs';
+import { applyProfile, profileSlot, profileFromForm, validateProfile, upgradeDraftBase, PROFILE_PATH, parseEducationPeriod, syncEducationNews } from '../assets/js/profile-model.mjs';
 import { changeCount, previewPath } from '../admin/editor-model.mjs';
 import { GitHub } from '../admin/github.mjs';
 const profile = JSON.parse(fs.readFileSync(PROFILE_PATH));
 const news = JSON.parse(fs.readFileSync('assets/data/news.json'));
 const portfolio = JSON.parse(fs.readFileSync('assets/data/portfolio.json'));
 const pages = Object.fromEntries(PAGE_PATHS.map(path => [path, fs.readFileSync(path, 'utf8')]));
+
+test('education periods accept common separators and reject invalid or reversed endpoints', () => {
+  for (const separator of [' — ', ' – ', ' - ', '-', ' to ', '至']) {
+    assert.deepEqual(parseEducationPeriod('2021.10' + separator + '2025.06'), {start:'2021.10',end:'2025.06',ongoing:false});
+  }
+  assert.deepEqual(parseEducationPeriod('2026.08.30 - present'), {start:'2026.08.30',end:'present',ongoing:true});
+  for (const value of ['2026 - present','2026.13 — present','2026.02.30 — present','2026.08 — 2025.06','2021.10 — 2025.02.30']) assert.equal(parseEducationPeriod(value), null, value);
+});
+
+test('one-language date edits align the counterpart, educational news, and phase boundaries', () => {
+  const next = profileFromForm(profile, [['stages.undergraduate.zh.period','2021.09 - 2025.06'],['stages.graduate.zh.period','2027.09.01 - 至今']]);
+  assert.equal(next.stages.undergraduate.en.period, '2021.09 — 2025.06');
+  assert.equal(next.stages.graduate.en.period, '2027.09.01 — present');
+  const n = structuredClone(news), otherBefore = n.events.filter(item => !['enrol','graduation','masters'].includes(item.id));
+  syncEducationNews(n,profile,next);
+  assert.equal(n.events.find(item => item.id === 'enrol').date,'2021.09');
+  assert.equal(n.events.find(item => item.id === 'graduation').date,'2025.06');
+  assert.equal(n.events.find(item => item.id === 'masters').date,'2027.09.01');
+  assert.deepEqual(n.events.filter(item => !['enrol','graduation','masters'].includes(item.id)),otherBefore);
+  const output = renderSite(pages,n,portfolio,next);
+  for (const path of ['index.html','zh/index.html','milestones.html','zh/milestones.html']) {
+    assert.ok(output[path].includes('<!-- profile:undergraduate-completion -->2025.06<!-- /profile:undergraduate-completion -->'), path);
+    assert.ok(output[path].includes('news-masters'), path);
+    assert.ok(!output[path].includes('本科结束 · <!-- profile:undergraduate-completion -->2021.09 - 2025.06'));
+  }
+  assert.ok(output['milestones.html'].includes('<!-- profile:graduate-enrollment -->2027.09.01<!-- /profile:graduate-enrollment -->'));
+  assert.deepEqual(renderSite(output,n,portfolio,next), output);
+});
+
+test('inconsistent bilingual education dates are rejected rather than published', () => {
+  const next=structuredClone(profile); next.stages.undergraduate.en.period='2021.10 — 2025.06';
+  assert.ok(validateProfile(next).some(error=>error.includes('中英文阶段起止日期须一致')));
+  assert.throws(()=>profileFromForm(profile,[['stages.undergraduate.en.period','2021.10 — 2025.06'],['stages.undergraduate.zh.period','2021.10 — 2025.05']]),/中英文阶段起止日期须一致/);
+});
 
 test('edited project responsibilities and periods propagate to bilingual electronic records', () => {
   const next = structuredClone(portfolio);

@@ -90,7 +90,7 @@
       "stage": "undergraduate",
       "section": "national",
       "type": "national-award",
-      "date": "≈2024.06",
+      "date": "≈2024.08",
       "cumulative": false,
       "quantity": 1,
       "counted": false,
@@ -770,21 +770,22 @@
     {
       "id": "language-ielts",
       "stage": "undergraduate",
+      "followUp": true,
       "section": "software",
       "type": "qualification",
-      "date": "≈2025.07",
+      "date": "2026.03.18",
       "cumulative": false,
       "quantity": 1,
       "counted": false,
       "en": {
-        "title": "IELTS",
-        "result": "Overall band score: 6.5.",
+        "title": "IELTS Academic",
+        "result": "Reading: 6.5 · Writing: 6.0.",
         "rankLabel": "",
         "rank": ""
       },
       "zh": {
-        "title": "雅思（IELTS）",
-        "result": "总分 6.5。",
+        "title": "学术类雅思（IELTS Academic）",
+        "result": "阅读 6.5 · 写作 6.0。",
         "rankLabel": "",
         "rank": ""
       }
@@ -865,7 +866,7 @@
     {
       "id": "coagulant-dosage",
       "stage": "graduate",
-      "period": "2026.09",
+      "period": "",
       "github": "",
       "gitee": "",
       "en": {

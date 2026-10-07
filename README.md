@@ -29,9 +29,13 @@ Shared document styling is in `assets/css/refinements.css`; the final responsive
 
 News contains individual events only: a named competition and its result, a project approval or completion, a paper milestone, a software registration, or a dated education or team event. Use complete competition names, confirmed tracks, results, and original rankings. Cumulative honors, scholarship counts, and undated qualifications belong in Awards, not News. Legacy aggregate news is archived by the editor and never rendered on public pages. A paper's submission, authorship notice, review, acceptance, and publication can each have its own news node; changing the current status preserves earlier nodes. Source synchronization updates untouched fields and preserves manually edited news wording.
 
+Historical manuscript versions use `historical` and `referenceOnly` to retain the title, author role, and date at that time without being counted as another paper. Manually edited news dates and stages are also retained by source synchronization. Importing a draft disconnects GitHub, and connecting/publishing checks its content baseline against the remote snapshot before any branch update.
+
 Project responsibilities and periods also generate the detailed electronic undergraduate record. Edit the shared project record rather than duplicating the same experience in HTML; project links open the corresponding `experience-*` section. Degree stages and undergraduate follow-up work remain explicit throughout News, Research, Projects, and CV.
 
 Keep English and Chinese records aligned. Distinguish submitted manuscripts from accepted or published articles, and include the year and subject category with journal quartiles. Preserve date precision: certificate dates, competition periods, and submission dates are distinct. Approximate months retain the quiet `≈` marker. Undergraduate follow-up work stays in the undergraduate stage even after master's enrollment.
+
+Education periods accept `—`, `–`, `-`, or `to` between dates, and `present`/`至今` for ongoing graduate study. Changing one language's dates aligns the other language and updates the existing admission/graduation news; the related phase boundaries use the same endpoints. Date changes do not translate independently written descriptions.
 
 The public identity is 许源知 / Yuanzhi Xu and is editable through the personal-details form. Existing GitHub and Gitee account handles are unchanged. The existing authorized CV PDF retains its original identity; certificate images, private contact details, and manuscript identifiers are not published as site assets.
 

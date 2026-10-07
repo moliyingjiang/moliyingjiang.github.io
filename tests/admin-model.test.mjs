@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { clone, upgradeLinkedNews } from '../assets/js/content-model.mjs';
-import { previewPath, recordAnchor, findSource, destination, changeCount, newsState, upgradeContentBase, createConfirmation } from '../admin/editor-model.mjs';
+import { previewPath, recordAnchor, findSource, destination, changeCount, newsState, upgradeContentBase, createConfirmation, assertPublicationBaseline, createConnectionAttempts } from '../admin/editor-model.mjs';
 const news = JSON.parse(fs.readFileSync('assets/data/news.json'));
 const portfolio = JSON.parse(fs.readFileSync('assets/data/portfolio.json'));
 
@@ -52,6 +52,41 @@ test('legacy source metadata upgrades both draft content and conflict baseline c
   assert.equal(upgradeContentBase(base, profile), base);
   assert.equal(n.events[0].sourceEvent, 'authorship');
 });
+test('publishing rejects a stale imported baseline even after the connection uses the latest remote head', () => {
+  const remote={news:clone(news),portfolio:clone(portfolio),profile:{test:'current profile'}};
+  upgradeLinkedNews(remote.news,remote.portfolio);
+  const base=JSON.stringify([remote.news,remote.portfolio,remote.profile]);
+  assert.doesNotThrow(()=>assertPublicationBaseline(base,remote));
+  const old=JSON.parse(base);old[0].events.pop();
+  assert.throws(()=>assertPublicationBaseline(JSON.stringify(old),remote),/草稿来源.*不一致/);
+  assert.throws(()=>assertPublicationBaseline('',remote),/草稿来源.*不一致/);
+});
+test('legacy baseline metadata remains compatible regardless of JSON object key order', () => {
+  const n=clone(news),p=clone(portfolio),profile={test:'profile baseline'};
+  upgradeLinkedNews(n,p);
+  const old=clone(n);
+  for(const item of old.events) if(item.sourceSnapshot){delete item.sourceSnapshot.date;delete item.sourceSnapshot.stage;}
+  const reorder=value=>Array.isArray(value)?value.map(reorder):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).reverse().map(([key,item])=>[key,reorder(item)])):value;
+  const base=JSON.stringify(reorder([old,p,profile]));
+  assert.doesNotThrow(()=>assertPublicationBaseline(base,{news:n,portfolio:p,profile}));
+});
+test('historical source references cannot offer an editable current-source regeneration path', () => {
+  const paper=portfolio.publications.find(record=>record.id==='measurement');
+  const item={sourceType:'publications',sourceId:paper.id,historical:true,referenceOnly:true};
+  assert.equal(findSource(item,portfolio).referenceOnly,true);
+});
+test('cancelled or superseded GitHub attempts cannot replace content or unlock a newer pending connection', async () => {
+  const attempts=createConnectionAttempts();let disabled=false,connected=null;
+  const deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done;});return{promise,resolve};};
+  const connect=async result=>{const attempt=attempts.begin();disabled=true;try{const value=await result.promise;if(attempts.isCurrent(attempt))connected=value;}finally{if(attempts.isCurrent(attempt))disabled=false;}};
+  const old=deferred(),oldWork=connect(old);attempts.invalidate();disabled=false;
+  const current=deferred(),currentWork=connect(current);
+  old.resolve('cancelled content');await oldWork;
+  assert.equal(connected,null);assert.equal(disabled,true);
+  current.resolve('current content');await currentWork;
+  assert.equal(connected,'current content');assert.equal(disabled,false);
+  attempts.invalidate();assert.equal(connected,'current content','closing a successfully connected auth dialog does not discard the client');
+});
 
 class ConfirmationDialog extends EventTarget {
   open = false;
@@ -91,4 +126,11 @@ test('a failed dialog open does not leave confirmation stuck pending', async () 
   await assert.rejects(confirm('操作'), /Cannot open/);
   dialog.showModal = () => { dialog.open = true; };
   const next = confirm('重试'); dialog.close('confirm'); assert.equal(await next, true);
+});
+test('missing confirmation controls or an unavailable focus target never leave a pending operation', async () => {
+  const missing=createConfirmation(null,{});
+  await assert.rejects(missing('操作'),/刷新管理页/);await assert.rejects(missing('重试'),/刷新管理页/);
+  const dialog=new ConfirmationDialog();dialog.ownerDocument.activeElement.focus=()=>{throw Error('Focus unavailable');};
+  const confirm=createConfirmation(dialog,{}),decision=confirm('确认');dialog.close('confirm');assert.equal(await decision,true);
+  const next=confirm('下一次');dialog.close('cancel');assert.equal(await next,false);
 });

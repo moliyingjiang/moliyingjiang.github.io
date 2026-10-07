@@ -1,4 +1,4 @@
-import { esc, safeUrl } from './content-model.mjs?v=20261007-events';
+import { esc, safeUrl, validDate } from './content-model.mjs?v=20261007-integrity';
 
 export const PROFILE_PATH = 'assets/data/profile.json';
 export const PROFILE_GROUPS = {
@@ -8,6 +8,25 @@ export const PROFILE_GROUPS = {
   links: ['头像与学术链接', '肖像、ORCID、Scholar 与代码主页']
 };
 const stageFields = ['school', 'degree', 'period', 'advisor', 'researchTitle', 'researchSummary', 'cvSummary', 'cvUrl', 'recordUrl'];
+
+export function parseEducationPeriod(value) {
+  const match = String(value || '').trim().match(/^(≈?\d{4}\.\d{2}(?:\.\d{2})?)\s*(?:—|–|-|至|to)\s*(.+)$/i);
+  if (!match || !validDate(match[1])) return null;
+  const start = match[1], end = match[2].trim(), ongoing = /^(?:至今|present|ongoing|now)$/i.test(end);
+  if (!ongoing && (!/^≈?\d{4}\.\d{2}(?:\.\d{2})?$/.test(end) || !validDate(end) || end.replace('≈', '') < start.replace('≈', ''))) return null;
+  return { start, end, ongoing };
+}
+
+export function syncEducationNews(news, previousProfile, nextProfile) {
+  for (const [id, stage, endpoint] of [['enrol', 'undergraduate', 'start'], ['graduation', 'undergraduate', 'end'], ['masters', 'graduate', 'start']]) {
+    const before = parseEducationPeriod(previousProfile.stages[stage].en.period);
+    const after = parseEducationPeriod(nextProfile.stages[stage].en.period);
+    if (!before || !after || before[endpoint] === after[endpoint]) continue;
+    const record = news.events.find(item => item.id === id);
+    if (record && !(endpoint === 'end' && after.ongoing)) record.date = after[endpoint];
+  }
+  return news;
+}
 
 export function validateProfile(profile) {
   if (profile?.schemaVersion !== 1 || !profile.links || !profile.stages) return ['个人资料格式或版本不匹配。'];
@@ -25,7 +44,13 @@ export function validateProfile(profile) {
         text(item?.[key], stage + '/' + lang + '/' + key, key !== 'cvUrl' && key !== 'advisor');
         if (key.endsWith('Url') && !safeUrl(item?.[key])) errors.push(stage + '/' + lang + '/' + key + '：请使用 https:// 或站内绝对路径。');
       }
+      const period = parseEducationPeriod(item?.period);
+      if (!period || stage === 'undergraduate' && period.ongoing) errors.push(stage + '/' + lang + '：阶段时间须为 YYYY.MM — YYYY.MM，硕士可用“至今”或 present，结束日期不能早于开始日期。');
     }
+  }
+  for (const stage of ['graduate', 'undergraduate']) {
+    const en = parseEducationPeriod(profile.stages[stage]?.en?.period), zh = parseEducationPeriod(profile.stages[stage]?.zh?.period);
+    if (en && zh && (en.start !== zh.start || en.ongoing !== zh.ongoing || !en.ongoing && en.end !== zh.end)) errors.push(stage + '：中英文阶段起止日期须一致。');
   }
   for (const key of ['orcid', 'scholar', 'github', 'gitee']) {
     text(profile.links[key], key, false);
@@ -48,6 +73,15 @@ export function profileFromForm(profile, entries) {
     const key = keys.at(-1);
     if (!Object.hasOwn(target, key) || typeof target[key] !== 'string' && key !== 'bio') throw Error('未知的个人资料字段。');
     target[key] = key === 'bio' ? String(value).split(/\n\s*\n/).map(item => item.trim()).filter(Boolean) : String(value).trim();
+  }
+  // Dates are facts shared by both languages, not independently translated prose.
+  for (const stage of ['graduate', 'undergraduate']) {
+    const changed = ['zh', 'en'].filter(lang => next.stages[stage][lang].period !== profile.stages[stage][lang].period);
+    if (changed.length !== 1) continue;
+    const period = parseEducationPeriod(next.stages[stage][changed[0]].period);
+    if (!period) continue;
+    const other = changed[0] === 'zh' ? 'en' : 'zh';
+    next.stages[stage][other].period = period.start + ' — ' + (period.ongoing ? other === 'zh' ? '至今' : 'present' : period.end);
   }
   const errors = validateProfile(next);
   if (errors.length) throw Error(errors.join('\n'));
@@ -79,8 +113,8 @@ export function renderProfileSlot(slot, lang, profile) {
   if (stageMatch) {
     const stage = stageMatch[1], key = stageMatch[2], item = profile.stages[stage][lang];
     const names = { 'research-title': 'researchTitle', 'research-summary': 'researchSummary', 'cv-summary': 'cvSummary' };
-    if (key === 'enrollment') return esc(item.period.split(/[—–]/)[0].trim());
-    if (key === 'completion') return esc(item.period.split(/[—–]/).at(-1).trim());
+    if (key === 'enrollment') return esc(parseEducationPeriod(item.period).start);
+    if (key === 'completion') return esc(parseEducationPeriod(item.period).end);
     if ([...stageFields, ...Object.keys(names)].includes(key)) return esc(item[names[key] || key]);
     if (key === 'cv-links') return anchor(item.cvUrl, zh ? '简历 PDF ↗' : 'CV · PDF ↗') + anchor(item.recordUrl, zh ? '完整档案 →' : 'Full record →');
     if (key === 'pdf-link') return anchor(item.cvUrl, stage === 'undergraduate' ? zh ? '本科简历 PDF ↗' : 'Undergraduate CV · PDF ↗' : zh ? '硕士简历 PDF ↗' : 'Graduate CV · PDF ↗');

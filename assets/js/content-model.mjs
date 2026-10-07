@@ -111,7 +111,7 @@ export function linkedNews(kind, record) {
     item[lang] = { title: text.title, text: kind === 'awards' ? [text.result, text.rank ? [text.rankLabel, text.rank].filter(Boolean).join(' ') : ''].filter(Boolean).join(' · ') : kind === 'publications' ? [text.journal, DATE_TYPES[event]?.[lang === 'zh' ? 0 : 1] || STATUSES[record.status][lang === 'zh' ? 0 : 1], ROLES[record.role][lang === 'zh' ? 0 : 1], text.summary].filter(Boolean).join(' · ') : text.text };
   }
   item.category = newsCategory(item, { awards: kind === 'awards' ? [record] : [] });
-  item.sourceSnapshot = clone({ en: item.en, zh: item.zh });
+  item.sourceSnapshot = clone({ date: item.date, stage: item.stage, en: item.en, zh: item.zh });
   return item;
 }
 function inferPublicationEvent(item, record) {
@@ -127,14 +127,14 @@ function inferPublicationEvent(item, record) {
 export function findLinkedNews(news, kind, record) {
   const records = [...news.events, ...news.grouped];
   const event = sourceEvent(kind, record);
-  const exact = records.find(item => !item.detachedSource && item.sourceType === kind && item.sourceId === record.id && (kind !== 'publications' || inferPublicationEvent(item, record) === event));
+  const exact = records.find(item => !item.detachedSource && !item.referenceOnly && !item.historical && item.sourceType === kind && item.sourceId === record.id && (kind !== 'publications' || inferPublicationEvent(item, record) === event));
   if (exact) return exact;
   if (kind === 'publications') {
     const legacyId = record.id === 'road-crack' ? 'road-paper' : record.id;
-    return records.find(item => !item.detachedSource && item.id === legacyId && inferPublicationEvent(item, record) === event);
+    return records.find(item => !item.detachedSource && !item.referenceOnly && !item.historical && item.id === legacyId && inferPublicationEvent(item, record) === event);
   }
   if (kind === 'awards' && !record.cumulative) {
-    const candidates = records.filter(item => !item.detachedSource && item.award === record.id && !item.cumulative && item.date === record.date);
+    const candidates = records.filter(item => !item.detachedSource && !item.referenceOnly && !item.historical && item.award === record.id && !item.cumulative && item.date === record.date);
     if (candidates.length === 1) return candidates[0];
   }
   return undefined;
@@ -145,6 +145,12 @@ export function syncLinkedNews(news, kind, record, { overwrite = false } = {}) {
   if (old) {
     // Award/project forms retain undergraduate ownership without redefining a historical follow-up phase.
     if (kind !== 'publications' && old.stage === 'continuation' && record.stage === 'undergraduate') next.stage = 'continuation';
+    next.sourceSnapshot.stage = next.stage;
+    for (const field of ['date', 'stage']) {
+      const baseline = old.sourceSnapshot?.[field];
+      // Legacy snapshots did not track these fields; preserve their historical values conservatively.
+      if (baseline === undefined || old[field] !== baseline) next[field] = old[field];
+    }
     if (!overwrite) for (const lang of ['en', 'zh']) for (const field of ['title', 'text']) {
       // A news event may be written more concisely than its source. Only replace untouched generated fields.
       const baseline = old.sourceSnapshot?.[lang]?.[field];
@@ -192,6 +198,7 @@ export function upgradeLinkedNews(news, portfolio) {
       item.award = ''; delete item.sourceType; delete item.sourceId; delete item.sourceEvent; delete item.sourceSnapshot;
       continue;
     }
+    if (item.referenceOnly || item.historical) continue;
     const legacyId = item.id === 'road-paper' ? 'road-crack' : item.id;
     const kind = item.sourceType || (item.award ? 'awards' : portfolio.publications.some(record => record.id === legacyId) ? 'publications' : null);
     const sourceId = item.sourceId || (kind === 'awards' ? item.award : legacyId);
@@ -201,9 +208,14 @@ export function upgradeLinkedNews(news, portfolio) {
     const event = kind === 'publications' ? inferPublicationEvent(item, record) : sourceEvent(kind, record);
     if (!event) continue;
     item.sourceType = kind; item.sourceId = sourceId; item.sourceEvent = event;
-    if (!item.sourceSnapshot && (kind !== 'publications' || event === sourceEvent(kind, record))) {
+    if (kind !== 'publications' || event === sourceEvent(kind, record)) {
       const generated = linkedNews(kind, record);
-      item.sourceSnapshot = clone({ en: generated.en, zh: generated.zh });
+      if (kind !== 'publications' && item.stage === 'continuation' && record.stage === 'undergraduate') generated.stage = 'continuation';
+      if (!item.sourceSnapshot) item.sourceSnapshot = clone({ date: generated.date, stage: generated.stage, en: generated.en, zh: generated.zh });
+      else {
+        if (item.sourceSnapshot.date === undefined) item.sourceSnapshot.date = generated.date;
+        if (item.sourceSnapshot.stage === undefined) item.sourceSnapshot.stage = generated.stage;
+      }
     }
   }
   return news;

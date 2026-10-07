@@ -95,6 +95,38 @@ test('source updates preserve hand-written news and refresh untouched names, ran
   assert.ok(next.zh.text.includes('全国决赛 3 / 65'));assert.equal(next.date,'2026.10.05');
   syncLinkedNews(n,'awards',award,{overwrite:true});assert.equal(n.events[0].zh.title,award.zh.title);
 });
+test('manual event dates and stages survive repeated source synchronization',()=>{
+  const n={events:[],grouped:[]},paper=clone(portfolio.publications.find(record=>record.id==='sustainability'));
+  const event=syncLinkedNews(n,'publications',paper);event.date='2026.09.27';event.stage='undergraduate';
+  paper.date='2026.10.01';paper.zh.title='更完整的同节点标题';
+  syncLinkedNews(n,'publications',paper);
+  assert.equal(n.events[0].date,'2026.09.27');assert.equal(n.events[0].stage,'undergraduate');
+  assert.equal(n.events[0].sourceSnapshot.date,'2026.10.01');assert.equal(n.events[0].sourceSnapshot.stage,'graduate');
+  syncLinkedNews(n,'publications',paper,{overwrite:true});
+  assert.equal(n.events[0].date,'2026.09.27');assert.equal(n.events[0].stage,'undergraduate');
+});
+test('legacy text-only source snapshots gain date metadata without changing edited historical fields',()=>{
+  const p=clone(portfolio),paper=p.publications.find(record=>record.id==='sustainability'),event=linkedNews('publications',paper);
+  delete event.sourceSnapshot.date;delete event.sourceSnapshot.stage;event.date='2026.09.27';event.stage='undergraduate';
+  const n={events:[event],grouped:[]};upgradeLinkedNews(n,p);
+  assert.equal(n.events[0].sourceSnapshot.date,paper.date);assert.equal(n.events[0].sourceSnapshot.stage,paper.stage);
+  paper.date='2026.10.03';syncLinkedNews(n,'publications',paper);
+  assert.equal(n.events[0].date,'2026.09.27');assert.equal(n.events[0].stage,'undergraduate');
+});
+test('a manually referenced award stays a reference after reload and does not become a synchronization target',()=>{
+  const p=clone(portfolio),award=p.awards[0],event={id:'independent-report',date:award.date,stage:'graduate',award:award.id,referenceOnly:true,en:{title:'Independent report',text:'A report about the result'},zh:{title:'独立报道事件',text:'对获奖结果进行报道'}};
+  const n={events:[clone(event)],grouped:[]};upgradeLinkedNews(n,p);
+  assert.deepEqual(n.events[0],event);assert.equal(findLinkedNews(n,'awards',award),undefined);
+  syncLinkedNews(n,'awards',award);assert.equal(n.events.length,2);assert.deepEqual(n.events[0],event);
+});
+test('a historical earlier manuscript version never absorbs the current author role, title or date',()=>{
+  const p=clone(portfolio),paper=p.publications.find(record=>record.id==='measurement');
+  const early={id:'measurement-early-version',date:'2026.03.15',stage:'continuation',historical:true,referenceOnly:true,sourceType:'publications',sourceId:paper.id,sourceEvent:'submitted',award:'',en:{title:'Earlier manuscript title',text:'First author · Submitted'},zh:{title:'前期版本的原题目',text:'第一作者 · 已投稿'}};
+  const n={events:[clone(early)],grouped:[]};upgradeLinkedNews(n,p);
+  Object.assign(paper,{date:'2026.10.03',dateType:'submitted',status:'submitted',role:'coauthor'});
+  syncLinkedNews(n,'publications',paper);assert.equal(n.events.length,2);assert.deepEqual(n.events[0],early);
+  assert.equal(n.events[0].sourceSnapshot,undefined);
+});
 test('old drafts retain concrete events, migrate concrete grouped news and archive totals without losing text',()=>{
   const award=clone(portfolio.awards[0]);award.cumulative=true;
   const original={id:'historic-award',date:'2024.06',stage:'undergraduate',award:award.id,en:{title:'A specific competition result',text:'Third prize'},zh:{title:'一次具体竞赛获奖',text:'三等奖'}};

@@ -21,7 +21,7 @@ export function findSource(item, portfolio) {
   if (!item) return null;
   if (['awards', 'publications', 'projects'].includes(item.sourceType)) {
     const record = portfolio[item.sourceType].find(record => record.id === item.sourceId);
-    if (record) return { kind: item.sourceType, record };
+    if (record) return { kind: item.sourceType, record, ...(item.referenceOnly || item.historical ? { referenceOnly: true } : {}) };
   }
   if (item.award) {
     const record = portfolio.awards.find(record => record.id === item.award);
@@ -47,9 +47,20 @@ export function upgradeContentBase(base, currentProfile) {
     return JSON.stringify(data);
   } catch { return base; }
 }
+export function assertPublicationBaseline(base, remoteContent) {
+  const canonical = value => Array.isArray(value) ? value.map(canonical) : value && typeof value === 'object' ? Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])])) : value;
+  let original;
+  try { original = JSON.parse(upgradeContentBase(base, remoteContent.profile)); } catch {}
+  const expected = [remoteContent.news, remoteContent.portfolio, remoteContent.profile];
+  if (!Array.isArray(original) || original.length !== 3 || JSON.stringify(canonical(original)) !== JSON.stringify(canonical(expected))) throw Error('草稿来源与当前 GitHub 版本不一致。请先导出草稿，再重新连接并合并修改；未覆盖线上内容。');
+}
+export function createConnectionAttempts() {
+  let generation = 0;
+  return { begin: () => ++generation, invalidate: () => { generation++; }, isCurrent: attempt => attempt === generation };
+}
 export function destination(kind, record) {
   if (kind === 'profile') return '首页、研究介绍、简历与全站个人资料';
-  const stage = record?.stage === 'graduate' ? '硕士阶段' : record?.stage === 'continuation' || record?.followUp ? '本科项目后续' : '本科阶段';
+  const stage = record?.stage === 'graduate' ? '硕士阶段' : record?.stage === 'continuation' || record?.followUp ? kind === 'awards' ? '本科阶段结束后' : '本科项目后续' : '本科阶段';
   const page = { news: '首页动态、完整时间线', awards: '荣誉与资格页', publications: '研究与论文页', projects: '研究项目页' }[kind];
   return page + (record ? ' · ' + stage : '');
 }
@@ -66,17 +77,18 @@ export function changeCount(base, news, portfolio, profile) {
   const before = flatten(...original), after = flatten(news, portfolio, profile);
   return [...new Set([...before.keys(), ...after.keys()])].filter(id => before.get(id) !== after.get(id)).length;
 }
-import { upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261007-events';
+import { upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261007-integrity';
 export function createConfirmation(dialog, messageElement) {
   let pending = false;
   return async message => {
     if (pending) return false;
     pending = true;
-    const trigger = dialog.ownerDocument?.activeElement;
     try {
+      if (!dialog || !messageElement) throw Error('确认窗口尚未加载，请刷新管理页。');
+      const trigger = dialog.ownerDocument?.activeElement;
       return await new Promise((resolve, reject) => {
         const cleanup = () => { dialog.removeEventListener('close', closed); dialog.removeEventListener('cancel', cancelled); };
-        const closed = () => { cleanup(); trigger?.focus?.({ preventScroll: true }); resolve(dialog.returnValue === 'confirm'); };
+        const closed = () => { cleanup(); try { trigger?.focus?.({ preventScroll: true }); } catch {} resolve(dialog.returnValue === 'confirm'); };
         const cancelled = event => { event.preventDefault(); dialog.close('cancel'); };
         messageElement.textContent = message;
         dialog.returnValue = 'cancel';

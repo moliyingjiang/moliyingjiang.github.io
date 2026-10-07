@@ -266,7 +266,7 @@
     },
     {
       "id": "creative-2024",
-      "date": "≈2024.06",
+      "date": "≈2024.08",
       "stage": "undergraduate",
       "award": "national-4",
       "en": {
@@ -500,6 +500,26 @@
         "text": "参与的智能手诊系统科研项目结题，相关工作涉及科研绘图、掌纹图像处理及辅助诊断信息检索。"
       },
       "category": "research"
+    },
+    {
+      "id": "measurement-early-version",
+      "date": "2026.03",
+      "stage": "continuation",
+      "historical": true,
+      "referenceOnly": true,
+      "category": "research",
+      "award": "",
+      "en": {
+        "title": "Early submitted manuscript version · industrial meter reading",
+        "text": "The early manuscript was titled “A Large-and-Small Model Cascade Method for Automatic Industrial Gauge Reading”, with me as first author at that stage. The manuscript was subsequently retitled and updated; see the Measurement record for its current details."
+      },
+      "zh": {
+        "title": "工业仪表读数论文早期在投版本",
+        "text": "早期稿件题为《A Large-and-Small Model Cascade Method for Automatic Industrial Gauge Reading》，当时为第一作者；后续稿件更名并更新，当前稿件信息见 Measurement 记录。"
+      },
+      "sourceType": "publications",
+      "sourceId": "measurement",
+      "sourceEvent": "submitted"
     },
     {
       "id": "masters",
