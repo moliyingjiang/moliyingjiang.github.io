@@ -1,6 +1,6 @@
-import { esc, byDate, SECTIONS, STATUSES, ROLES, DATE_TYPES, validateContent } from './content-model.mjs?v=20261003-profile';
-import { renderNewsPages } from './render-news.mjs?v=20261003-profile';
-import { applyProfile, validateProfile } from './profile-model.mjs?v=20261003-profile';
+import { esc, byDate, SECTIONS, STATUSES, ROLES, DATE_TYPES, validateContent } from './content-model.mjs?v=20261007-events';
+import { renderNewsPages } from './render-news.mjs?v=20261007-events';
+import { applyProfile, validateProfile } from './profile-model.mjs?v=20261007-events';
 
 const profileMark = (slot, value) => '<!-- profile:' + slot + ' -->' + esc(value) + '<!-- /profile:' + slot + ' -->';
 
@@ -83,17 +83,14 @@ function researchStage(page, stage, data, lang) {
 function projectRow(record, lang) {
   const content = record[lang];
   const links = [record.gitee ? '<a href="' + esc(record.gitee) + '">Gitee ↗</a>' : '', record.github ? '<a href="' + esc(record.github) + '">GitHub ↗</a>' : '', content.moreUrl ? '<a href="' + esc(content.moreUrl) + '">' + esc(content.moreLabel || (lang === 'zh' ? '了解更多' : 'Details')) + '</a>' : ''].filter(Boolean).join('');
-  return '<article id="project-' + record.id + '"><p class="number">' + esc(content.category) + '</p><h2>' + esc(content.title) + '</h2>' + (record.period ? '<p class="project-period">' + esc(record.period) + '</p>' : '') + '<p>' + esc(content.text) + '</p>' + (links ? '<div>' + links + '</div>' : '') + '</article>';
+  const summary = content.text.split(/\n+/).filter(Boolean).map(text => '<p>' + esc(text) + '</p>').join('');
+  return '<article id="project-' + record.id + '"><p class="number">' + esc(content.category) + '</p><h3>' + esc(content.title) + '</h3>' + (record.period ? '<p class="project-period">' + esc(record.period) + '</p>' : '') + '<div class="project-summary">' + summary + '</div>' + (links ? '<div class="project-links">' + links + '</div>' : '') + '</article>';
 }
 function renderProjects(page, data, lang) {
+  const zh = lang === 'zh';
   const rows = stage => data.projects.filter(item => item.stage === stage).map(item => projectRow(item, lang)).join('\n');
-  const pattern = /<div class="project-page-list">[\s\S]*?<\/div>(?=<p class="all-projects">)/;
-  if (!pattern.test(page)) throw new Error('Undergraduate project template missing.');
-  let next = page.replace(pattern, () => '<div class="project-page-list">' + rows('undergraduate') + '</div>');
-  const graduate = /<section (?:id="graduate-projects" )?class="study-stage">[\s\S]*?<\/section>/;
-  if (!graduate.test(next)) throw new Error('Graduate project template missing.');
-  const body = '<section id="graduate-projects" class="study-stage">' + stageHeading('graduate', lang) + '<div class="project-page-list">' + rows('graduate') + '</div><p><a href="' + recordLink(lang) + '">' + (lang === 'zh' ? '硕士阶段档案 →' : 'Graduate record →') + '</a></p></section>';
-  return next.replace(graduate, () => body);
+  const main = '<main class="page-shell projects-page"><p class="eyebrow">' + (zh ? '研究与工程实践' : 'RESEARCH &amp; ENGINEERING') + '</p><h1>' + (zh ? '项目与技术实践' : 'Research &amp; engineering projects') + '</h1><p class="page-lead">' + (zh ? '本科阶段开展视觉诊断、工业检测与机器人系统实践；硕士阶段关注饮用水处理中的机器学习。' : 'Undergraduate work in visual diagnosis, industrial inspection, and robotic systems; graduate work in machine learning for drinking-water treatment.') + '</p><nav class="section-index" aria-label="' + (zh ? '项目阶段' : 'Project stages') + '"><a href="#undergraduate-projects">' + (zh ? '本科项目' : 'Undergraduate projects') + '</a><a href="#graduate-projects">' + (zh ? '硕士项目' : 'Master’s projects') + '</a></nav><section id="undergraduate-projects" class="study-stage">' + stageHeading('undergraduate', lang) + '<div class="project-page-list">' + rows('undergraduate') + '</div><p class="all-projects"><a data-profile-link="gitee" href="https://gitee.com/YJ-MoLi">' + (zh ? 'Gitee 全部仓库（国内） →' : 'All repositories on Gitee →') + '</a><a data-profile-link="github" href="https://github.com/moliyingjiang">' + (zh ? 'GitHub 全部仓库（国际） →' : 'All repositories on GitHub →') + '</a></p></section><div class="phase-break"><span>' + (zh ? '硕士阶段 · 2026.08.30 起' : 'GRADUATE STAGE · FROM 2026.08.30') + '</span></div><section id="graduate-projects" class="study-stage">' + stageHeading('graduate', lang) + '<div class="project-page-list">' + rows('graduate') + '</div><p><a href="' + recordLink(lang) + '">' + (zh ? '硕士阶段档案 →' : 'Graduate record →') + '</a></p></section></main>';
+  return replaceMain(page, main);
 }
 function renderGraduateRecord(page, data, lang) {
   const publications = data.publications.filter(item => item.stage === 'graduate').sort(byDate).map(item => publicationRow(item, lang)).join('\n');
@@ -105,26 +102,18 @@ function renderGraduateRecord(page, data, lang) {
     return '<section id="graduate-publications" class="record-section"><h2>' + (lang === 'zh' ? '论文记录' : 'Manuscripts &amp; publications') + '</h2>' + publications + '</section>';
   });
   if (!replaced) throw new Error('Graduate publication template missing.');
-  return next;
+  return lang === 'en' ? next.replace(/(<!-- \/profile:graduate-research-title -->)。/g, '$1. ') : next;
 }
 function renderUndergraduateRecord(page, data, lang) {
   const zh = lang === 'zh', prefix = zh ? '/zh' : '';
   const publications = data.publications.filter(item => item.stage === 'undergraduate').sort(byDate).map(item => publicationRow(item, lang)).join('\n');
-  const section = '<section id="undergraduate-publications" class="record-section"><h2>' + (zh ? '论文与研究成果' : 'Manuscripts &amp; publications') + '</h2>' + publications + '</section>';
-  let next = page;
-  if (next.includes('id="undergraduate-publications"')) next = next.replace(/<section id="undergraduate-publications"[\s\S]*?<\/section>/, () => section);
-  else {
-    if (zh) {
-      next = next.replace(/<article><div><h3>(?:工业仪表自动读数大\/小模型级联方法|基于 YOLOv8 的轻量化道路裂缝检测模型)<\/h3>[\s\S]*?<\/article>/g, '');
-      next = next.replace('<h2>论文、毕业设计与科研项目</h2>', '<h2>毕业设计与科研项目</h2>');
-    } else next = next.replace(/<p>Co-authored industrial pointer-meter manuscript[\s\S]*?<\/p>/, '');
-    next = next.replace('<section class="dated-experience">', () => section + '<section class="dated-experience">');
-  }
-  const totals = data.totals.undergraduate;
-  const honors = '<section class="award-summary"><h2>' + (zh ? '竞赛与荣誉' : 'Awards and distinctions') + '</h2>' + overview(totals, lang) + '<p><a href="' + prefix + '/awards.html">' + (zh ? '完整荣誉记录 →' : 'Full award record →') + '</a></p></section>';
-  next = next.replace(/<section class="award-summary">[\s\S]*?<\/section>/, () => honors);
-  if (zh) next = next.replace(/<section><h2>代表性竞赛与成果<\/h2>[\s\S]*?<\/section>/, '');
-  return next;
+  const undergraduateLink = zh ? '/undergraduate-cv.html' : '/undergraduate-record.html';
+  const thesisAwards = data.awards.filter(item => item.stage === 'undergraduate' && ['university-1', 'university-2'].includes(item.id));
+  const thesis = thesisAwards.length ? '<section id="undergraduate-thesis" class="record-section"><h2>' + (zh ? '毕业设计与论文荣誉' : 'Graduation projects &amp; thesis honors') + '</h2><div class="timeline">' + thesisAwards.map(item => '<article><div class="award-date">' + time(item.date) + '</div><div><h3>' + esc(item[lang].title) + '</h3><p>' + esc(item[lang].result) + '</p><p><a href="' + prefix + '/awards.html#' + item.id + '">' + (zh ? '荣誉记录 →' : 'Award record →') + '</a></p></div></article>').join('') + '</div></section>' : '';
+  const experiences = data.projects.filter(item => item.stage === 'undergraduate').sort(byDate).map(item => '<article id="experience-' + item.id + '">' + (item.period ? '<time>' + esc(item.period) + '</time>' : '<span aria-hidden="true"></span>') + '<div><h3>' + esc(item[lang].title) + '</h3>' + item[lang].text.split(/\n+/).filter(Boolean).map(text => '<p>' + esc(text) + '</p>').join('') + '<p><a href="' + prefix + '/projects.html#project-' + item.id + '">' + (zh ? '项目说明与相关入口 →' : 'Project details &amp; links →') + '</a></p></div></article>').join('\n');
+  const education = '<section id="undergraduate-education" class="record-section"><h2>' + (zh ? '教育与科研训练' : 'Education &amp; research training') + '</h2><p>' + profileMark('undergraduate-cv-summary', zh ? '专业排名前 10%（13/137）。机器人、机械臂、计算机视觉与人工智能方向的科研训练和工程实践。' : 'Top 10% in the major (13/137). Research training and engineering practice in robotics, robotic manipulation, computer vision, and artificial intelligence.') + '</p><p>' + (zh ? '主要课程：机器学习、单片机原理与应用、传感器原理及应用、信号与系统、电路与模拟电子技术。' : 'Coursework: machine learning, microcontrollers, sensors, signals and systems, circuits, and analog electronics.') + '</p><p>' + (zh ? '本科科研导师：' : 'Undergraduate research advisors: ') + profileMark('undergraduate-advisor', zh ? '陈志贤老师（北京大学博士后）；张光华副教授（清华大学博士）' : 'Zhixian Chen (postdoctoral research, Peking University); Associate Professor Guanghua Zhang (Ph.D., Tsinghua University)') + '</p><div class="timeline"><article id="experience-lab"><time>2022.03 — 2025.07</time><div><h3>' + (zh ? '太原学院大数据与人工智能创新实验室' : 'Big Data and Artificial Intelligence Innovation Laboratory, Taiyuan University') + '</h3><p>' + (zh ? '作为实验室成员，参与组会、研究汇报及医疗人工智能、视觉算法与多模态应用相关科研训练。' : 'Participated as a laboratory member; participated in group meetings, research presentations, and research training in medical AI, visual algorithms, and multimodal applications.') + '</p></div></article><article id="experience-academy"><time>2022.03 — 2025.07</time><div><h3>' + (zh ? '山西省“1331工程”大数据智能诊疗产业学院' : 'Shanxi “1331 Project” Big Data Intelligent Diagnosis Industry Academy') + '</h3><p>' + (zh ? '担任组长，参与人工智能培训、开发实践与大学生创新创业训练项目。' : 'Served as group leader and participated in AI training, development practice, and undergraduate innovation-training projects.') + '</p></div></article></div></section>';
+  const main = '<main class="page-shell record-detail"><p class="eyebrow">' + (zh ? '本科' : 'UNDERGRADUATE') + ' · ' + profileMark('undergraduate-period', '2021.10 — 2025.07') + '</p><h1>' + (zh ? '本科电子简历' : 'Undergraduate record') + '</h1><p class="page-lead">' + profileMark('undergraduate-school', zh ? '太原学院' : 'Taiyuan University') + ' · ' + profileMark('undergraduate-degree', zh ? '本科 · 物联网工程' : 'B.Eng. · Internet of Things Engineering') + '</p><nav class="section-index" aria-label="' + (zh ? '本科档案目录' : 'Undergraduate record sections') + '"><a href="#undergraduate-education">' + (zh ? '教育与训练' : 'Education') + '</a><a href="#undergraduate-publications">' + (zh ? '论文' : 'Publications') + '</a><a href="#undergraduate-experience">' + (zh ? '项目经历' : 'Projects') + '</a><a href="#undergraduate-awards">' + (zh ? '竞赛与荣誉' : 'Awards') + '</a></nav>' + education + '<section id="undergraduate-publications" class="record-section"><h2>' + (zh ? '论文与研究成果' : 'Manuscripts &amp; publications') + '</h2>' + publications + '</section>' + thesis + '<section id="undergraduate-experience" class="dated-experience"><h2>' + (zh ? '研究、项目与团队经历' : 'Research, projects &amp; team experience') + '</h2><div class="timeline">' + experiences + '</div></section><section id="undergraduate-awards" class="award-summary"><h2>' + (zh ? '竞赛与荣誉' : 'Awards &amp; distinctions') + '</h2>' + overview(data.totals.undergraduate, lang) + '<p><a href="' + prefix + '/awards.html">' + (zh ? '完整荣誉与名次记录 →' : 'Full award &amp; ranking record →') + '</a></p></section><p class="all-projects"><!-- profile:undergraduate-pdf-link --><a href="/files/undergraduate-cv.pdf">' + (zh ? '本科简历 PDF ↗' : 'Undergraduate CV · PDF ↗') + '</a><!-- /profile:undergraduate-pdf-link --><a data-profile-record="undergraduate-' + lang + '" href="' + undergraduateLink + '#undergraduate-education">' + (zh ? '返回档案顶部 ↑' : 'Back to education ↑') + '</a></p></main>';
+  return replaceMain(page, main);
 }
 function renderCvOverview(page, data, lang) {
   const prefix = lang === 'zh' ? '/zh' : '';
@@ -163,7 +152,7 @@ export function renderSite(pages, news, portfolio, profile) {
   }
   const languageScript = '<script type="module" src="/assets/js/language-routing.mjs?v=20261006"></script>';
   for (const path of Object.keys(out).filter(path => path.endsWith('.html'))) {
-    out[path] = out[path].replace(/<script\b[^>]*src="\/assets\/js\/language-routing\.mjs(?:\?[^\"]*)?"[^>]*><\/script>/g, '').replace('</head>', () => languageScript + '</head>');
+    out[path] = out[path].replace(/<script\b[^>]*src="\/assets\/js\/language-routing\.mjs(?:\?[^\"]*)?"[^>]*><\/script>/g, '').replace('</head>', () => languageScript + '</head>').replace(/editorial\.css\?v=[^"]+/g, 'editorial.css?v=20261007-events');
   }
   return out;
 }

@@ -21,7 +21,9 @@ export const SECTIONS = {
 };
 export const STATUSES = { submitted: ['已投稿', 'Submitted'], reviewing: ['审稿中', 'Under review'], accepted: ['已接收', 'Accepted'], published: ['已发表', 'Published'] };
 export const ROLES = { first: ['第一作者', 'First author'], second: ['第二作者', 'Second author'], coauthor: ['共同作者', 'Co-author'], cofirst: ['共同第一作者', 'Co-first author'], corresponding: ['通讯作者', 'Corresponding author'] };
-export const DATE_TYPES = { submitted: ['投稿', 'Submitted'], published: ['发表', 'Published'], accepted: ['接收', 'Accepted'], authorship: ['作者确认通知', 'Authorship notification'] };
+export const DATE_TYPES = { submitted: ['投稿', 'Submitted'], reviewing: ['进入审稿', 'Review started'], published: ['发表', 'Published'], accepted: ['接收', 'Accepted'], authorship: ['作者确认通知', 'Authorship notification'] };
+export const NEWS_CATEGORIES = { education: '入学与毕业', research: '科研与论文', competition: '竞赛获奖', innovation: '大创立项与结题', honor: '校级荣誉与奖学金', software: '软件著作权', qualification: '资格与语言成绩', service: '团队与服务经历', other: '其他具体事件' };
+export const PUBLICATION_EVENTS = new Set(['submitted', 'authorship', 'reviewing', 'accepted', 'published']);
 export const clone = value => structuredClone(value);
 export const esc = value => String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 export const safeUrl = value => !value || (/^\/(?!\/)/.test(value) && !/[\\\x00-\x20]/.test(value)) || (() => { try { return new URL(value).protocol === 'https:' && !/[\\\x00-\x20]/.test(value); } catch { return false; } })();
@@ -55,11 +57,17 @@ export function validateContent(news, portfolio) {
         if (kind === 'projects' && !safeUrl(record[lang]?.moreUrl)) errors.push(name + '：附加链接须以 https:// 或 / 开头。');
       }
       if (kind === 'news' && record.award && ![...portfolio.awards.map(item => item.id), ...Object.keys(SECTIONS), 'graduate'].includes(record.award)) errors.push(name + '：关联的荣誉记录不存在。');
+      if (kind === 'news' && news.events.includes(record)) {
+        if (record.cumulative) errors.push(name + '：动态只能记录一次具体事件；累计汇总请在荣誉栏目维护。');
+        if (record.category && !NEWS_CATEGORIES[record.category]) errors.push(name + '：请选择有效的事件分类。');
+        if (record.award && !portfolio.awards.some(item => item.id === record.award && !item.cumulative)) errors.push(name + '：动态只能引用具体荣誉，不能引用累计汇总。');
+      }
       if (kind === 'awards') {
         if (!TYPES[record.type] || !SECTIONS[record.section]) errors.push(name + '：请选择荣誉类别。');
         if (!Number.isInteger(record.quantity) || record.quantity < 1 || record.quantity > 999) errors.push(name + '：数量应为 1–999 的整数。');
       }
       if (kind === 'publications' && (!STATUSES[record.status] || !ROLES[record.role] || !DATE_TYPES[record.dateType])) errors.push(name + '：论文状态、作者身份或日期类型不完整。');
+      if (kind === 'publications' && DATE_TYPES[record.dateType] && STATUSES[record.status] && (record.dateType === 'authorship' ? !['submitted', 'reviewing'].includes(record.status) : record.dateType !== record.status)) errors.push(name + '：日期含义须对应本次论文状态；接收、发表各使用自己的事件日期。');
       for (const key of ['github', 'gitee', 'url', 'metricsSource']) if (!safeUrl(record[key])) errors.push(name + '：' + key + ' 链接须使用 https://。');
     }
   }
@@ -75,39 +83,128 @@ export function adjustAwardTotals(portfolio, oldRecord, newRecord) {
     if (record?.counted && key) portfolio.totals[record.stage][key] = Math.max(0, portfolio.totals[record.stage][key] + direction * record.quantity);
   }
 }
+export function canLinkNews(kind, record) {
+  return !record.cumulative && (kind !== 'projects' || validDate((record.period || '').split(/[—–]/)[0].trim()));
+}
+export function sourceEvent(kind, record) {
+  if (kind === 'publications') return ['accepted', 'published'].includes(record.status) ? record.status : record.dateType === 'authorship' ? 'authorship' : record.status === 'reviewing' ? 'reviewing' : record.dateType;
+  return kind === 'awards' ? 'award' : 'started';
+}
+export function newsCategory(item, portfolio) {
+  if (NEWS_CATEGORIES[item.category]) return item.category;
+  if (item.sourceType === 'publications' || item.sourceType === 'projects') return 'research';
+  const award = portfolio?.awards?.find(record => record.id === (item.sourceType === 'awards' ? item.sourceId : item.award));
+  if (award) return award.type.includes('innovation') ? 'innovation' : award.type.includes('award') ? 'competition' : award.type === 'software' ? 'software' : award.type === 'qualification' ? 'qualification' : 'honor';
+  if (['enrol', 'masters', 'graduation'].includes(item.id)) return 'education';
+  if (['team', 'lab', 'academy'].includes(item.id)) return 'service';
+  if (['meter-start', 'eye-start', 'grasp-start', 'palm-start'].includes(item.id)) return 'research';
+  if (item.id === 'palm-completion') return 'innovation';
+  return 'other';
+}
 export function linkedNews(kind, record) {
   const stage = record.stage === 'graduate' ? 'graduate' : record.followUp ? 'continuation' : 'undergraduate';
   const date = record.date || (record.period || '').split(/[—–]/)[0].trim();
-  const item = { id: 'update-' + record.id, date, stage, cumulative: Boolean(record.cumulative), award: kind === 'awards' ? record.id : '', sourceType: kind, sourceId: record.id, en: {}, zh: {} };
+  const event = sourceEvent(kind, record);
+  const item = { id: 'update-' + record.id + (kind === 'publications' ? '-' + event : ''), date, stage, cumulative: false, award: kind === 'awards' ? record.id : '', sourceType: kind, sourceId: record.id, sourceEvent: event, en: {}, zh: {} };
   for (const lang of ['en', 'zh']) {
     const text = record[lang];
-    item[lang] = { title: text.title, text: kind === 'awards' ? [text.result, text.rank ? text.rankLabel + ' ' + text.rank : ''].filter(Boolean).join(' · ') : kind === 'publications' ? [text.journal, STATUSES[record.status][lang === 'zh' ? 0 : 1], ROLES[record.role][lang === 'zh' ? 0 : 1], text.summary].filter(Boolean).join(' · ') : text.text };
+    item[lang] = { title: text.title, text: kind === 'awards' ? [text.result, text.rank ? [text.rankLabel, text.rank].filter(Boolean).join(' ') : ''].filter(Boolean).join(' · ') : kind === 'publications' ? [text.journal, DATE_TYPES[event]?.[lang === 'zh' ? 0 : 1] || STATUSES[record.status][lang === 'zh' ? 0 : 1], ROLES[record.role][lang === 'zh' ? 0 : 1], text.summary].filter(Boolean).join(' · ') : text.text };
   }
+  item.category = newsCategory(item, { awards: kind === 'awards' ? [record] : [] });
+  item.sourceSnapshot = clone({ en: item.en, zh: item.zh });
   return item;
+}
+function inferPublicationEvent(item, record) {
+  if (PUBLICATION_EVENTS.has(item.sourceEvent)) return item.sourceEvent;
+  const text = [item.zh?.title, item.zh?.text, item.en?.title, item.en?.text].join(' ');
+  if (/作者确认|作者通知|authorship|author confirmation/i.test(text)) return 'authorship';
+  if (/已发表|发表论文|published|publication of/i.test(text)) return 'published';
+  if (/已接收|获接收|录用|accepted/i.test(text)) return 'accepted';
+  if (/审稿中|进入审稿|under review|review started/i.test(text)) return 'reviewing';
+  if (/投稿|submitted|submission/i.test(text)) return 'submitted';
+  return item.date === record.date ? sourceEvent('publications', record) : null;
 }
 export function findLinkedNews(news, kind, record) {
   const records = [...news.events, ...news.grouped];
-  const exact = records.find(item => item.sourceType === kind && item.sourceId === record.id);
+  const event = sourceEvent(kind, record);
+  const exact = records.find(item => !item.detachedSource && item.sourceType === kind && item.sourceId === record.id && (kind !== 'publications' || inferPublicationEvent(item, record) === event));
   if (exact) return exact;
   if (kind === 'publications') {
     const legacyId = record.id === 'road-crack' ? 'road-paper' : record.id;
-    return records.find(item => item.id === legacyId);
+    return records.find(item => !item.detachedSource && item.id === legacyId && inferPublicationEvent(item, record) === event);
   }
   if (kind === 'awards' && !record.cumulative) {
-    const candidates = records.filter(item => item.award === record.id && !item.cumulative && item.date === record.date);
+    const candidates = records.filter(item => !item.detachedSource && item.award === record.id && !item.cumulative && item.date === record.date);
     if (candidates.length === 1) return candidates[0];
   }
   return undefined;
 }
-export function syncLinkedNews(news, kind, record) {
+export function syncLinkedNews(news, kind, record, { overwrite = false } = {}) {
+  if (!canLinkNews(kind, record)) return null;
   const next = linkedNews(kind, record), old = findLinkedNews(news, kind, record);
   if (old) {
     // Award/project forms retain undergraduate ownership without redefining a historical follow-up phase.
     if (kind !== 'publications' && old.stage === 'continuation' && record.stage === 'undergraduate') next.stage = 'continuation';
+    if (!overwrite) for (const lang of ['en', 'zh']) for (const field of ['title', 'text']) {
+      // A news event may be written more concisely than its source. Only replace untouched generated fields.
+      const baseline = old.sourceSnapshot?.[lang]?.[field];
+      if (baseline === undefined || old[lang]?.[field] !== baseline) next[lang][field] = old[lang]?.[field] || '';
+    }
+    if (old.category) next.category = old.category;
     for (const bucket of ['events', 'grouped']) {
       const index = news[bucket].indexOf(old);
-      if (index >= 0) { news[bucket][index] = { ...old, ...next, id: old.id }; return; }
+      if (index >= 0) { news[bucket][index] = { ...old, ...next, id: old.id }; return news[bucket][index]; }
     }
   }
   news.events.push(next);
+  return next;
+}
+export function detachLinkedNews(news, kind, sourceId) {
+  for (const item of [...news.events, ...news.grouped]) {
+    const legacyPublication = kind === 'publications' && (item.id === sourceId || sourceId === 'road-crack' && item.id === 'road-paper');
+    if (item.sourceType === kind && item.sourceId === sourceId || kind === 'awards' && item.award === sourceId || legacyPublication) {
+      item.detachedSource = { kind, id: sourceId, event: item.sourceEvent || '' };
+      delete item.sourceType; delete item.sourceId; delete item.sourceEvent; delete item.sourceSnapshot;
+      if (kind === 'awards') item.award = '';
+    }
+  }
+}
+export function upgradeLinkedNews(news, portfolio) {
+  for (const record of portfolio.publications) {
+    if (['accepted', 'published'].includes(record.status) || record.status === 'reviewing' && record.dateType !== 'authorship') record.dateType = record.status;
+  }
+  const events = [...news.events], archived = [];
+  for (const item of news.grouped) {
+    if (!item.cumulative) {
+      if (!events.some(record => record.id === item.id)) events.push(item);
+    } else archived.push(item);
+  }
+  news.events = events.filter(item => {
+    if (item.cumulative) { archived.push(item); return false; }
+    return true;
+  });
+  news.grouped = archived;
+  for (const item of news.events) {
+    if (item.detachedSource) continue;
+    const summary = portfolio.awards.find(record => record.id === (item.sourceType === 'awards' ? item.sourceId : item.award) && record.cumulative);
+    if (summary || Object.keys(SECTIONS).includes(item.award) || item.award === 'graduate') {
+      item.detachedSource = { kind: 'awards', id: item.sourceId || item.award, event: item.sourceEvent || '', reason: 'summary-reference' };
+      item.award = ''; delete item.sourceType; delete item.sourceId; delete item.sourceEvent; delete item.sourceSnapshot;
+      continue;
+    }
+    const legacyId = item.id === 'road-paper' ? 'road-crack' : item.id;
+    const kind = item.sourceType || (item.award ? 'awards' : portfolio.publications.some(record => record.id === legacyId) ? 'publications' : null);
+    const sourceId = item.sourceId || (kind === 'awards' ? item.award : legacyId);
+    const record = kind && portfolio[kind]?.find(record => record.id === sourceId);
+    if (!record && item.sourceType && item.sourceId) { detachLinkedNews(news, item.sourceType, item.sourceId); continue; }
+    if (!record || !canLinkNews(kind, record)) continue;
+    const event = kind === 'publications' ? inferPublicationEvent(item, record) : sourceEvent(kind, record);
+    if (!event) continue;
+    item.sourceType = kind; item.sourceId = sourceId; item.sourceEvent = event;
+    if (!item.sourceSnapshot && (kind !== 'publications' || event === sourceEvent(kind, record))) {
+      const generated = linkedNews(kind, record);
+      item.sourceSnapshot = clone({ en: generated.en, zh: generated.zh });
+    }
+  }
+  return news;
 }

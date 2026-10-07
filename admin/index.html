@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
-  <title>内容管理 · 许源知</title><link rel="stylesheet" href="admin.css?v=20261003-profile">
+  <title>内容管理 · 许源知</title><link rel="stylesheet" href="admin.css?v=20261007-events">
 </head>
 <body>
   <header>
@@ -14,7 +14,8 @@
   <main>
     <aside>
       <nav id="nav" aria-label="内容栏目"></nav>
-      <div class="filters"><label>学习阶段<select id="filter"><option value="">全部阶段</option><option value="undergraduate">本科（含后续）</option><option value="graduate">硕士</option></select></label><label>搜索<input id="search" placeholder="标题关键词" aria-label="搜索标题"></label></div>
+      <div class="filters"><label>学习阶段<select id="filter"><option value="">全部阶段</option><option value="undergraduate">本科（含后续）</option><option value="graduate">硕士</option></select></label><label>检索事件<input id="search" placeholder="完整名称、结果或名次" aria-label="搜索名称、正文和结果"></label></div>
+      <div class="filters" id="event-filters" hidden><label>事件分类<select id="category-filter"><option value="">全部事件分类</option></select></label><label>关联状态<select id="event-filter"><option value="">全部具体事件</option><option value="linked">关联来源</option><option value="independent">独立事件</option><option value="detached">独立历史</option><option value="archived">旧版汇总归档</option></select></label></div>
       <button id="add" class="add-record">＋ 新增动态</button>
       <p class="list-caption" id="list-caption"></p><div id="list" aria-label="记录列表"></div>
       <div class="draft-tools"><button id="export">导出草稿</button><label class="button">导入草稿<input type="file" id="import" accept="application/json" hidden></label><button id="reset" class="quiet">放弃本地草稿</button></div>
@@ -23,6 +24,7 @@
   </main>
   <dialog id="auth"><form method="dialog"><p class="overline">GITHUB CONNECTION</p><h2>连接你的主页仓库</h2><p>创建仅限 <code>moliyingjiang.github.io</code> 的 fine-grained token，将 Contents 权限设为 Read and write。</p><p><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">前往 GitHub 创建令牌 ↗</a></p><label>访问令牌<input id="token" type="password" autocomplete="off" spellcheck="false"></label><p class="field-help">令牌只保留在当前页面，刷新后需重新连接。草稿保存在本设备，可导出后带到其他设备。</p><div class="dialog-actions"><button value="cancel">取消</button><button id="login" type="button" class="primary">连接仓库</button></div></form></dialog>
   <dialog id="preview-dialog"><div class="preview-toolbar"><div><strong>发布前预览</strong><p id="preview-note"></p></div><select id="preview-page" aria-label="预览页面"></select><button id="close-preview">关闭</button></div><iframe sandbox="allow-scripts" title="网站预览"></iframe></dialog>
-  <script type="module" src="app.mjs?v=20261006-language"></script>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-message"><form method="dialog"><h2 id="confirm-title">确认操作</h2><p id="confirm-message"></p><div class="dialog-actions"><button id="confirm-cancel" value="cancel" autofocus>取消</button><button id="confirm-accept" value="confirm" class="primary">确认</button></div></form></dialog>
+  <script type="module" src="app.mjs?v=20261007-dialog"></script>
 </body>
 </html>

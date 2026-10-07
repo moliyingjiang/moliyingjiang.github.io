@@ -11,6 +11,31 @@ const news = JSON.parse(fs.readFileSync('assets/data/news.json'));
 const portfolio = JSON.parse(fs.readFileSync('assets/data/portfolio.json'));
 const pages = Object.fromEntries(PAGE_PATHS.map(path => [path, fs.readFileSync(path, 'utf8')]));
 
+test('edited project responsibilities and periods propagate to bilingual electronic records', () => {
+  const next = structuredClone(portfolio);
+  const project = next.projects.find(item => item.id === 'hand-eye');
+  project.period = '2024.03 — 2025.09';
+  project.en.text = 'Updated personal contribution: A < B & C.\nA second paragraph.';
+  project.zh.text = '更新后的个人工作：A < B & C。\n第二段工作说明。';
+  const output = renderSite(pages, news, next, profile);
+  for (const path of ['projects.html', 'undergraduate-record.html', 'zh/projects.html', 'undergraduate-cv.html']) {
+    assert.ok(output[path].includes('2024.03 — 2025.09'), path);
+    assert.ok(output[path].includes('A &lt; B &amp; C'), path);
+  }
+  assert.ok(output['undergraduate-record.html'].includes('id="experience-hand-eye"'));
+  assert.ok(output['zh/projects.html'].includes('/undergraduate-cv.html#experience-hand-eye'));
+  assert.deepEqual(renderSite(output, news, next, profile), output);
+});
+
+test('editable record destinations preserve exact experience anchors and URL queries', () => {
+  const next = structuredClone(profile);
+  next.stages.undergraduate.en.recordUrl = '/custom-record.html';
+  const template = '<a data-profile-record="undergraduate-en" href="/undergraduate-record.html?lang=en&amp;ref=project#experience-hand-eye">Details</a>';
+  const output = applyProfile(template, 'en', next);
+  assert.ok(output.includes('href="/custom-record.html?lang=en&amp;ref=project#experience-hand-eye"'));
+  assert.equal(applyProfile(output, 'en', next), output);
+});
+
 test('all generated pages remain stable and later identity edits replace the original names', () => {
   const first = renderSite(pages, news, portfolio, profile);
   assert.deepEqual(renderSite(first, news, portfolio, profile), first);

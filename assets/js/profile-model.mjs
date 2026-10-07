@@ -1,4 +1,4 @@
-import { esc, safeUrl } from './content-model.mjs?v=20261003-profile';
+import { esc, safeUrl } from './content-model.mjs?v=20261007-events';
 
 export const PROFILE_PATH = 'assets/data/profile.json';
 export const PROFILE_GROUPS = {
@@ -127,10 +127,19 @@ export function applyProfile(template, lang, profile, path = 'index.html') {
   });
   next = next.replace(/<a\b([^>]*)>[\s\S]*?<\/a>/g, (tag, attributes) => {
     const href = /href="([^"]*)"/.exec(attributes)?.[1], key = /data-profile-link="(\w+)"/.exec(attributes)?.[1] || linkDefaults[href];
-    const record = /data-profile-record="(graduate|undergraduate)-(en|zh)"/.exec(attributes) || /^\/(graduate|undergraduate)-(record|cv)\.html$/.exec(href || '');
+    const decodedHref = (href || '').replaceAll('&amp;', '&');
+    const recordPath = decodedHref.split(/[?#]/)[0];
+    const record = /data-profile-record="(graduate|undergraduate)-(en|zh)"/.exec(attributes) || /^\/(graduate|undergraduate)-(record|cv)\.html$/.exec(recordPath);
     if (record) {
       const targetLang = ['zh', 'cv'].includes(record[2]) ? 'zh' : 'en';
-      let updated = tag.replace(/href="[^"]*"/, () => 'href="' + esc(profile.stages[record[1]][targetLang].recordUrl) + '"');
+      const suffix = decodedHref.slice(recordPath.length);
+      const recordUrl = profile.stages[record[1]][targetLang].recordUrl;
+      const targetUrl = new URL(recordUrl, 'https://profile.invalid');
+      const originalUrl = new URL(recordPath + suffix, 'https://profile.invalid');
+      if (originalUrl.search) targetUrl.search = originalUrl.search;
+      if (originalUrl.hash) targetUrl.hash = originalUrl.hash;
+      const destination = recordUrl.startsWith('/') ? targetUrl.pathname + targetUrl.search + targetUrl.hash : targetUrl.href;
+      let updated = tag.replace(/href="[^"]*"/, () => 'href="' + esc(destination) + '"');
       if (!attributes.includes('data-profile-record')) updated = updated.replace('<a', '<a data-profile-record="' + record[1] + '-' + targetLang + '"');
       return updated;
     }

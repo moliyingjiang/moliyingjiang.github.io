@@ -20,13 +20,29 @@
       "stage": "undergraduate",
       "award": "",
       "en": {
-        "title": "Joined the laboratory and intelligent-diagnosis academy",
-        "text": "Began research training in the Big Data and Artificial Intelligence Laboratory and intelligent-diagnosis academy."
+        "title": "Joined the Big Data and Artificial Intelligence Laboratory",
+        "text": "Began research training in medical-image analysis and computer vision at Taiyuan University; laboratory work continued through July 2025."
       },
       "zh": {
-        "title": "加入实验室与智能诊疗产业学院",
-        "text": "加入大数据与人工智能实验室，参与智能诊疗产业学院的科研训练与实践。"
-      }
+        "title": "加入太原学院大数据与人工智能创新实验室",
+        "text": "开展医学图像分析与计算机视觉科研训练，实验室经历持续至 2025 年 7 月。"
+      },
+      "category": "service"
+    },
+    {
+      "id": "academy",
+      "date": "2022.03",
+      "stage": "undergraduate",
+      "award": "",
+      "en": {
+        "title": "Joined the Shanxi “1331 Project” Intelligent Diagnosis Industry Academy",
+        "text": "Served as a group leader in the Big Data Intelligent Diagnosis Industry Academy, working on AI and medical applications through July 2025."
+      },
+      "zh": {
+        "title": "加入山西省“1331工程”大数据智能诊疗产业学院",
+        "text": "担任组长，参与人工智能与医学应用相关研究和实践，经历持续至 2025 年 7 月。"
+      },
+      "category": "service"
     },
     {
       "id": "palm-2022",
@@ -34,12 +50,12 @@
       "stage": "undergraduate",
       "award": "innovation-4",
       "en": {
-        "title": "National innovation-training recognition · palm diagnosis",
-        "text": "National-level innovation-training project; project selection rank 1/289."
+        "title": "National innovation-training project approved · intelligent palm diagnosis",
+        "text": "The intelligent palm-diagnosis project was approved under the national undergraduate innovation and entrepreneurship training programme; project selection rank: 1/289."
       },
       "zh": {
-        "title": "智能手诊项目获国家级大创立项",
-        "text": "国家级大学生创新创业训练项目，立项排序 1/289。"
+        "title": "智能手诊系统获国家级大学生创新创业训练计划立项",
+        "text": "智能手诊系统项目获国家级立项，项目立项排序为 1/289。"
       },
       "sourceType": "awards",
       "sourceId": "innovation-4"
@@ -50,12 +66,12 @@
       "stage": "undergraduate",
       "award": "innovation-5",
       "en": {
-        "title": "National innovation-training recognition · ocular diagnosis",
-        "text": "National-level undergraduate innovation-training project in ocular-motility diagnosis."
+        "title": "National innovation-training project approved · ocular-motility diagnosis",
+        "text": "An AI-assisted ocular-motility diagnosis project was approved under the national undergraduate innovation and entrepreneurship training programme."
       },
       "zh": {
-        "title": "眼球运动障碍诊断项目获国家级大创立项",
-        "text": "眼球运动障碍诊断方向获国家级大学生创新创业训练项目立项。"
+        "title": "眼球运动障碍 AI 辅助诊断获国家级大学生创新创业训练计划立项",
+        "text": "眼球运动障碍 AI 辅助诊断项目获国家级立项。"
       },
       "sourceType": "awards",
       "sourceId": "innovation-5"
@@ -66,13 +82,14 @@
       "stage": "undergraduate",
       "award": "",
       "en": {
-        "title": "Began industrial meter-reading research",
-        "text": "Research on low-light and contaminated-dial meter reading; project period 2022.09–2025.08."
+        "title": "Started industrial pointer-meter reading research",
+        "text": "Led research on meter reading under low light and dial contamination, including keypoint detection, segmentation, synthetic-data generation, and reading-error evaluation; project period: September 2022–August 2025."
       },
       "zh": {
-        "title": "开展工业仪表读数研究",
-        "text": "研究低光与表盘污染条件下的仪表读数，项目周期为 2022.09–2025.08。"
-      }
+        "title": "开展暗光环境与表盘污染条件下的工业仪表读数研究",
+        "text": "作为负责人，开展关键点检测与分割、污染数据合成、模型训练和读数误差评估；项目周期为 2022.09–2025.08。"
+      },
+      "category": "research"
     },
     {
       "id": "team",
@@ -80,13 +97,14 @@
       "stage": "undergraduate",
       "award": "",
       "en": {
-        "title": "Became robot-dog team captain",
-        "text": "Led robot-dog competition preparation and system development in the TYU robotics team through July 2025."
+        "title": "Appointed robot-dog team captain · TYU Dengshu Robotics Team",
+        "text": "Organized competition preparation and robot-system development for the Taiyuan University Dengshu Robotics Team; served through July 2025."
       },
       "zh": {
-        "title": "担任登枢战队机器狗队队长",
-        "text": "参与机器人系统开发与竞赛准备，任期至 2025 年 7 月。"
-      }
+        "title": "担任太原学院登枢战队机器狗队队长",
+        "text": "组织机器人竞赛准备与系统开发，开展视觉感知、通信和机器人协同调试；任期至 2025 年 7 月。"
+      },
+      "category": "service"
     },
     {
       "id": "eye-start",
@@ -94,13 +112,14 @@
       "stage": "undergraduate",
       "award": "",
       "en": {
-        "title": "Led ocular-motility diagnosis research",
-        "text": "Led eye-image analysis and diagnostic system development; project period 2023.03–2024.11."
+        "title": "Started the ocular-motility diagnosis project as project lead",
+        "text": "Led eye-region preprocessing, segmentation and keypoint detection, diagnostic grading, and front-end/back-end integration; project period: March 2023–November 2024."
       },
       "zh": {
-        "title": "负责眼球运动障碍 AI 辅助诊断研究",
-        "text": "开展眼部图像分析与辅助诊断系统开发，项目周期为 2023.03–2024.11。"
-      }
+        "title": "负责基于 Opening 与混合式深度学习的眼球运动障碍诊断技术研究",
+        "text": "开展眼部预处理、分割与关键点定位，结合诊断标准生成辅诊报告，并完成前后端系统集成；项目周期为 2023.03–2024.11。"
+      },
+      "category": "research"
     },
     {
       "id": "eye-2023",
@@ -108,12 +127,12 @@
       "stage": "undergraduate",
       "award": "innovation-3",
       "en": {
-        "title": "National innovation-training recognition · EyeMoveAI",
-        "text": "Led the national-level innovation-training project; project selection rank 3/218."
+        "title": "National innovation-training project approved · EyeMoveAI",
+        "text": "Led the AI-assisted ocular-motility diagnosis project, approved under the national undergraduate innovation and entrepreneurship training programme; project selection rank: 3/218."
       },
       "zh": {
-        "title": "眼动辅诊项目获国家级大创立项",
-        "text": "担任国家级大创项目负责人，立项排序 3/218。"
+        "title": "EyeMoveAI 获国家级大学生创新创业训练计划立项",
+        "text": "担任眼球运动障碍 AI 辅助诊断项目负责人，国家级项目立项排序为 3/218。"
       },
       "sourceType": "awards",
       "sourceId": "innovation-3"
@@ -124,12 +143,12 @@
       "stage": "undergraduate",
       "award": "national-8",
       "en": {
-        "title": "National second prize · Computer Design Competition",
-        "text": "Medical robot-dog challenge; national rank 3."
+        "title": "National second prize · 2023 China University Computer Design Competition (16th edition)",
+        "text": "Medical robot-dog special challenge, AI applications category. Awarded for “Intelligent Medical Robot Dog: Comprehensive Assistance with SOTA Technologies”; national rank: 3rd."
       },
       "zh": {
-        "title": "中国大学生计算机设计大赛全国二等奖",
-        "text": "医护机器狗专项挑战赛，全国第 3 名。"
+        "title": "2023 年（第 16 届）中国大学生计算机设计大赛全国二等奖",
+        "text": "人工智能应用—人工智能挑战赛—医护机器狗专项挑战赛，获奖作品《智能医护机器狗：融合 SOTA 技术的全方位援助服务》，全国第 3 名。"
       },
       "sourceType": "awards",
       "sourceId": "national-8"
@@ -140,12 +159,12 @@
       "stage": "undergraduate",
       "award": "national-7",
       "en": {
-        "title": "National second prize · Intelligent Robot Creative Competition",
-        "text": "Inspection robot-dog project; preliminary rank 4/65."
+        "title": "National second prize · 2023 China University Intelligent Robot Creative Competition (6th edition)",
+        "text": "Awarded for a hybrid deep-learning approach to pointer-keypoint detection and high-precision meter-dial keypoint localization; preliminary rank: 4/65."
       },
       "zh": {
-        "title": "中国高校智能机器人创意大赛全国二等奖",
-        "text": "巡检机器狗相关项目，初赛第 4/65。"
+        "title": "2023 年第六届中国高校智能机器人创意大赛全国二等奖",
+        "text": "获奖作品围绕混合式深度学习的指针关键点检测与仪表盘高精度关键点定位；初赛全国第 4/65。"
       },
       "sourceType": "awards",
       "sourceId": "national-7"
@@ -156,12 +175,12 @@
       "stage": "undergraduate",
       "award": "national-6",
       "en": {
-        "title": "National second prize · RAICOM",
-        "text": "“Ru Ying Sui Xing” challenge; Northern Division runner-up."
+        "title": "National second prize · 2023 RAICOM Robotics Developer Competition",
+        "text": "“Ru Ying Sui Xing” competition event; national-finals second prize and Northern Division runner-up."
       },
       "zh": {
-        "title": "睿抗机器人开发者大赛全国二等奖",
-        "text": "如影随形项目，北方赛区亚军。"
+        "title": "2023 睿抗机器人开发者大赛（RAICOM）全国总决赛二等奖",
+        "text": "“如影随形”竞赛项目获全国二等奖，北方赛区亚军。"
       },
       "sourceType": "awards",
       "sourceId": "national-6"
@@ -172,13 +191,14 @@
       "stage": "undergraduate",
       "award": "",
       "en": {
-        "title": "Joined a provincial youth research project",
-        "text": "Contributed to the intelligent palm-diagnosis system study; project period 2023.11–2025.11."
+        "title": "Joined the Shanxi Provincial Youth Research Project on intelligent palm diagnosis",
+        "text": "Contributed to “Intelligent Palm-Diagnosis System Based on Modern Palmprint Medical Diagnostic Standards”, including research figures, palmprint-image processing, and knowledge-graph-assisted information retrieval; project period: November 2023–November 2025."
       },
       "zh": {
-        "title": "参与山西省青年科研项目",
-        "text": "参与智能手诊系统研究，项目周期为 2023.11–2025.11。"
-      }
+        "title": "参与山西省青年科研项目：面向现代掌纹医学诊断标准的智能手诊系统研究",
+        "text": "负责科研绘图，参与掌纹图像提取、二值化和关键纹路匹配，以及结合知识图谱的医学信息检索与辅助报告生成；项目周期为 2023.11–2025.11。"
+      },
+      "category": "research"
     },
     {
       "id": "person-year",
@@ -186,12 +206,12 @@
       "stage": "undergraduate",
       "award": "university-3",
       "en": {
-        "title": "University Person of the Year · 2023",
-        "text": "University-level recognition at Taiyuan University."
+        "title": "Named Taiyuan University Person of the Year · 2023",
+        "text": "Received Taiyuan University’s 2023 Person of the Year honor."
       },
       "zh": {
-        "title": "获评校 2023 年度人物",
-        "text": "太原学院校级荣誉。"
+        "title": "获评太原学院 2023 年度人物",
+        "text": "获太原学院 2023 年度人物校级荣誉。"
       },
       "sourceType": "awards",
       "sourceId": "university-3"
@@ -202,15 +222,16 @@
       "stage": "undergraduate",
       "award": "",
       "en": {
-        "title": "Road-crack detection paper published",
-        "text": "Second author of “Lightweight Road Crack Detection Model Based on YOLOv8”, published in Shanxi Electronic Technology."
+        "title": "Road-crack detection paper published in Shanxi Electronic Technology",
+        "text": "Second author of “Lightweight Road Crack Detection Model Based on YOLOv8”; the work introduces FasterNet-based lightweight feature extraction for embedded deployment."
       },
       "zh": {
-        "title": "道路裂缝检测论文发表",
-        "text": "《基于 YOLOv8 的轻量化道路裂缝检测模型》发表于《山西电子技术》，本人为第二作者。"
+        "title": "《基于 YOLOv8 的轻量化道路裂缝检测模型》发表于《山西电子技术》",
+        "text": "本人为第二作者；研究在 YOLOv8 中引入 FasterNet 轻量化模块，优化特征提取与内存访问，面向嵌入式部署。"
       },
       "sourceType": "publications",
-      "sourceId": "road-crack"
+      "sourceId": "road-crack",
+      "sourceEvent": "published"
     },
     {
       "id": "grasp-start",
@@ -218,13 +239,14 @@
       "stage": "undergraduate",
       "award": "",
       "en": {
-        "title": "Led hand-eye coordinated robotic grasping research",
-        "text": "Developed robotic perception, arm planning, and system integration; project period 2024.03–2025.08."
+        "title": "Started the hand-eye coordinated robotic grasping project",
+        "text": "Independently built the engineering system around ROS integration, IMU and leg odometry, URDF/PyBullet/MoveIt simulation, depth-camera perception, and reinforcement-learning-based arm planning; project period: March 2024–August 2025."
       },
       "zh": {
-        "title": "开展通用机器人手眼协调抓取研究",
-        "text": "开展机器人感知、机械臂规划与系统集成，项目周期为 2024.03–2025.08。"
-      }
+        "title": "开展通用机器人手眼协调抓取系统研究",
+        "text": "独立搭建 ROS 协同框架，结合 IMU 与腿部里程计、URDF/PyBullet/MoveIt 仿真、深度相机感知和强化学习机械臂规划；项目周期为 2024.03–2025.08。"
+      },
+      "category": "research"
     },
     {
       "id": "robot-2024",
@@ -232,12 +254,12 @@
       "stage": "undergraduate",
       "award": "national-5",
       "en": {
-        "title": "National second prize · China Robot Competition",
-        "text": "China Robot Competition & RoboCup China Open; intelligent quadruped rescue robot."
+        "title": "National second prize · 2024 China Robot Competition & RoboCup China Open",
+        "text": "Rescue Robot category — Intelligent Quadruped Rescue Robot event."
       },
       "zh": {
-        "title": "中国机器人大赛全国二等奖",
-        "text": "中国机器人大赛暨 RoboCup 机器人世界杯中国赛，智能四足救援机器人赛项。"
+        "title": "2024 中国机器人大赛暨 RoboCup 机器人世界杯中国赛全国二等奖",
+        "text": "救援机器人—智能四足救援机器人赛项获全国二等奖。"
       },
       "sourceType": "awards",
       "sourceId": "national-5"
@@ -248,12 +270,12 @@
       "stage": "undergraduate",
       "award": "national-4",
       "en": {
-        "title": "National first prize · Intelligent Robot Creative Competition",
-        "text": "Awarded for work on hand-eye coordinated robotic grasping."
+        "title": "National first prize · 2024 China University Intelligent Robot Creative Competition (7th edition)",
+        "text": "The hand-eye coordinated robotic grasping system received a national first prize."
       },
       "zh": {
-        "title": "中国高校智能机器人创意大赛全国一等奖",
-        "text": "通用机器人手眼协调抓取系统相关成果获奖。"
+        "title": "2024 年第七届中国高校智能机器人创意大赛全国一等奖",
+        "text": "通用机器人手眼协调抓取系统相关成果获全国一等奖。"
       },
       "sourceType": "awards",
       "sourceId": "national-4"
@@ -264,12 +286,12 @@
       "stage": "undergraduate",
       "award": "innovation-1",
       "en": {
-        "title": "National innovation-training recognition · palm diagnosis",
-        "text": "Intelligent palm-diagnosis work received national-level undergraduate innovation-training support in 2024."
+        "title": "National innovation-training project approved · intelligent palm diagnosis",
+        "text": "The intelligent palm-diagnosis system was approved under the 2024 national undergraduate innovation and entrepreneurship training programme."
       },
       "zh": {
-        "title": "智能手诊项目再次获国家级大创立项",
-        "text": "智能手诊相关工作获 2024 年国家级大学生创新创业训练项目立项。"
+        "title": "智能手诊系统获 2024 年国家级大学生创新创业训练计划立项",
+        "text": "智能手诊系统相关项目获 2024 年国家级立项。"
       },
       "sourceType": "awards",
       "sourceId": "innovation-1"
@@ -280,11 +302,11 @@
       "stage": "undergraduate",
       "award": "innovation-2",
       "en": {
-        "title": "Provincial innovation-training recognition · meter reading",
-        "text": "Provincial-level support for meter reading under low light and dial contamination."
+        "title": "Provincial innovation-training project approved · industrial meter reading",
+        "text": "Meter reading under low light and dial contamination was approved under the 2024 provincial undergraduate innovation and entrepreneurship training programme."
       },
       "zh": {
-        "title": "仪表读数项目获省级大创立项",
+        "title": "工业仪表读数研究获 2024 年省级大学生创新创业训练计划立项",
         "text": "暗光环境与表盘污染条件下的仪表读数项目获省级立项。"
       },
       "sourceType": "awards",
@@ -294,15 +316,17 @@
       "id": "challenge-2024",
       "date": "≈2024.06",
       "stage": "undergraduate",
-      "award": "provincial-4",
+      "award": "provincial-challenge-2024",
       "en": {
-        "title": "Provincial bronze award · Challenge Cup",
-        "text": "Industrial meter-reading project; included in the three provincial bronze awards."
+        "title": "Provincial bronze award · 2024 Shanxi “Challenge Cup” College Student Business Plan Competition",
+        "text": "The industrial meter-reading project received a provincial bronze award."
       },
       "zh": {
-        "title": "“挑战杯”省级铜奖",
-        "text": "工业仪表读数项目获奖，包含在本科累计 3 项省级铜奖中。"
-      }
+        "title": "2024 年第十四届“挑战杯”山西省大学生创业计划竞赛铜奖",
+        "text": "暗光环境与表盘污染条件下的工业仪表读数项目获省级铜奖。"
+      },
+      "sourceType": "awards",
+      "sourceId": "provincial-challenge-2024"
     },
     {
       "id": "eyemove-software",
@@ -310,12 +334,12 @@
       "stage": "undergraduate",
       "award": "software-5",
       "en": {
-        "title": "EyeMoveAI software registration",
-        "text": "Primary contributor to the AI-assisted ocular-motility diagnosis system; included in the five registered software works."
+        "title": "EyeMoveAI registered as a software work",
+        "text": "Primary contributor to “EyeMoveAI — AI-Assisted Diagnosis System for Ocular-Motility Disorders”."
       },
       "zh": {
-        "title": "EyeMoveAI 软件著作权",
-        "text": "眼球运动障碍 AI 辅助诊断系统软件著作权，实际主创；包含在 5 项软著汇总中。"
+        "title": "EyeMoveAI 眼球运动障碍 AI 辅助诊断系统获软件著作权",
+        "text": "眼球运动障碍 AI 辅助诊断系统完成软件著作权登记，本人为实际主创。"
       },
       "sourceType": "awards",
       "sourceId": "software-5"
@@ -326,12 +350,12 @@
       "stage": "undergraduate",
       "award": "national-3",
       "en": {
-        "title": "National second prize · RAICOM",
-        "text": "Intelligent systems event."
+        "title": "National second prize · 2024 RAICOM Robotics Developer Competition",
+        "text": "“Intelligent Systems” competition event; national-finals second prize."
       },
       "zh": {
-        "title": "睿抗机器人开发者大赛全国二等奖",
-        "text": "智能系统赛项。"
+        "title": "2024 睿抗机器人开发者大赛（RAICOM）全国总决赛二等奖",
+        "text": "“智能系统”竞赛项目获全国二等奖。"
       },
       "sourceType": "awards",
       "sourceId": "national-3"
@@ -342,12 +366,12 @@
       "stage": "undergraduate",
       "award": "university-1",
       "en": {
-        "title": "Outstanding Graduation Project & Thesis",
-        "text": "Recognized for the hand-eye coordinated robot-dog target-grasping system."
+        "title": "Outstanding Graduation Project and Thesis · Taiyuan University",
+        "text": "“Hand-Eye Coordinated Target Grasping with a Robot Dog” received Outstanding Graduation Project and Outstanding Graduation Thesis honors."
       },
       "zh": {
-        "title": "优秀毕业设计、优秀毕业论文",
-        "text": "基于手眼协调的机器狗目标抓取系统获校级荣誉。"
+        "title": "《基于手眼协调的机器狗目标抓取系统》获优秀毕业设计、优秀毕业论文",
+        "text": "本科毕业设计与论文获太原学院校级荣誉。"
       },
       "sourceType": "awards",
       "sourceId": "university-1"
@@ -358,12 +382,12 @@
       "stage": "undergraduate",
       "award": "university-2",
       "en": {
-        "title": "Outstanding graduation-project recognition · meter reading",
-        "text": "Industrial meter-reading research received university outstanding graduation-project recognition."
+        "title": "Outstanding Graduation Project · industrial meter reading",
+        "text": "The industrial meter-reading project received Taiyuan University’s Outstanding Graduation Project recognition."
       },
       "zh": {
-        "title": "仪表读数研究获优秀毕业设计相关荣誉",
-        "text": "工业仪表读数研究获校优秀毕业设计相关荣誉。"
+        "title": "工业仪表读数项目获太原学院优秀毕业设计荣誉",
+        "text": "暗光环境与表盘污染条件下的仪表读数研究获校级优秀毕业设计荣誉。"
       },
       "sourceType": "awards",
       "sourceId": "university-2"
@@ -374,12 +398,12 @@
       "stage": "undergraduate",
       "award": "provincial-2",
       "en": {
-        "title": "Provincial first prize · Computer Design Competition",
-        "text": "Industrial meter-reading project; provincial rank 8/206."
+        "title": "Provincial first prize · 2025 China University Computer Design Competition (18th edition), Shanxi",
+        "text": "Awarded for the industrial meter-reading project; provincial rank: 8/206."
       },
       "zh": {
-        "title": "中国大学生计算机设计大赛省级一等奖",
-        "text": "工业仪表读数项目，全省第 8/206。"
+        "title": "2025 年（第 18 届）中国大学生计算机设计大赛山西省级赛一等奖",
+        "text": "工业仪表读数项目获省级一等奖，全省第 8/206。"
       },
       "sourceType": "awards",
       "sourceId": "provincial-2"
@@ -390,12 +414,12 @@
       "stage": "undergraduate",
       "award": "provincial-3",
       "en": {
-        "title": "Provincial AI teaching-case recognition",
-        "text": "Rank 44 in the provincial selection."
+        "title": "Provincial recognition · 2025 Shanxi AI Teaching-Case Selection",
+        "text": "The hand-eye coordinated robotic grasping project was included in the provincial AI teaching-case selection; selection rank: 44th."
       },
       "zh": {
-        "title": "省人工智能优秀课例",
-        "text": "省级评选第 44 名。"
+        "title": "2025 年山西省人工智能优秀课例评选",
+        "text": "通用机器人手眼协调抓取系统相关成果入选省级人工智能优秀课例，评选第 44 名。"
       },
       "sourceType": "awards",
       "sourceId": "provincial-3"
@@ -406,12 +430,12 @@
       "stage": "undergraduate",
       "award": "provincial-1",
       "en": {
-        "title": "Provincial first prize · RAICOM",
-        "text": "Intelligent irrigation and harvesting; provincial rank 2/18."
+        "title": "Provincial first prize · 2025 RAICOM Robotics Developer Competition, Shanxi",
+        "text": "“Intelligent Irrigation and Harvesting” event; provincial rank: 2/18, with work on autonomous arm decisions."
       },
       "zh": {
-        "title": "睿抗机器人开发者大赛省级一等奖",
-        "text": "智灌采收赛项，全省第 2/18。"
+        "title": "2025 睿抗机器人开发者大赛（RAICOM）山西省赛一等奖",
+        "text": "“智灌采收”赛项，全省第 2/18；相关工作包括机械臂自主决策。"
       },
       "sourceType": "awards",
       "sourceId": "provincial-1"
@@ -436,12 +460,12 @@
       "stage": "continuation",
       "award": "national-2",
       "en": {
-        "title": "National second prize · RAICOM",
-        "text": "Intelligent irrigation and harvesting, continuing undergraduate project work."
+        "title": "National second prize · 2025 RAICOM Robotics Developer Competition",
+        "text": "“Intelligent Irrigation and Harvesting” event; national-finals second prize, continuing the undergraduate robotic grasping project."
       },
       "zh": {
-        "title": "睿抗机器人开发者大赛全国二等奖",
-        "text": "智灌采收赛项，本科项目延续。"
+        "title": "2025 睿抗机器人开发者大赛（RAICOM）全国总决赛二等奖",
+        "text": "“智灌采收”竞赛项目获全国二等奖，为本科手眼协调抓取项目的后续竞赛成果。"
       },
       "sourceType": "awards",
       "sourceId": "national-2"
@@ -452,12 +476,12 @@
       "stage": "continuation",
       "award": "national-1",
       "en": {
-        "title": "National second prize · Intelligent Robot Creative Competition",
-        "text": "Quadruped robot challenge, continuing undergraduate project work."
+        "title": "National second prize · 2025 China University Intelligent Robot Creative Competition (8th edition)",
+        "text": "Legged Robot Challenge; national second prize, continuing undergraduate robotics work."
       },
       "zh": {
-        "title": "中国高校智能机器人创意大赛全国二等奖",
-        "text": "足式机器人挑战赛，本科项目延续。"
+        "title": "2025 年第八届中国高校智能机器人创意大赛全国二等奖",
+        "text": "足式机器人挑战赛获全国二等奖，为本科机器人项目的后续竞赛成果。"
       },
       "sourceType": "awards",
       "sourceId": "national-1"
@@ -468,13 +492,14 @@
       "stage": "continuation",
       "award": "",
       "en": {
-        "title": "Intelligent palm-diagnosis project completed",
-        "text": "Contributed to the completed Shanxi provincial youth research project on intelligent palm diagnosis."
+        "title": "Shanxi Provincial Youth Research Project on intelligent palm diagnosis concluded",
+        "text": "The provincial youth research project “Intelligent Palm-Diagnosis System Based on Modern Palmprint Medical Diagnostic Standards”, in which I participated, concluded."
       },
       "zh": {
-        "title": "智能手诊科研项目结题",
-        "text": "参与的山西省青年科研项目“智能手诊系统研究”结题。"
-      }
+        "title": "山西省青年科研项目《面向现代掌纹医学诊断标准的智能手诊系统研究》结题",
+        "text": "参与的智能手诊系统科研项目结题，相关工作涉及科研绘图、掌纹图像处理及辅助诊断信息检索。"
+      },
+      "category": "research"
     },
     {
       "id": "masters",
@@ -496,15 +521,16 @@
       "stage": "graduate",
       "award": "",
       "en": {
-        "title": "Drinking-water treatment manuscript submitted",
-        "text": "Co-authored a manuscript on machine learning prediction and interpretation of aluminum and iron coagulant dosages, submitted to Sustainability."
+        "title": "Manuscript submitted to Sustainability · drinking-water treatment",
+        "text": "Co-author of “Machine Learning-Based Prediction and Interpretation of Aluminum and Iron Coagulant Dosages in Drinking Water Treatment”; submitted on 28 September 2026."
       },
       "zh": {
-        "title": "饮用水处理方向论文投稿",
-        "text": "合作撰写机器学习预测与解释饮用水处理中铝盐、铁盐混凝剂投加量的论文，投稿至 Sustainability。"
+        "title": "饮用水处理研究论文投稿至 Sustainability",
+        "text": "作为共同作者参与《Machine Learning-Based Prediction and Interpretation of Aluminum and Iron Coagulant Dosages in Drinking Water Treatment》，2026 年 9 月 28 日投稿。"
       },
       "sourceType": "publications",
-      "sourceId": "sustainability"
+      "sourceId": "sustainability",
+      "sourceEvent": "submitted"
     },
     {
       "id": "measurement",
@@ -512,158 +538,97 @@
       "stage": "continuation",
       "award": "",
       "en": {
-        "title": "Undergraduate research follow-up · Measurement manuscript",
-        "text": "Received a contributing-author notification for the manuscript on reliability-gated selective reading of industrial pointer meters, submitted to Measurement."
+        "title": "Authorship confirmation · industrial pointer-meter manuscript in Measurement",
+        "text": "Received the co-authorship confirmation for “Reliability-gated selective reading from visual evidence to admissible measurements for industrial pointer meters”, a submitted manuscript continuing the undergraduate meter-reading research."
       },
       "zh": {
-        "title": "本科研究后续 · Measurement 论文作者确认",
-        "text": "收到工业指针仪表可靠性门控选择性读数论文的共同作者确认通知，稿件已投稿至 Measurement。"
+        "title": "Measurement 工业指针仪表读数论文共同作者确认",
+        "text": "收到《Reliability-gated selective reading from visual evidence to admissible measurements for industrial pointer meters》的共同作者确认通知，延续本科仪表读数研究；稿件已投稿。"
       },
       "sourceType": "publications",
-      "sourceId": "measurement"
-    }
-  ],
-  "grouped": [
-    {
-      "id": "honor-totals",
-      "award": "national",
-      "en": {
-        "title": "National and provincial distinctions",
-        "text": "National: 10 competition awards and 4 innovation-training projects. Provincial: 18 competition awards and 6 innovation-training projects."
-      },
-      "zh": {
-        "title": "国家级与省级荣誉汇总",
-        "text": "国家级：竞赛获奖 10 项、大创立项 4 项；省级：竞赛获奖 18 项、大创立项 6 项。"
-      },
-      "date": "≈2025.08",
-      "stage": "continuation",
-      "cumulative": true
-    },
-    {
-      "id": "scholarships",
-      "award": "university-5",
-      "en": {
-        "title": "Six university scholarships",
-        "text": "Three first-class and three second-class Outstanding Student Scholarships."
-      },
-      "zh": {
-        "title": "六次校级奖学金",
-        "text": "校级优秀学生一等奖学金 3 次、二等奖学金 3 次。"
-      },
-      "date": "≈2025.07",
-      "stage": "undergraduate",
-      "cumulative": true
-    },
-    {
-      "id": "school-service",
-      "award": "university-4",
-      "en": {
-        "title": "University honor and student representation",
-        "text": "Outstanding Student Cadre; student representative at the university evaluation expert forum and for the university Youth League committee."
-      },
-      "zh": {
-        "title": "校级优秀干部与学生代表经历",
-        "text": "校级优秀干部；校评估专家座谈会学生代表、校团委学生代表。"
-      },
-      "date": "≈2025.07",
-      "stage": "undergraduate",
-      "cumulative": true
+      "sourceId": "measurement",
+      "sourceEvent": "authorship"
     },
     {
       "id": "internet-plus",
       "award": "provincial-5",
       "en": {
-        "title": "Provincial silver award · Internet+",
-        "text": "Provincial silver award for work on AI and medical applications."
+        "title": "Provincial silver award · China International “Internet+” College Students Innovation and Entrepreneurship Competition",
+        "text": "AI and medical-application project received a provincial silver award."
       },
       "zh": {
-        "title": "“互联网+”特级赛省级银奖",
+        "title": "中国国际“互联网+”大学生创新创业大赛省级银奖",
         "text": "人工智能与医疗应用相关项目获省级银奖。"
       },
       "date": "≈2023.06",
       "stage": "undergraduate",
-      "cumulative": false,
       "sourceType": "awards",
       "sourceId": "provincial-5"
     },
     {
-      "id": "challenge-total",
-      "award": "provincial-4",
-      "en": {
-        "title": "Three provincial bronze awards · Challenge Cup",
-        "text": "Three provincial bronze awards, including the 2024 industrial meter-reading result."
-      },
-      "zh": {
-        "title": "“挑战杯”省级铜奖共三项",
-        "text": "累计 3 项省级铜奖，包含 2024 年工业仪表读数项目。"
-      },
-      "date": "≈2025.08",
-      "stage": "continuation",
-      "cumulative": true,
-      "sourceType": "awards",
-      "sourceId": "provincial-4"
-    },
-    {
-      "id": "regional-total",
-      "award": "provincial-6",
-      "en": {
-        "title": "RAICOM Northern Division placements",
-        "text": "Northern Division second- and third-place finishes."
-      },
-      "zh": {
-        "title": "睿抗北方赛区名次汇总",
-        "text": "北方赛区第二、第三名。"
-      },
-      "date": "≈2025.08",
-      "stage": "continuation",
-      "cumulative": true,
-      "sourceType": "awards",
-      "sourceId": "provincial-6"
-    },
-    {
-      "id": "software-total",
-      "award": "software",
-      "en": {
-        "title": "Five registered software works",
-        "text": "Primary contributor: 3D point-cloud assistive helmet, cephalometric detection, diabetic-retinopathy diagnosis, device–edge–cloud road-distress detection, and EyeMoveAI."
-      },
-      "zh": {
-        "title": "五项软件著作权",
-        "text": "实际主创：3D 点云 AI 助盲头盔、头颅侧位片检测、糖网病变 AI 辅诊、端边云路面病害检测、EyeMoveAI 眼动辅诊。"
-      },
-      "date": "≈2025.08",
-      "stage": "continuation",
-      "cumulative": true
-    },
-    {
-      "id": "innovation-topics",
-      "award": "innovation",
-      "en": {
-        "title": "Further innovation-training topics",
-        "text": "Projects also covered an IoT assistive helmet, cephalometric analysis for orthodontics, and reinforcement-learning decisions for a robotic dispensing arm."
-      },
-      "zh": {
-        "title": "其他大创项目方向",
-        "text": "项目还涉及物联网助盲头盔、头颅侧位片分析（口腔正畸）、抓药机械臂强化学习决策等方向。"
-      },
-      "date": "≈2025.08",
-      "stage": "continuation",
-      "cumulative": true
-    },
-    {
-      "id": "qualifications",
-      "award": "software-6",
-      "en": {
-        "title": "Professional qualifications",
-        "text": "IELTS  6.5, HUAWEI HCIA / HCIP and HCCDP (AI), Level 3 Network and Information Security Administrator, and Putonghua Level 2-B."
-      },
-      "zh": {
-        "title": "专业资格与语言证书",
-        "text": "雅思  6.5，HUAWEI HCIA／HCIP、HCCDP 人工智能认证，国家三级网络与信息安全管理员，普通话二级乙等。"
-      },
-      "date": "≈2025.07",
+      "id": "assistive-helmet-software",
+      "date": "≈2023.06",
       "stage": "undergraduate",
-      "cumulative": true
+      "award": "software-1",
+      "en": {
+        "title": "3D Point-Cloud AI Assistive Helmet System registered as a software work",
+        "text": "Software registration completed; primary contributor to this system."
+      },
+      "zh": {
+        "title": "3D 点云 AI 助盲头盔系统获软件著作权",
+        "text": "该系统完成软件著作权登记，本人为实际主创。"
+      },
+      "sourceType": "awards",
+      "sourceId": "software-1"
+    },
+    {
+      "id": "cephalometric-software",
+      "date": "≈2023.06",
+      "stage": "undergraduate",
+      "award": "software-2",
+      "en": {
+        "title": "Cephalometric Image Detection System registered as a software work",
+        "text": "Software registration completed; primary contributor to this system."
+      },
+      "zh": {
+        "title": "头颅侧位片检测系统获软件著作权",
+        "text": "该系统完成软件著作权登记，本人为实际主创。"
+      },
+      "sourceType": "awards",
+      "sourceId": "software-2"
+    },
+    {
+      "id": "retinopathy-software",
+      "date": "≈2024.06",
+      "stage": "undergraduate",
+      "award": "software-3",
+      "en": {
+        "title": "AI-Assisted Diabetic Retinopathy Diagnosis System registered as a software work",
+        "text": "Software registration completed; primary contributor to this system."
+      },
+      "zh": {
+        "title": "糖网病变 AI 辅诊系统获软件著作权",
+        "text": "该系统完成软件著作权登记，本人为实际主创。"
+      },
+      "sourceType": "awards",
+      "sourceId": "software-3"
+    },
+    {
+      "id": "road-distress-software",
+      "date": "≈2024.06",
+      "stage": "undergraduate",
+      "award": "software-4",
+      "en": {
+        "title": "Device–Edge–Cloud Road-Distress Detection System registered as a software work",
+        "text": "Software registration completed; primary contributor to this system."
+      },
+      "zh": {
+        "title": "端边云路面病害检测获软件著作权",
+        "text": "该系统完成软件著作权登记，本人为实际主创。"
+      },
+      "sourceType": "awards",
+      "sourceId": "software-4"
     }
-  ]
+  ],
+  "grouped": []
 }

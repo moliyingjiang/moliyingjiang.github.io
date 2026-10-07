@@ -25,11 +25,27 @@ export function findSource(item, portfolio) {
   }
   if (item.award) {
     const record = portfolio.awards.find(record => record.id === item.award);
-    if (record) return { kind: 'awards', record, referenceOnly: true };
+    if (record && !record.cumulative) return { kind: 'awards', record, referenceOnly: true };
   }
+  if (item.detachedSource) return null;
   const paperId = item.id === 'road-paper' ? 'road-crack' : item.id;
   const record = portfolio.publications.find(record => record.id === paperId);
   return record ? { kind: 'publications', record } : null;
+}
+export function newsState(item, portfolio) {
+  if (item.cumulative) return 'archived';
+  if (findSource(item, portfolio)) return 'linked';
+  if (item.detachedSource) return 'detached';
+  return 'independent';
+}
+export function upgradeContentBase(base, currentProfile) {
+  try {
+    const data = JSON.parse(base);
+    if (!Array.isArray(data) || ![2, 3].includes(data.length)) return base;
+    upgradeLinkedNews(data[0], data[1]);
+    if (data.length === 2) data.push(currentProfile);
+    return JSON.stringify(data);
+  } catch { return base; }
 }
 export function destination(kind, record) {
   if (kind === 'profile') return '首页、研究介绍、简历与全站个人资料';
@@ -49,4 +65,26 @@ export function changeCount(base, news, portfolio, profile) {
   ]);
   const before = flatten(...original), after = flatten(news, portfolio, profile);
   return [...new Set([...before.keys(), ...after.keys()])].filter(id => before.get(id) !== after.get(id)).length;
+}
+import { upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261007-events';
+export function createConfirmation(dialog, messageElement) {
+  let pending = false;
+  return async message => {
+    if (pending) return false;
+    pending = true;
+    const trigger = dialog.ownerDocument?.activeElement;
+    try {
+      return await new Promise((resolve, reject) => {
+        const cleanup = () => { dialog.removeEventListener('close', closed); dialog.removeEventListener('cancel', cancelled); };
+        const closed = () => { cleanup(); trigger?.focus?.({ preventScroll: true }); resolve(dialog.returnValue === 'confirm'); };
+        const cancelled = event => { event.preventDefault(); dialog.close('cancel'); };
+        messageElement.textContent = message;
+        dialog.returnValue = 'cancel';
+        dialog.addEventListener('close', closed);
+        dialog.addEventListener('cancel', cancelled);
+        try { dialog.showModal(); dialog.querySelector('[value="cancel"]')?.focus(); }
+        catch (error) { cleanup(); reject(error); }
+      });
+    } finally { pending = false; }
+  };
 }
