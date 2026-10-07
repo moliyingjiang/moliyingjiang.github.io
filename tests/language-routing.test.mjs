@@ -78,8 +78,8 @@ function windowMock(path = '/', config = {}) {
   return win;
 }
 
-test('all eight public route pairs preserve query and fragment in both directions', () => {
-  assert.equal(LANGUAGE_PAIRS.length, 8);
+test('all nine public route pairs preserve query and fragment in both directions', () => {
+  assert.equal(LANGUAGE_PAIRS.length, 9);
   for (const [en, zh] of LANGUAGE_PAIRS) {
     assert.equal(pageLanguage(en), 'en');
     assert.equal(pageLanguage(zh), 'zh');
@@ -362,8 +362,8 @@ test('rendering all sixteen public pages inserts one routing module and is idemp
   const stale = '<script type="module" src="/assets/js/language-routing.mjs?v=old"></script>';
   for (const path of PAGE_PATHS) pages[path] = pages[path].replace('</head>', stale + stale + '</head>');
   const output = renderSite(pages, news, portfolio, profile);
-  assert.equal(PAGE_PATHS.length, 16);
-  assert.equal(Object.keys(output).filter(path => path.endsWith('.html')).length, 16);
+  assert.equal(PAGE_PATHS.length, 18);
+  assert.equal(Object.keys(output).filter(path => path.endsWith('.html')).length, 18);
   for (const path of PAGE_PATHS) {
     const matches = [...output[path].matchAll(/<script\b[^>]*src="\/assets\/js\/language-routing\.mjs(?:\?[^"]*)?"[^>]*><\/script>/g)];
     assert.equal(matches.length, 1, path);

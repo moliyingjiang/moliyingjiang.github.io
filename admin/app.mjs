@@ -1,8 +1,8 @@
-import { EDITABLE_PATHS, PAGE_PATHS, TYPES, STATUSES, ROLES, DATE_TYPES, NEWS_CATEGORIES, esc, clone, newId, today, validDate, byDate, validateContent, adjustAwardTotals, syncLinkedNews, findLinkedNews, canLinkNews, sourceEvent, newsCategory, detachLinkedNews, upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261007-integrity';
-import { renderSite } from '../assets/js/site-renderer.mjs?v=20261007-integrity';
-import { PROFILE_PATH, PROFILE_GROUPS, validateProfile, profileFromForm, upgradeDraftBase, syncEducationNews } from '../assets/js/profile-model.mjs?v=20261007-integrity';
-import { GitHub } from './github.mjs?v=20261003-profile';
-import { KIND_NAMES, PAGE_NAMES, previewPath, recordAnchor, findSource, destination, changeCount, newsState, upgradeContentBase, createConfirmation, assertPublicationBaseline, createConnectionAttempts } from './editor-model.mjs?v=20261007-integrity';
+import { EDITABLE_PATHS, PAGE_PATHS, TYPES, STATUSES, ROLES, DATE_TYPES, NEWS_CATEGORIES, esc, clone, newId, today, validDate, byDate, validateContent, adjustAwardTotals, syncLinkedNews, findLinkedNews, canLinkNews, sourceEvent, newsCategory, detachLinkedNews, upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261007-practice';
+import { renderSite } from '../assets/js/site-renderer.mjs?v=20261007-practice';
+import { PROFILE_PATH, PROFILE_GROUPS, validateProfile, profileFromForm, upgradeDraftBase, syncEducationNews } from '../assets/js/profile-model.mjs?v=20261007-practice';
+import { GitHub } from './github.mjs?v=20261007-practice';
+import { KIND_NAMES, PAGE_NAMES, previewPath, recordAnchor, findSource, destination, changeCount, newsState, upgradeContentBase, createConfirmation, assertPublicationBaseline, createConnectionAttempts } from './editor-model.mjs?v=20261007-practice';
 
 const $ = selector => document.querySelector(selector);
 const requestConfirmation = createConfirmation($('#confirm-dialog'), $('#confirm-message'));
@@ -62,7 +62,7 @@ function list() {
   ).slice().sort(byDate);
   $('#list').innerHTML = filtered.length ? filtered.map(record =>
     '<button type="button" data-id="' + esc(record.id) + '" class="' + (editing?.id === record.id ? 'selected' : '') + '">' + esc(record.zh.title) +
-    '<small>' + (record.stage === 'graduate' ? '硕士' : record.stage === 'continuation' || record.followUp ? kind === 'awards' && record.type === 'qualification' || kind === 'news' && newsCategory(record, portfolio) === 'qualification' ? '毕业后 · 入硕前' : '本科研究后续' : '本科') + ' · ' + esc(record.date || record.period || '时间未填写') + '</small>' + (kind === 'news' ? '<span class="record-state">' + esc(NEWS_CATEGORIES[newsCategory(record, portfolio)]) + ' · ' + eventStates[newsState(record, portfolio)] + '</span>' : '') + '</button>'
+    '<small>' + (record.stage === 'graduate' ? '硕士' : record.stage === 'continuation' || record.followUp ? kind === 'awards' && record.type === 'qualification' || kind === 'news' && newsCategory(record, portfolio) === 'qualification' ? '毕业后 · 入硕前' : '本科研究后续' : '本科') + ' · ' + (kind === 'projects' ? record.practice ? '实践 · ' : '项目 · ' : '') + esc(record.date || record.period || '时间未填写') + '</small>' + (kind === 'news' ? '<span class="record-state">' + esc(NEWS_CATEGORIES[newsCategory(record, portfolio)]) + ' · ' + eventStates[newsState(record, portfolio)] + '</span>' : '') + '</button>'
   ).join('') : '<p class="empty-list">没有匹配的记录，试试其他阶段或关键词。</p>';
   $('#list-caption').textContent = filtered.length + ' 条记录 · 按时间排序';
   $('#add').textContent = '＋ 新增' + ({news:'动态',awards:'荣誉 / 资格',publications:'论文',projects:'项目'})[kind];
@@ -128,6 +128,7 @@ function edit(record) {
     html += '<div class="form-section"><h3>论文信息</h3><div class="form-grid">' + select('status', record.status, '论文状态', STATUSES) + select('role', record.role, '作者身份', ROLES) + select('dateType', record.dateType, '日期含义', DATE_TYPES) + field('url', record.url, '论文链接（可选）') + field('metricsSource', record.metricsSource, '分区来源链接（可选）') + '</div>';
     html += '<label class="check-row"><input type="checkbox" name="followUp" ' + (record.followUp ? 'checked' : '') + (record.stage === 'graduate' ? ' disabled' : '') + '>本科项目后续成果</label><p class="field-help">本科项目延续形成的论文仍归入本科；硕士记录不勾选这一项。</p></div>';
   }
+  if (kind === 'projects') html += '<label class="check-row"><input type="checkbox" name="practice" ' + (record.practice ? 'checked' : '') + '>实践经历（团队成员、班长等任职，不显示在项目页）</label>';
   if (kind === 'projects') html += '<div class="form-section"><h3>代码与材料</h3><div class="form-grid">' + field('gitee', record.gitee, 'Gitee 仓库（国内访问）') + field('github', record.github, 'GitHub 仓库（国际访问）') + '</div></div>';
   if (kind === 'news') html += '<div class="form-section"><div class="form-grid">' + select('category', record.category || '', '事件分类', { '': '按关联来源自动分类', ...NEWS_CATEGORIES }) + select('award', record.award || '', '引用具体荣誉（可选）', { '':'无', ...Object.fromEntries(portfolio.awards.filter(item => !item.cumulative).map(item => [item.id, item.zh.title])) }) + '</div><p class="field-help">只引用本次具体获奖、立项或证书；累计汇总不作为新闻。</p>' + (record.sourceType === 'publications' ? '<p class="source-history">论文节点：' + esc(DATE_TYPES[record.sourceEvent]?.[0] || '历史事件') + ' · 修改本条不改变其他投稿、接收或发表事件。</p>' : '') + '</div>';
   const fields = kind === 'awards' ? ['title','result','rankLabel','rank'] : kind === 'publications' ? ['title','journal','metrics','summary'] : kind === 'projects' ? ['title','category','text','moreLabel','moreUrl'] : ['title','text'];
@@ -142,7 +143,7 @@ function edit(record) {
 function clearEditor() {
   if (kind === 'profile') return editProfile();
   editing = null; dirty = false;
-  const help = {news:'每条动态只记录一次具体事件。填写发生日期、完整名称与结果，在首页和时间线按本科、硕士分别显示。',awards:'竞赛奖项、奖学金、资格证书和语言成绩均在这里维护。单次具体记录可生成动态，累计汇总只显示在荣誉页。',publications:'按本科与硕士阶段维护论文。投稿、作者通知、审稿、接收与发表可分别关联独立事件，保留先前历史。',projects:'维护研究项目介绍，以及 Gitee 与 GitHub 的代码入口。'}[kind];
+  const help = {news:'每条动态只记录一次具体事件。填写发生日期、完整名称与结果，在首页和时间线按本科、硕士分别显示。',awards:'竞赛奖项、奖学金、资格证书和语言成绩均在这里维护。单次具体记录可生成动态，累计汇总只显示在荣誉页。',publications:'按本科与硕士阶段维护论文。投稿、作者通知、审稿、接收与发表可分别关联独立事件，保留先前历史。',projects:'维护项目及实践经历；勾选“实践经历”后单独显示在实践页，本硕分别记录。'}[kind];
   $('#editor').innerHTML = '<div class="empty-editor"><p class="overline">PERSONAL ACADEMIC RECORD</p><h1>' + KIND_NAMES[kind] + '</h1><p>' + help + '</p><p>选择一条记录，或点击“新增”。中英文分别填写，预览确认后发布。</p></div>';
   updateState();
 }
@@ -221,9 +222,9 @@ $('#editor').onsubmit = event => {
     const next = clone(editing), form = new FormData(event.target), n = clone(news), p = clone(portfolio);
     for (const [name,value] of form) {
       if (name.includes('.')) { const [lang, field] = name.split('.'); next[lang][field] = value.trim(); }
-      else if (!['sync','counted','cumulative','followUp'].includes(name)) next[name] = value.trim();
+      else if (!['sync','counted','cumulative','followUp','practice'].includes(name)) next[name] = value.trim();
     }
-    if (kind === 'projects') delete next.date;
+    if (kind === 'projects') { delete next.date; next.practice = form.has('practice'); }
     if (kind === 'news' && next.award !== editing.award && editing.sourceType === 'awards') {
       next.detachedSource = { kind: 'awards', id: editing.sourceId, event: editing.sourceEvent || '' };
       delete next.sourceType; delete next.sourceId; delete next.sourceEvent; delete next.sourceSnapshot;
@@ -353,7 +354,7 @@ function showPreview() {
   try {
     if (dirty) throw Error('请先保存当前表单，再预览这条记录。');
     const language = $('#preview-page').value.startsWith('zh/') || ['graduate-cv.html','undergraduate-cv.html'].includes($('#preview-page').value) ? 'zh' : 'en';
-    $('#preview-page').value = previewPath(kind, language);
+    $('#preview-page').value = previewPath(kind, language, editing);
     preview(); $('#preview-dialog').showModal();
   } catch(error) { status(error.message); }
 }

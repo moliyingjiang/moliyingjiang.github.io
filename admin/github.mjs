@@ -1,4 +1,4 @@
-import { EDITABLE_PATHS } from '../assets/js/content-model.mjs?v=20261003-profile';
+import { EDITABLE_PATHS } from '../assets/js/content-model.mjs?v=20261007-practice';
 export class GitHub {
   constructor(token, fetcher = (...args) => globalThis.fetch(...args)) { this.token = token; this.fetcher = fetcher; }
   async request(path, method = 'GET', body) {

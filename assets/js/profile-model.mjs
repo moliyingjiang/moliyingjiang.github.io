@@ -1,4 +1,4 @@
-import { esc, safeUrl, validDate } from './content-model.mjs?v=20261007-integrity';
+import { esc, safeUrl, validDate } from './content-model.mjs?v=20261007-practice';
 
 export const PROFILE_PATH = 'assets/data/profile.json';
 export const PROFILE_GROUPS = {
@@ -131,6 +131,7 @@ const titles = {
   'milestones.html': ['News & milestones', '动态与足迹'],
   'research.html': ['Research & publications', '研究与论文'],
   'projects.html': ['Research projects', '研究项目'],
+  'practice.html': ['Experience & service', '实践经历'],
   'awards.html': ['Awards & distinctions', '竞赛与荣誉'],
   'cv.html': ['Curriculum vitae', '教育背景与简历'],
   'graduate-record.html': ['Graduate record', '硕士档案'],

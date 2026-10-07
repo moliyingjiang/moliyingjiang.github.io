@@ -6,7 +6,7 @@ const FAILURE_TTL = 5 * 60 * 1000;
 
 export const LANGUAGE_PAIRS = [
   ['/', '/zh/'],
-  ...['milestones', 'research', 'projects', 'awards', 'cv'].map(name => ['/' + name + '.html', '/zh/' + name + '.html']),
+  ...['milestones', 'research', 'projects', 'practice', 'awards', 'cv'].map(name => ['/' + name + '.html', '/zh/' + name + '.html']),
   ['/undergraduate-record.html', '/undergraduate-cv.html'],
   ['/graduate-record.html', '/graduate-cv.html']
 ];

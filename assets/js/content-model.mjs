@@ -1,5 +1,5 @@
 export const DATA_PATHS = ['assets/data/news.json', 'assets/data/portfolio.json', 'assets/data/profile.json'];
-export const PAGE_PATHS = ['index.html', 'zh/index.html', 'milestones.html', 'zh/milestones.html', 'awards.html', 'zh/awards.html', 'research.html', 'zh/research.html', 'projects.html', 'zh/projects.html', 'graduate-record.html', 'graduate-cv.html', 'cv.html', 'zh/cv.html', 'undergraduate-record.html', 'undergraduate-cv.html'];
+export const PAGE_PATHS = ['index.html', 'zh/index.html', 'milestones.html', 'zh/milestones.html', 'awards.html', 'zh/awards.html', 'research.html', 'zh/research.html', 'projects.html', 'zh/projects.html', 'practice.html', 'zh/practice.html', 'graduate-record.html', 'graduate-cv.html', 'cv.html', 'zh/cv.html', 'undergraduate-record.html', 'undergraduate-cv.html'];
 export const EDITABLE_PATHS = [...DATA_PATHS, ...PAGE_PATHS];
 export const TYPES = {
   'national-award': ['国家级竞赛奖', 'national', 'nationalAwards'],
@@ -92,6 +92,7 @@ export function sourceEvent(kind, record) {
 }
 export function newsCategory(item, portfolio) {
   if (NEWS_CATEGORIES[item.category]) return item.category;
+  if (item.sourceType === 'projects' && portfolio?.projects?.find(record => record.id === item.sourceId)?.practice) return 'service';
   if (item.sourceType === 'publications' || item.sourceType === 'projects') return 'research';
   const award = portfolio?.awards?.find(record => record.id === (item.sourceType === 'awards' ? item.sourceId : item.award));
   if (award) return award.type.includes('innovation') ? 'innovation' : award.type.includes('award') ? 'competition' : award.type === 'software' ? 'software' : award.type === 'qualification' ? 'qualification' : 'honor';
@@ -110,7 +111,7 @@ export function linkedNews(kind, record) {
     const text = record[lang];
     item[lang] = { title: text.title, text: kind === 'awards' ? [text.result, text.rank ? [text.rankLabel, text.rank].filter(Boolean).join(' ') : ''].filter(Boolean).join(' · ') : kind === 'publications' ? [text.journal, DATE_TYPES[event]?.[lang === 'zh' ? 0 : 1] || STATUSES[record.status][lang === 'zh' ? 0 : 1], ROLES[record.role][lang === 'zh' ? 0 : 1], text.summary].filter(Boolean).join(' · ') : text.text };
   }
-  item.category = newsCategory(item, { awards: kind === 'awards' ? [record] : [] });
+  item.category = newsCategory(item, { awards: kind === 'awards' ? [record] : [], projects: kind === 'projects' ? [record] : [] });
   item.sourceSnapshot = clone({ date: item.date, stage: item.stage, en: item.en, zh: item.zh });
   return item;
 }

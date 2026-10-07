@@ -1,20 +1,23 @@
-export const KIND_NAMES = { profile: '个人资料', news: '动态与足迹', awards: '荣誉与资格', publications: '论文记录', projects: '研究项目' };
+export const KIND_NAMES = { profile: '个人资料', news: '动态与足迹', awards: '荣誉与资格', publications: '论文记录', projects: '项目与实践' };
 export const PAGE_NAMES = {
   'index.html': '首页 · English', 'zh/index.html': '首页 · 中文',
   'milestones.html': '完整时间线 · English', 'zh/milestones.html': '完整时间线 · 中文',
   'awards.html': '荣誉与资格 · English', 'zh/awards.html': '荣誉与资格 · 中文',
   'research.html': '研究与论文 · English', 'zh/research.html': '研究与论文 · 中文',
   'projects.html': '研究项目 · English', 'zh/projects.html': '研究项目 · 中文',
+  'practice.html': '实践经历 · English', 'zh/practice.html': '实践经历 · 中文',
   'graduate-record.html': '硕士档案 · English', 'graduate-cv.html': '硕士档案 · 中文',
   'cv.html': '简历索引 · English', 'zh/cv.html': '简历索引 · 中文',
   'undergraduate-record.html': '本科档案 · English', 'undergraduate-cv.html': '本科档案 · 中文'
 };
-export function previewPath(kind, language = 'en') {
+export function previewPath(kind, language = 'en', record) {
+  if (kind === 'projects' && record?.practice) return (language === 'zh' ? 'zh/' : '') + 'practice.html';
   const page = { profile: 'index.html', news: 'index.html', awards: 'awards.html', publications: 'research.html', projects: 'projects.html' }[kind];
   return (language === 'zh' ? 'zh/' : '') + page;
 }
 export function recordAnchor(kind, record) {
   if (!record || kind === 'profile') return '';
+  if (kind === 'projects' && record.practice) return 'practice-' + record.id;
   return kind === 'awards' ? record.id : ({ news: 'news-', publications: 'publication-', projects: 'project-' }[kind] || '') + record.id;
 }
 export function findSource(item, portfolio) {
@@ -61,7 +64,7 @@ export function createConnectionAttempts() {
 export function destination(kind, record) {
   if (kind === 'profile') return '首页、研究介绍、简历与全站个人资料';
   const stage = record?.stage === 'graduate' ? '硕士阶段' : record?.stage === 'continuation' || record?.followUp ? kind === 'awards' ? '本科阶段结束后' : '本科项目后续' : '本科阶段';
-  const page = { news: '首页动态、完整时间线', awards: '荣誉与资格页', publications: '研究与论文页', projects: '研究项目页' }[kind];
+  const page = { news: '首页动态、完整时间线', awards: '荣誉与资格页', publications: '研究与论文页', projects: record?.practice ? '实践经历页' : '研究项目页' }[kind];
   return page + (record ? ' · ' + stage : '');
 }
 export function changeCount(base, news, portfolio, profile) {
@@ -77,7 +80,7 @@ export function changeCount(base, news, portfolio, profile) {
   const before = flatten(...original), after = flatten(news, portfolio, profile);
   return [...new Set([...before.keys(), ...after.keys()])].filter(id => before.get(id) !== after.get(id)).length;
 }
-import { upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261007-integrity';
+import { upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261007-practice';
 export function createConfirmation(dialog, messageElement) {
   let pending = false;
   return async message => {

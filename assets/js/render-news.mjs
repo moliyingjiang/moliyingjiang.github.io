@@ -1,4 +1,4 @@
-import { esc as escape, newsCategory } from './content-model.mjs?v=20261007-integrity';
+import { esc as escape, newsCategory } from './content-model.mjs?v=20261007-practice';
 
 export function renderNewsPages(pages, data, portfolio, profile) {
 // A dated news item describes one occurrence. Summary figures belong on Awards.
@@ -27,7 +27,7 @@ for (const lang of ['en', 'zh']) {
     const legacy = { sustainability: 'sustainability', measurement: 'measurement', 'road-paper': 'road-crack' };
     const paperId = record.sourceType === 'publications' ? record.sourceId : legacy[record.id];
     if (paperId && (!portfolio || portfolio.publications.some(item => item.id === paperId))) return [prefix + '/research.html#publication-' + paperId, zh ? '论文记录 →' : 'Publication record →'];
-    if (record.sourceType === 'projects' && record.sourceId && (!portfolio || portfolio.projects.some(item => item.id === record.sourceId))) return [prefix + '/projects.html#project-' + record.sourceId, zh ? '项目记录 →' : 'Project record →'];
+    if (record.sourceType === 'projects' && record.sourceId && (!portfolio || portfolio.projects.some(item => item.id === record.sourceId))) return [prefix + (portfolio?.projects.find(item => item.id === record.sourceId)?.practice ? '/practice.html#practice-' : '/projects.html#project-') + record.sourceId, zh ? '项目记录 →' : 'Project record →'];
     return null;
   };
   const homeRow = record => {

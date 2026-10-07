@@ -936,16 +936,17 @@
         "title": "Taiyuan University Dengshu Robotics Team · Robot-dog team",
         "category": "ROBOTICS",
         "text": "Robot-dog team captain from November 2022 to July 2025. Organized preparation for RAICOM, the China University Intelligent Robot Creative Competition, and the China Robot Competition; worked on visual perception, communication, and coordinated robot-system debugging.",
-        "moreLabel": "Team experience →",
-        "moreUrl": "/undergraduate-record.html#experience-robocup"
+        "moreLabel": "",
+        "moreUrl": ""
       },
       "zh": {
         "title": "太原学院登枢战队 · 机器狗队",
         "category": "机器人系统",
         "text": "2022.11–2025.07 担任机器狗队队长，组织睿抗机器人开发者大赛、中国高校智能机器人创意大赛与中国机器人大赛等竞赛准备，开展视觉感知、通信及机器人协同调试。",
-        "moreLabel": "团队经历 →",
-        "moreUrl": "/undergraduate-cv.html#experience-robocup"
-      }
+        "moreLabel": "",
+        "moreUrl": ""
+      },
+      "practice": true
     },
     {
       "id": "p-ssd",
@@ -1008,6 +1009,72 @@
         "text": "参与山西省青年科研项目，负责科研绘图，参与掌纹图像提取、二值化与关键纹路匹配，并结合知识图谱开展医学信息检索和辅助诊断报告生成。",
         "moreLabel": "项目经历 →",
         "moreUrl": "/undergraduate-cv.html#experience-palm-diagnosis"
+      }
+    },
+    {
+      "id": "lab",
+      "stage": "undergraduate",
+      "period": "2022.03 — 2025.07",
+      "practice": true,
+      "gitee": "",
+      "github": "",
+      "zh": {
+        "title": "太原学院大数据与人工智能创新实验室",
+        "category": "实验室成员",
+        "text": "参与组会、研究汇报及医疗人工智能、视觉算法与多模态应用相关科研训练。",
+        "moreLabel": "",
+        "moreUrl": ""
+      },
+      "en": {
+        "title": "Big Data and Artificial Intelligence Innovation Laboratory, Taiyuan University",
+        "category": "Laboratory member",
+        "text": "Participated in group meetings, research presentations, and research training in medical AI, visual algorithms, and multimodal applications.",
+        "moreLabel": "",
+        "moreUrl": ""
+      }
+    },
+    {
+      "id": "academy",
+      "stage": "undergraduate",
+      "period": "2022.03 — 2025.07",
+      "practice": true,
+      "gitee": "",
+      "github": "",
+      "zh": {
+        "title": "山西省“1331工程”大数据智能诊疗产业学院",
+        "category": "组长",
+        "text": "参与人工智能培训、开发实践与大学生创新创业训练项目。",
+        "moreLabel": "",
+        "moreUrl": ""
+      },
+      "en": {
+        "title": "Shanxi “1331 Project” Big Data Intelligent Diagnosis Industry Academy",
+        "category": "Group leader",
+        "text": "Participated in AI training, development practice, and undergraduate innovation-training projects.",
+        "moreLabel": "",
+        "moreUrl": ""
+      }
+    },
+    {
+      "id": "masters-class-monitor",
+      "stage": "graduate",
+      "period": "至今",
+      "practice": true,
+      "gitee": "",
+      "github": "",
+      "zh": {
+        "title": "广西师范大学 · 硕士班级",
+        "category": "班长",
+        "text": "现任硕士班级班长。",
+        "moreLabel": "",
+        "moreUrl": ""
+      },
+      "en": {
+        "title": "Master’s cohort, Guangxi Normal University",
+        "category": "Class monitor",
+        "text": "Currently serving as class monitor of the master’s cohort.",
+        "moreLabel": "",
+        "moreUrl": ""
       }
     }
   ]
