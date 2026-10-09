@@ -1,0 +1,25 @@
+name: Mirror all owned repositories to Gitee
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mirror-all-owned-repositories
+  cancel-in-progress: false
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Check Git LFS is available
+        run: git lfs version
+      - name: Sync owned repositories
+        env:
+          GH_SOURCE_TOKEN: ${{ secrets.GH_SOURCE_TOKEN }}
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        run: python3 scripts/mirror_all_repositories.py
