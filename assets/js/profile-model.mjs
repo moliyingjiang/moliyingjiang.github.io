@@ -166,6 +166,10 @@ export function applyProfile(template, lang, profile, path = 'index.html') {
     const recordPath = decodedHref.split(/[?#]/)[0];
     const record = /data-profile-record="(graduate|undergraduate)-(en|zh)"/.exec(attributes) || /^\/(graduate|undergraduate)-(record|cv)\.html$/.exec(recordPath);
     if (record) {
+      if (record[1] === 'undergraduate' && attributes.includes('class="language"') && ['undergraduate-record.html', 'undergraduate-cv.html'].includes(path)) {
+        const destination = path === 'undergraduate-record.html' ? '/undergraduate-cv.html' : '/undergraduate-record.html';
+        return tag.replace(/href="[^"]*"/, 'href="' + destination + '"').replace(/>[^<]*<\/a>$/, '>' + (path === 'undergraduate-record.html' ? 'Language · 中文' : 'Language · EN') + '</a>');
+      }
       const targetLang = ['zh', 'cv'].includes(record[2]) ? 'zh' : 'en';
       const suffix = decodedHref.slice(recordPath.length);
       const recordUrl = profile.stages[record[1]][targetLang].recordUrl;

@@ -62,11 +62,13 @@ test('edited project responsibilities and periods propagate to bilingual electro
   assert.deepEqual(renderSite(output, news, next, profile), output);
 });
 
-test('research-only projects appear in research, engineering projects keep repository links, and undergraduate CV is PDF-only', () => {
+test('palm diagnosis is the research project, coagulant work is a publication, and undergraduate PDF stays in CV', () => {
   const output = renderSite(pages, news, portfolio, profile);
   for (const language of ['research.html', 'zh/research.html']) {
     assert.ok(output[language].includes('project-palm-diagnosis'));
-    assert.ok(output[language].includes('project-coagulant-dosage'));
+    assert.ok(!output[language].includes('project-coagulant-dosage'));
+    assert.ok(output[language].includes('publication-sustainability'));
+    assert.ok(!output[language].includes('/files/undergraduate-cv.pdf'));
   }
   for (const language of ['projects.html', 'zh/projects.html']) {
     assert.ok(!output[language].includes('project-palm-diagnosis'));
@@ -78,6 +80,7 @@ test('research-only projects appear in research, engineering projects keep repos
     assert.ok(!output[language].includes('/undergraduate-record.html'));
     assert.ok(!output[language].includes('/undergraduate-cv.html'));
   }
+  for (const language of ['awards.html', 'zh/awards.html', 'graduate-record.html', 'graduate-cv.html']) assert.ok(!output[language].includes('/files/undergraduate-cv.pdf'));
   assert.equal(previewPath('projects', 'zh', portfolio.projects.find(item => item.id === 'palm-diagnosis')), 'zh/research.html');
 });
 
@@ -116,7 +119,9 @@ test('advisor, school, research and CV changes propagate to their public destina
   for (const path of ['index.html','research.html','cv.html','graduate-record.html','awards.html','projects.html','milestones.html']) assert.ok(output[path].includes('Updated University'), path);
   for (const path of ['cv.html','graduate-record.html']) assert.ok(output[path].includes('Updated Advisor'), path);
   assert.ok(output['index.html'].includes('Updated research direction'));
-  for (const path of ['cv.html','undergraduate-record.html','awards.html']) assert.ok(output[path].includes('/files/updated-cv.pdf'), path);
+  assert.ok(output['cv.html'].includes('/files/updated-cv.pdf'));
+  assert.ok(!output['undergraduate-record.html'].includes('/files/updated-cv.pdf'));
+  assert.ok(!output['awards.html'].includes('/files/updated-cv.pdf'));
   assert.deepEqual(renderSite(output, news, portfolio, next), output);
 });
 

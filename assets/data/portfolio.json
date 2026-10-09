@@ -864,28 +864,6 @@
   ],
   "projects": [
     {
-      "id": "coagulant-dosage",
-      "stage": "graduate",
-      "researchOnly": true,
-      "period": "",
-      "github": "",
-      "gitee": "",
-      "en": {
-        "title": "Machine-learning prediction and interpretation of coagulant dosages",
-        "category": "DRINKING-WATER TREATMENT",
-        "text": "Co-author of the Sustainability submission on predicting and interpreting aluminum and iron coagulant dosages in drinking-water treatment. The manuscript was submitted on 28 September 2026.",
-        "moreLabel": "Related manuscript →",
-        "moreUrl": "/research.html#publication-sustainability"
-      },
-      "zh": {
-        "title": "饮用水处理混凝剂投加量的机器学习预测与解释",
-        "category": "饮用水处理",
-        "text": "作为共同作者参与铝盐、铁盐混凝剂投加量的机器学习预测与解释研究，相关论文于 2026 年 9 月 28 日投稿至 Sustainability。",
-        "moreLabel": "相关论文 →",
-        "moreUrl": "/zh/research.html#publication-sustainability"
-      }
-    },
-    {
       "id": "open-eye",
       "stage": "undergraduate",
       "period": "2023.03 — 2024.11",
