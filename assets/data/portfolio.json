@@ -789,6 +789,29 @@
         "rankLabel": "",
         "rank": ""
       }
+    },
+    {
+      "id": "awards-mv0gvrq4-9feb8f",
+      "stage": "graduate",
+      "en": {
+        "title": "AAA",
+        "result": "NO.1",
+        "rankLabel": "全国决赛",
+        "rank": ""
+      },
+      "zh": {
+        "title": "AAA",
+        "result": "一等奖",
+        "rankLabel": "全国决赛",
+        "rank": ""
+      },
+      "date": "2026.10.09",
+      "type": "national-award",
+      "section": "national",
+      "quantity": 1,
+      "counted": false,
+      "cumulative": false,
+      "followUp": false
     }
   ],
   "publications": [
