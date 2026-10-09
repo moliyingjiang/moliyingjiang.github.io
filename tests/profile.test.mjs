@@ -57,8 +57,28 @@ test('edited project responsibilities and periods propagate to bilingual electro
     assert.ok(output[path].includes('A &lt; B &amp; C'), path);
   }
   assert.ok(output['undergraduate-record.html'].includes('id="experience-hand-eye"'));
-  assert.ok(output['zh/projects.html'].includes('/undergraduate-cv.html#experience-hand-eye'));
+  assert.ok(!output['zh/projects.html'].includes('/undergraduate-cv.html#experience-hand-eye'));
+  assert.ok(output['zh/cv.html'].includes('/files/undergraduate-cv.pdf'));
   assert.deepEqual(renderSite(output, news, next, profile), output);
+});
+
+test('research-only projects appear in research, engineering projects keep repository links, and undergraduate CV is PDF-only', () => {
+  const output = renderSite(pages, news, portfolio, profile);
+  for (const language of ['research.html', 'zh/research.html']) {
+    assert.ok(output[language].includes('project-palm-diagnosis'));
+    assert.ok(output[language].includes('project-coagulant-dosage'));
+  }
+  for (const language of ['projects.html', 'zh/projects.html']) {
+    assert.ok(!output[language].includes('project-palm-diagnosis'));
+    assert.ok(!output[language].includes('project-coagulant-dosage'));
+    assert.ok(output[language].includes('github.com/moliyingjiang/Open-Eye'));
+  }
+  for (const language of ['cv.html', 'zh/cv.html']) {
+    assert.ok(output[language].includes('/files/undergraduate-cv.pdf'));
+    assert.ok(!output[language].includes('/undergraduate-record.html'));
+    assert.ok(!output[language].includes('/undergraduate-cv.html'));
+  }
+  assert.equal(previewPath('projects', 'zh', portfolio.projects.find(item => item.id === 'palm-diagnosis')), 'zh/research.html');
 });
 
 test('editable record destinations preserve exact experience anchors and URL queries', () => {

@@ -64,7 +64,7 @@
         "researchSummary": "Industrial meter reading, AI-assisted diagnosis, and hand-eye coordination.",
         "cvSummary": "Top 10% in the major (13/137). Research training and engineering practice in robotics, robotic manipulation, computer vision, and artificial intelligence.",
         "cvUrl": "/files/undergraduate-cv.pdf",
-        "recordUrl": "/undergraduate-record.html"
+        "recordUrl": "/files/undergraduate-cv.pdf"
       },
       "zh": {
         "school": "太原学院",
@@ -75,7 +75,7 @@
         "researchSummary": "工业仪表读数、人工智能辅助诊断与手眼协调。",
         "cvSummary": "专业排名前 10%（13/137）。机器人、机械臂、计算机视觉与人工智能方向的科研训练和工程实践。",
         "cvUrl": "/files/undergraduate-cv.pdf",
-        "recordUrl": "/undergraduate-cv.html"
+        "recordUrl": "/files/undergraduate-cv.pdf"
       }
     }
   }

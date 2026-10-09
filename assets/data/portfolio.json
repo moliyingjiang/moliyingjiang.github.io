@@ -866,6 +866,7 @@
     {
       "id": "coagulant-dosage",
       "stage": "graduate",
+      "researchOnly": true,
       "period": "",
       "github": "",
       "gitee": "",
@@ -979,36 +980,37 @@
         "title": "Hand-eye coordinated robotic grasping system",
         "category": "ROBOTIC MANIPULATION",
         "text": "Independently built the engineering system as project lead. Integrated ROS with IMU and leg-odometry navigation, URDF modeling, PyBullet/MoveIt simulation, depth-camera perception, hand-eye coordination, and reinforcement-learning-based arm planning. Completed algorithm/hardware debugging and system testing for grasping, agricultural harvesting, and rescue scenarios.",
-        "moreLabel": "Project experience →",
-        "moreUrl": "/undergraduate-record.html#experience-hand-eye"
+        "moreLabel": "",
+        "moreUrl": ""
       },
       "zh": {
         "title": "通用机器人手眼协调抓取系统",
         "category": "机器人操作",
         "text": "作为负责人独立搭建工程系统，集成 ROS、IMU 与腿部里程计导航、URDF 建模、PyBullet/MoveIt 仿真、深度相机感知、手眼协同及强化学习机械臂规划，完成算法与硬件调试和系统测试，面向目标抓取、农业采收与救援场景。",
-        "moreLabel": "项目经历 →",
-        "moreUrl": "/undergraduate-cv.html#experience-hand-eye"
+        "moreLabel": "",
+        "moreUrl": ""
       }
     },
     {
       "id": "palm-diagnosis",
       "stage": "undergraduate",
+      "researchOnly": true,
       "period": "2023.11 — 2025.11",
       "github": "",
       "gitee": "",
       "en": {
         "title": "Intelligent palm-diagnosis system based on modern medical standards",
-        "category": "MEDICAL COMPUTER VISION",
+        "category": "PROVINCIAL RESEARCH PROJECT · MEDICAL AI",
         "text": "Participant in a Shanxi Provincial Youth Research Project. Prepared research figures and contributed to palmprint-image extraction, binarization, and key-line matching, with knowledge-graph-assisted medical information retrieval and diagnostic-report generation.",
-        "moreLabel": "Project experience →",
-        "moreUrl": "/undergraduate-record.html#experience-palm-diagnosis"
+        "moreLabel": "",
+        "moreUrl": ""
       },
       "zh": {
         "title": "面向现代掌纹医学诊断标准的智能手诊系统研究",
-        "category": "医学计算机视觉",
+        "category": "省级科研项目 · 医学人工智能",
         "text": "参与山西省青年科研项目，负责科研绘图，参与掌纹图像提取、二值化与关键纹路匹配，并结合知识图谱开展医学信息检索和辅助诊断报告生成。",
-        "moreLabel": "项目经历 →",
-        "moreUrl": "/undergraduate-cv.html#experience-palm-diagnosis"
+        "moreLabel": "",
+        "moreUrl": ""
       }
     },
     {

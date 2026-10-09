@@ -1,6 +1,6 @@
 import { esc, byDate, SECTIONS, STATUSES, ROLES, DATE_TYPES, validateContent } from './content-model.mjs?v=20261007-practice';
 import { renderNewsPages } from './render-news.mjs?v=20261007-practice';
-import { applyProfile, validateProfile, parseEducationPeriod } from './profile-model.mjs?v=20261007-practice';
+import { applyProfile, validateProfile, parseEducationPeriod } from './profile-model.mjs?v=20261009-research';
 
 const profileMark = (slot, value) => '<!-- profile:' + slot + ' -->' + esc(value) + '<!-- /profile:' + slot + ' -->';
 
@@ -73,6 +73,8 @@ function researchStage(page, stage, data, lang) {
   if (!section) throw new Error('Research template missing: ' + stage);
   const records = data.publications.filter(item => item.stage === stage).sort(byDate).map(item => publicationRow(item, lang)).join('\n');
   const counts = publicationCounts(data, stage, lang);
+  const researchProjects = data.projects.filter(item => item.stage === stage && item.researchOnly).map(item => projectRow(item, lang)).join('\n');
+  const projectBlock = '<!-- research-projects:start -->' + (researchProjects ? '<div class="research-projects"><h3>' + (lang === 'zh' ? '科研项目' : 'Research projects') + '</h3><div class="project-page-list">' + researchProjects + '</div></div>' : '') + '<!-- research-projects:end -->';
   const marker = '<!-- publications:start -->\n' + (counts ? '<p class="publication-overview">' + esc(counts) + '</p>\n' : '') + records + '\n<!-- publications:end -->';
   let next;
   if (section.includes('<!-- publications:start -->')) next = section.replace(/<!-- publications:start -->[\s\S]*?<!-- publications:end -->/, () => marker);
@@ -81,6 +83,8 @@ function researchStage(page, stage, data, lang) {
     next = section.replace(/<article class="publication-record"[^>]*>[\s\S]*?<\/article>/g, () => { if (!first) return ''; first = false; return marker; });
     if (first) throw new Error('Publication template missing: ' + stage);
   }
+  next = next.replace(/<!-- research-projects:start -->[\s\S]*?<!-- research-projects:end -->/, '');
+  next = next.replace('<!-- publications:end -->', '<!-- publications:end -->' + projectBlock);
   return page.replace(section, () => next);
 }
 function projectRow(record, lang) {
@@ -91,9 +95,10 @@ function projectRow(record, lang) {
 }
 function renderProjects(page, data, lang) {
   const zh = lang === 'zh';
-  const rows = stage => data.projects.filter(item => item.stage === stage && !item.practice).map(item => projectRow(item, lang)).join('\n');
+  const rows = stage => data.projects.filter(item => item.stage === stage && !item.practice && !item.researchOnly).map(item => projectRow(item, lang)).join('\n');
+  const graduateRows = rows('graduate') || '<p><a href="' + (zh ? '/zh' : '') + '/research.html#graduate-research">' + (zh ? '查看硕士阶段研究与论文 →' : 'Explore master’s research &amp; publications →') + '</a></p>';
   const main = '<main class="page-shell projects-page"><p class="eyebrow">' + (zh ? '研究与工程实践' : 'RESEARCH &amp; ENGINEERING') + '</p><h1>' + (zh ? '项目与技术实践' : 'Research &amp; engineering projects') + '</h1><p class="page-lead">' + (zh ? '本科阶段开展视觉诊断、工业检测与机器人系统实践；硕士阶段关注饮用水处理中的机器学习。' : 'Undergraduate work in visual diagnosis, industrial inspection, and robotic systems; graduate work in machine learning for drinking-water treatment.') + '</p><nav class="section-index" aria-label="' + (zh ? '项目阶段' : 'Project stages') + '"><a href="#undergraduate-projects">' + (zh ? '本科项目' : 'Undergraduate projects') + '</a><a href="#graduate-projects">' + (zh ? '硕士项目' : 'Master’s projects') + '</a></nav><section id="undergraduate-projects" class="study-stage">' + stageHeading('undergraduate', lang) + '<div class="project-page-list">' + rows('undergraduate') + '</div><p class="all-projects"><a data-profile-link="gitee" href="https://gitee.com/YJ-MoLi">' + (zh ? 'Gitee 全部仓库（国内） →' : 'All repositories on Gitee →') + '</a><a data-profile-link="github" href="https://github.com/moliyingjiang">' + (zh ? 'GitHub 全部仓库（国际） →' : 'All repositories on GitHub →') + '</a></p></section><div class="phase-break"><span>' + (zh ? '硕士阶段 · 2026.08.30 起' : 'GRADUATE STAGE · FROM 2026.08.30') + '</span></div><section id="graduate-projects" class="study-stage">' + stageHeading('graduate', lang) + '<div class="project-page-list">' + rows('graduate') + '</div><p><a href="' + recordLink(lang) + '">' + (zh ? '硕士阶段档案 →' : 'Graduate record →') + '</a></p></section></main>';
-  return replaceMain(page, main);
+  return replaceMain(page, main.replace('<div class="project-page-list"></div><p><a href="' + recordLink(lang), '<div class="project-page-list">' + graduateRows + '</div><p><a href="' + recordLink(lang)));
 }
 
 function practiceSection(data, stage, lang) {
@@ -153,9 +158,9 @@ function compactNavigation(page, zh) {
     const milestones = link('/milestones.html'), practice = link('/practice.html'), cv = link('/cv.html');
     const language = nav.match(/<a\b[^>]*class="language"[^>]*>[\s\S]*?<\/a>/)?.[0];
     if (!language) throw new Error('Navigation language link missing.');
-    const selected = [milestones, practice, cv].some(item => item.includes('aria-current="page"'));
-    const more = '<details class="nav-more"><summary' + (selected ? ' class="active" aria-current="page"' : '') + '>' + (zh ? '更多' : 'More') + '</summary><div class="nav-more-menu">' + milestones + practice + cv + '</div></details>';
-    return '<nav aria-label="' + (zh ? '主导航' : 'Main navigation') + '">' + home + research + projects + awards + more + language + '</nav>';
+    const selected = [milestones, practice].some(item => item.includes('aria-current="page"'));
+    const more = '<details class="nav-more"><summary' + (selected ? ' class="active" aria-current="page"' : '') + '>' + (zh ? '更多' : 'More') + '</summary><div class="nav-more-menu">' + milestones + practice + '</div></details>';
+    return '<nav aria-label="' + (zh ? '主导航' : 'Main navigation') + '">' + home + research + projects + awards + cv + more + language + '</nav>';
   });
 }
 export function renderSite(pages, news, portfolio, profile) {

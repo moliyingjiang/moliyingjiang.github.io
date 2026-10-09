@@ -116,7 +116,7 @@ export function renderProfileSlot(slot, lang, profile) {
     if (key === 'enrollment') return esc(parseEducationPeriod(item.period).start);
     if (key === 'completion') return esc(parseEducationPeriod(item.period).end);
     if ([...stageFields, ...Object.keys(names)].includes(key)) return esc(item[names[key] || key]);
-    if (key === 'cv-links') return anchor(item.cvUrl, zh ? '简历 PDF ↗' : 'CV · PDF ↗') + anchor(item.recordUrl, zh ? '完整档案 →' : 'Full record →');
+    if (key === 'cv-links') return anchor(item.cvUrl, zh ? '简历 PDF ↗' : 'CV · PDF ↗') + (stage === 'undergraduate' ? '' : anchor(item.recordUrl, zh ? '完整档案 →' : 'Full record →'));
     if (key === 'pdf-link') return anchor(item.cvUrl, stage === 'undergraduate' ? zh ? '本科简历 PDF ↗' : 'Undergraduate CV · PDF ↗' : zh ? '硕士简历 PDF ↗' : 'Graduate CV · PDF ↗');
     if (key === 'cv') return '<p class="number">' + (stage === 'graduate' ? zh ? '硕士' : 'GRADUATE' : zh ? '本科' : 'UNDERGRADUATE') + ' · ' + esc(item.period) + '</p><h2>' + esc(item.school) + '<br>' + esc(item.degree) + '</h2><p>' + esc(item.cvSummary) + '</p>' + (item.advisor ? '<p>' + (zh ? '导师：' : stage === 'graduate' ? 'Advisor: ' : 'Advisors: ') + esc(item.advisor) + '</p>' : '') + '<div>' + renderProfileSlot(stage + '-cv-links', lang, profile) + '</div>';
   }
@@ -175,6 +175,7 @@ export function applyProfile(template, lang, profile, path = 'index.html') {
       if (originalUrl.hash) targetUrl.hash = originalUrl.hash;
       const destination = recordUrl.startsWith('/') ? targetUrl.pathname + targetUrl.search + targetUrl.hash : targetUrl.href;
       let updated = tag.replace(/href="[^"]*"/, () => 'href="' + esc(destination) + '"');
+      if (record[1] === 'undergraduate' && recordUrl.endsWith('.pdf')) updated = updated.replace(/>[^<]*<\/a>$/, '>' + (lang === 'zh' ? '本科简历 PDF ↗' : 'Undergraduate CV · PDF ↗') + '</a>');
       if (!attributes.includes('data-profile-record')) updated = updated.replace('<a', '<a data-profile-record="' + record[1] + '-' + targetLang + '"');
       return updated;
     }

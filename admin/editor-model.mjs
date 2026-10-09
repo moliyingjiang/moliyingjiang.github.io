@@ -12,6 +12,7 @@ export const PAGE_NAMES = {
 };
 export function previewPath(kind, language = 'en', record) {
   if (kind === 'projects' && record?.practice) return (language === 'zh' ? 'zh/' : '') + 'practice.html';
+  if (kind === 'projects' && record?.researchOnly) return (language === 'zh' ? 'zh/' : '') + 'research.html';
   const page = { profile: 'index.html', news: 'index.html', awards: 'awards.html', publications: 'research.html', projects: 'projects.html' }[kind];
   return (language === 'zh' ? 'zh/' : '') + page;
 }
@@ -64,7 +65,7 @@ export function createConnectionAttempts() {
 export function destination(kind, record) {
   if (kind === 'profile') return '首页、研究介绍、简历与全站个人资料';
   const stage = record?.stage === 'graduate' ? '硕士阶段' : record?.stage === 'continuation' || record?.followUp ? kind === 'awards' ? '本科阶段结束后' : '本科项目后续' : '本科阶段';
-  const page = { news: '首页动态、完整时间线', awards: '荣誉与资格页', publications: '研究与论文页', projects: record?.practice ? '实践经历页' : '研究项目页' }[kind];
+  const page = { news: '首页动态、完整时间线', awards: '荣誉与资格页', publications: '研究与论文页', projects: record?.practice ? '实践经历页' : record?.researchOnly ? '研究与论文页' : '工程项目页' }[kind];
   return page + (record ? ' · ' + stage : '');
 }
 export function changeCount(base, news, portfolio, profile) {

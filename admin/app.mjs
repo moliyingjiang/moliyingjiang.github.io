@@ -1,8 +1,8 @@
 import { EDITABLE_PATHS, PAGE_PATHS, TYPES, STATUSES, ROLES, DATE_TYPES, NEWS_CATEGORIES, esc, clone, newId, today, validDate, byDate, validateContent, adjustAwardTotals, syncLinkedNews, findLinkedNews, canLinkNews, sourceEvent, newsCategory, detachLinkedNews, upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261007-practice';
-import { renderSite } from '../assets/js/site-renderer.mjs?v=20261007-practice';
-import { PROFILE_PATH, PROFILE_GROUPS, validateProfile, profileFromForm, upgradeDraftBase, syncEducationNews } from '../assets/js/profile-model.mjs?v=20261007-practice';
+import { renderSite } from '../assets/js/site-renderer.mjs?v=20261009-research';
+import { PROFILE_PATH, PROFILE_GROUPS, validateProfile, profileFromForm, upgradeDraftBase, syncEducationNews } from '../assets/js/profile-model.mjs?v=20261009-research';
 import { GitHub } from './github.mjs?v=20261007-practice';
-import { KIND_NAMES, PAGE_NAMES, previewPath, recordAnchor, findSource, destination, changeCount, newsState, upgradeContentBase, createConfirmation, assertPublicationBaseline, createConnectionAttempts } from './editor-model.mjs?v=20261007-practice';
+import { KIND_NAMES, PAGE_NAMES, previewPath, recordAnchor, findSource, destination, changeCount, newsState, upgradeContentBase, createConfirmation, assertPublicationBaseline, createConnectionAttempts } from './editor-model.mjs?v=20261009-research';
 
 const $ = selector => document.querySelector(selector);
 const requestConfirmation = createConfirmation($('#confirm-dialog'), $('#confirm-message'));
@@ -85,10 +85,10 @@ function editProfile(id = 'identity') {
     html += '<div class="languages">' + ['zh', 'en'].map(lang => {
       const prefix = id === 'identity' ? lang : 'stages.' + id + '.' + lang;
       const item = id === 'identity' ? profile[lang] : profile.stages[id][lang];
-      const definitions = id === 'identity' ? [['name','公开署名'], ['role','身份与专业'], ['affiliation','所在学校 / 机构'], ['bio','个人介绍（空行分段）', true], ['description','搜索与分享摘要', true], ['footer','页脚文字']] : [['school','学校'], ['degree','学历与专业'], ['period','阶段时间'], ['advisor','导师与学术背景', true], ['researchTitle','研究方向标题'], ['researchSummary','研究方向说明', true], ['cvSummary','简历介绍', true], ['cvUrl','简历 PDF 地址（可留空）'], ['recordUrl','电子档案地址']];
+      const definitions = id === 'identity' ? [['name','公开署名'], ['role','身份与专业'], ['affiliation','所在学校 / 机构'], ['bio','个人介绍（空行分段）', true], ['description','搜索与分享摘要', true], ['footer','页脚文字']] : [['school','学校'], ['degree','学历与专业'], ['period','阶段时间'], ['advisor','导师与学术背景', true], ['researchTitle','研究方向标题'], ['researchSummary','研究方向说明', true], ['cvSummary','简历介绍', true], ['cvUrl','简历 PDF 地址（可留空）'], ...(id === 'undergraduate' ? [] : [['recordUrl','电子档案地址']])];
       return '<div><h3>' + (lang === 'zh' ? '中文版本' : 'English version') + '</h3>' + definitions.map(([key, label, area]) => field(prefix + '.' + key, key === 'bio' ? item.bio.join('\n\n') : item[key], label, area)).join('') + '</div>';
     }).join('') + '</div>';
-    if (id !== 'identity') html += '<p class="field-help">阶段时间请至少填写到月份，例如 2021.10 — 2025.07 或 2026.08.30 — 至今。中英文日期自动对齐，并同步对应入学、毕业动态。简历 PDF 可填写已有文件的站内地址或 HTTPS 地址；留空时只展示电子档案入口。</p>';
+    if (id !== 'identity') html += '<p class="field-help">阶段时间请至少填写到月份，例如 2021.10 — 2025.07 或 2026.08.30 — 至今。中英文日期自动对齐，并同步对应入学、毕业动态。' + (id === 'undergraduate' ? '本科仅展示 PDF 简历。' : '简历 PDF 可填写已有文件的站内地址或 HTTPS 地址；留空时只展示电子档案入口。') + '</p>';
   }
   html += '<div class="actions"><small>保存后可预览中文与英文页面。</small><button class="primary" type="submit">保存草稿</button><button type="button" id="editor-preview">预览页面</button></div>';
   $('#editor').innerHTML = html; list(); updateState();
@@ -129,6 +129,7 @@ function edit(record) {
     html += '<label class="check-row"><input type="checkbox" name="followUp" ' + (record.followUp ? 'checked' : '') + (record.stage === 'graduate' ? ' disabled' : '') + '>本科项目后续成果</label><p class="field-help">本科项目延续形成的论文仍归入本科；硕士记录不勾选这一项。</p></div>';
   }
   if (kind === 'projects') html += '<label class="check-row"><input type="checkbox" name="practice" ' + (record.practice ? 'checked' : '') + '>实践经历（团队成员、班长等任职，不显示在项目页）</label>';
+  if (kind === 'projects') html += '<label class="check-row"><input type="checkbox" name="researchOnly" ' + (record.researchOnly ? 'checked' : '') + '>科研项目（展示在研究页，不在工程项目页）</label>';
   if (kind === 'projects') html += '<div class="form-section"><h3>代码与材料</h3><div class="form-grid">' + field('gitee', record.gitee, 'Gitee 仓库（国内访问）') + field('github', record.github, 'GitHub 仓库（国际访问）') + '</div></div>';
   if (kind === 'news') html += '<div class="form-section"><div class="form-grid">' + select('category', record.category || '', '事件分类', { '': '按关联来源自动分类', ...NEWS_CATEGORIES }) + select('award', record.award || '', '引用具体荣誉（可选）', { '':'无', ...Object.fromEntries(portfolio.awards.filter(item => !item.cumulative).map(item => [item.id, item.zh.title])) }) + '</div><p class="field-help">只引用本次具体获奖、立项或证书；累计汇总不作为新闻。</p>' + (record.sourceType === 'publications' ? '<p class="source-history">论文节点：' + esc(DATE_TYPES[record.sourceEvent]?.[0] || '历史事件') + ' · 修改本条不改变其他投稿、接收或发表事件。</p>' : '') + '</div>';
   const fields = kind === 'awards' ? ['title','result','rankLabel','rank'] : kind === 'publications' ? ['title','journal','metrics','summary'] : kind === 'projects' ? ['title','category','text','moreLabel','moreUrl'] : ['title','text'];
@@ -222,9 +223,9 @@ $('#editor').onsubmit = event => {
     const next = clone(editing), form = new FormData(event.target), n = clone(news), p = clone(portfolio);
     for (const [name,value] of form) {
       if (name.includes('.')) { const [lang, field] = name.split('.'); next[lang][field] = value.trim(); }
-      else if (!['sync','counted','cumulative','followUp','practice'].includes(name)) next[name] = value.trim();
+      else if (!['sync','counted','cumulative','followUp','practice','researchOnly'].includes(name)) next[name] = value.trim();
     }
-    if (kind === 'projects') { delete next.date; next.practice = form.has('practice'); }
+    if (kind === 'projects') { delete next.date; next.practice = form.has('practice'); next.researchOnly = form.has('researchOnly'); }
     if (kind === 'news' && next.award !== editing.award && editing.sourceType === 'awards') {
       next.detachedSource = { kind: 'awards', id: editing.sourceId, event: editing.sourceEvent || '' };
       delete next.sourceType; delete next.sourceId; delete next.sourceEvent; delete next.sourceSnapshot;
@@ -359,7 +360,7 @@ function showPreview() {
   } catch(error) { status(error.message); }
 }
 $('#preview').onclick = showPreview;
-$('#preview-page').innerHTML = PAGE_PATHS.map(path => '<option value="' + path + '">' + esc(PAGE_NAMES[path] || path) + '</option>').join('');
+$('#preview-page').innerHTML = PAGE_PATHS.filter(path => !['undergraduate-record.html','undergraduate-cv.html'].includes(path)).map(path => '<option value="' + path + '">' + esc(PAGE_NAMES[path] || path) + '</option>').join('');
 $('#preview-page').onchange = () => { try { preview(); } catch(error) { status(error.message); } };
 $('#close-preview').onclick = () => $('#preview-dialog').close();
 $('#publish').onclick = async () => {
