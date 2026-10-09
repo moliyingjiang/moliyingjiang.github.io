@@ -140,6 +140,24 @@ function replaceMain(page, main) {
   if (!/<main[\s\S]*?<\/main>/.test(page)) throw new Error('Page template missing.');
   return page.replace(/<main[\s\S]*?<\/main>/, () => main.includes('id="main-content"') ? main : main.replace('<main ', '<main id="main-content" '));
 }
+function compactNavigation(page, zh) {
+  return page.replace(/<nav aria-label="(?:Main navigation|主导航)">[\s\S]*?<\/nav>/, nav => {
+    const prefix = zh ? '/zh' : '';
+    const link = path => {
+      const pattern = new RegExp('<a\\b[^>]*href="' + prefix + path.replace('.', '\\.') + '"[^>]*>[\\s\\S]*?<\\/a>');
+      const match = nav.match(pattern);
+      if (!match) throw new Error('Navigation link missing: ' + prefix + path);
+      return match[0];
+    };
+    const home = link('/'), research = link('/research.html'), projects = link('/projects.html'), awards = link('/awards.html');
+    const milestones = link('/milestones.html'), practice = link('/practice.html'), cv = link('/cv.html');
+    const language = nav.match(/<a\b[^>]*class="language"[^>]*>[\s\S]*?<\/a>/)?.[0];
+    if (!language) throw new Error('Navigation language link missing.');
+    const selected = [milestones, practice, cv].some(item => item.includes('aria-current="page"'));
+    const more = '<details class="nav-more"><summary' + (selected ? ' class="active" aria-current="page"' : '') + '>' + (zh ? '更多' : 'More') + '</summary><div class="nav-more-menu">' + milestones + practice + cv + '</div></details>';
+    return '<nav aria-label="' + (zh ? '主导航' : 'Main navigation') + '">' + home + research + projects + awards + more + language + '</nav>';
+  });
+}
 export function renderSite(pages, news, portfolio, profile) {
   const errors = [...validateContent(news, portfolio), ...(profile ? validateProfile(profile) : [])];
   if (errors.length) throw new Error(errors.join('\n'));
@@ -171,7 +189,7 @@ export function renderSite(pages, news, portfolio, profile) {
     const zh = path.startsWith('zh/') || ['undergraduate-cv.html','graduate-cv.html'].includes(path);
     const practiceLink = '<a' + (path.endsWith('practice.html') ? ' class="active" aria-current="page"' : '') + ' href="' + (zh ? '/zh' : '') + '/practice.html">' + (zh ? '实践' : 'Experience') + '</a>';
     if (!out[path].includes('href="' + (zh ? '/zh' : '') + '/practice.html"')) out[path] = out[path].replace(/(<a\b[^>]*href="\/(?:zh\/)?awards\.html"[^>]*>)/, match => practiceLink + match);
-    out[path] = out[path].replace(/<script\b[^>]*src="\/assets\/js\/language-routing\.mjs(?:\?[^\"]*)?"[^>]*><\/script>/g, '').replace('</head>', () => languageScript + '</head>').replace(/editorial\.css\?v=[^"]+/g, 'editorial.css?v=20261007-practice');
+    out[path] = compactNavigation(out[path], zh).replace(/<script\b[^>]*src="\/assets\/js\/language-routing\.mjs(?:\?[^\"]*)?"[^>]*><\/script>/g, '').replace('</head>', () => languageScript + '</head>').replace(/editorial\.css\?v=[^"]+/g, 'editorial.css?v=20261009-nav');
   }
   return out;
 }

@@ -19,6 +19,14 @@ header, .research-header { background: #fff; border-bottom: 1px solid var(--acad
   color: var(--academic-accent); text-decoration-color: var(--academic-accent); text-decoration-thickness: 1px;
 }
 .nav nav .language, .research-nav nav .language { padding-left: 22px; font-size: 12px; border-color: var(--academic-line); }
+.nav-more { position: relative; color: #50615e; font-size: 13px; }
+.nav-more summary { list-style: none; cursor: pointer; padding: 8px 0; white-space: nowrap; }
+.nav-more summary::-webkit-details-marker { display: none; }
+.nav-more summary::after { content: '⌄'; margin-left: 5px; font-size: 12px; }
+.nav-more summary.active, .nav-more[open] summary { color: var(--academic-accent); }
+.nav-more summary:focus-visible { outline: 2px solid var(--academic-accent); outline-offset: 4px; }
+.nav-more-menu { position: absolute; z-index: 30; right: -18px; top: calc(100% + 12px); display: grid; min-width: 132px; padding: 8px 16px; background: #fff; border: 1px solid var(--academic-line); box-shadow: 0 12px 30px #172c2318; }
+.nav nav .nav-more-menu a, .research-nav nav .nav-more-menu a { padding: 9px 0; }
 main, .page-shell { padding: 48px 44px 56px; }
 .page-shell>h1 { font: 400 45px/1.16 var(--editorial-serif); letter-spacing: -.035em; margin-bottom: 20px; }
 .eyebrow { color: #6d8077; font-size: 10px; font-weight: 600; letter-spacing: .13em; }
@@ -194,6 +202,9 @@ html[lang="zh-CN"] .home-page .research-brief-grid h3 { font-size: 24px; line-he
   .brand, .wordmark { font-size: 24px; }
   .nav nav, .research-nav nav { gap: 5px 14px; justify-content: space-between; }
   .nav nav a, .research-nav nav a { font-size: 12px; padding: 6px 0; }
+  .nav-more { font-size: 12px; }
+  .nav-more summary { padding: 6px 0; }
+  .nav-more-menu { right: 0; top: calc(100% + 7px); }
   .nav nav .language, .research-nav nav .language { right: 21px; top: 18px; font-size: 10px; }
   .identity { grid-template-columns: minmax(0, 1fr) 94px; gap: 17px; margin-bottom: 23px; }
   .home-page .profile img { width: 94px; height: 121px; }
