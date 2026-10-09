@@ -1,4 +1,4 @@
-import { esc, safeUrl, validDate } from './content-model.mjs?v=20261007-practice';
+import { esc, safeUrl, validDate } from './content-model.mjs?v=20261009-trim';
 
 export const PROFILE_PATH = 'assets/data/profile.json';
 export const PROFILE_GROUPS = {
@@ -7,7 +7,7 @@ export const PROFILE_GROUPS = {
   undergraduate: ['本科资料', '学校、导师、研究方向与简历'],
   links: ['头像与学术链接', '肖像、ORCID、Scholar 与代码主页']
 };
-const stageFields = ['school', 'degree', 'period', 'advisor', 'researchTitle', 'researchSummary', 'cvSummary', 'cvUrl', 'recordUrl'];
+const stageFields = ['school', 'degree', 'period', 'advisor', 'researchTitle', 'researchSummary', 'cvSummary', 'cvUrl'];
 
 export function parseEducationPeriod(value) {
   const match = String(value || '').trim().match(/^(≈?\d{4}\.\d{2}(?:\.\d{2})?)\s*(?:—|–|-|至|to)\s*(.+)$/i);
@@ -103,7 +103,7 @@ export function renderProfileSlot(slot, lang, profile) {
   if (['name', 'role', 'affiliation', 'description', 'footer'].includes(slot)) return esc(localized[slot]);
   if (slot === 'bio') return localized.bio.map(paragraph => '<p>' + esc(paragraph) + '</p>').join('');
   if (slot === 'portrait') return '<figure class="profile"><img data-profile-avatar src="' + esc(profile.avatar) + '" alt="' + esc(localized.name) + '" width="160" height="205" decoding="async"><figcaption>' + esc(localized.name) + '</figcaption></figure>';
-  if (slot === 'academic-links') return anchor(profile.links.orcid, 'ORCID', ' rel="me" data-profile-link="orcid"') + anchor(profile.links.scholar, 'Google Scholar', ' data-profile-link="scholar"') + anchor(zh ? '/zh/cv.html' : '/cv.html', zh ? '简历与档案' : 'CV & records');
+  if (slot === 'academic-links') return anchor(profile.links.orcid, 'ORCID', ' rel="me" data-profile-link="orcid"') + anchor(profile.links.scholar, 'Google Scholar', ' data-profile-link="scholar"') + anchor(zh ? '/zh/cv.html' : '/cv.html', zh ? '简历' : 'CV');
   if (slot === 'repository-links') return anchor(profile.links.gitee, zh ? 'Gitee · 国内' : 'Gitee · China', ' data-profile-link="gitee"') + anchor(profile.links.github, zh ? 'GitHub · 国际' : 'GitHub · International', ' data-profile-link="github"');
   if (slot === 'education') return '<h2>' + (zh ? '教育经历' : 'Education') + '</h2>' + ['graduate', 'undergraduate'].map(stage => {
     const item = profile.stages[stage][lang];
@@ -116,9 +116,9 @@ export function renderProfileSlot(slot, lang, profile) {
     if (key === 'enrollment') return esc(parseEducationPeriod(item.period).start);
     if (key === 'completion') return esc(parseEducationPeriod(item.period).end);
     if ([...stageFields, ...Object.keys(names)].includes(key)) return esc(item[names[key] || key]);
-    if (key === 'cv-links') return anchor(item.cvUrl, zh ? '简历 PDF ↗' : 'CV · PDF ↗') + (stage === 'undergraduate' ? '' : anchor(item.recordUrl, zh ? '完整档案 →' : 'Full record →'));
+    if (key === 'cv-links') return anchor(item.cvUrl, zh ? '简历 PDF ↗' : 'CV · PDF ↗');
     if (key === 'pdf-link') return anchor(item.cvUrl, stage === 'undergraduate' ? zh ? '本科简历 PDF ↗' : 'Undergraduate CV · PDF ↗' : zh ? '硕士简历 PDF ↗' : 'Graduate CV · PDF ↗');
-    if (key === 'cv') return '<p class="number">' + (stage === 'graduate' ? zh ? '硕士' : 'GRADUATE' : zh ? '本科' : 'UNDERGRADUATE') + ' · ' + esc(item.period) + '</p><h2>' + esc(item.school) + '<br>' + esc(item.degree) + '</h2><p>' + esc(item.cvSummary) + '</p>' + (item.advisor ? '<p>' + (zh ? '导师：' : stage === 'graduate' ? 'Advisor: ' : 'Advisors: ') + esc(item.advisor) + '</p>' : '') + '<div>' + renderProfileSlot(stage + '-cv-links', lang, profile) + '</div>';
+    if (key === 'cv') { const links = renderProfileSlot(stage + '-cv-links', lang, profile); return '<p class="number">' + (stage === 'graduate' ? zh ? '硕士' : 'GRADUATE' : zh ? '本科' : 'UNDERGRADUATE') + ' · ' + esc(item.period) + '</p><h2>' + esc(item.school) + '<br>' + esc(item.degree) + '</h2><p>' + esc(item.cvSummary) + '</p>' + (item.advisor ? '<p>' + (zh ? '导师：' : stage === 'graduate' ? 'Advisor: ' : 'Advisors: ') + esc(item.advisor) + '</p>' : '') + (links ? '<div>' + links + '</div>' : ''); }
   }
   throw Error('未知的个人资料展示位置：' + slot);
 }
@@ -134,10 +134,10 @@ const titles = {
   'practice.html': ['Experience & service', '实践经历'],
   'awards.html': ['Awards & distinctions', '竞赛与荣誉'],
   'cv.html': ['Curriculum vitae', '教育背景与简历'],
-  'graduate-record.html': ['Graduate record', '硕士档案'],
-  'graduate-cv.html': ['Graduate record', '硕士档案'],
-  'undergraduate-record.html': ['Undergraduate record', '本科档案'],
-  'undergraduate-cv.html': ['Undergraduate record', '本科档案']
+  'graduate-record.html': ['Curriculum vitae', '教育背景与简历'],
+  'graduate-cv.html': ['Curriculum vitae', '教育背景与简历'],
+  'undergraduate-record.html': ['Curriculum vitae', '教育背景与简历'],
+  'undergraduate-cv.html': ['Curriculum vitae', '教育背景与简历']
 };
 const linkDefaults = {
   'https://orcid.org/0009-0007-5488-3557': 'orcid',
@@ -162,27 +162,6 @@ export function applyProfile(template, lang, profile, path = 'index.html') {
   });
   next = next.replace(/<a\b([^>]*)>[\s\S]*?<\/a>/g, (tag, attributes) => {
     const href = /href="([^"]*)"/.exec(attributes)?.[1], key = /data-profile-link="(\w+)"/.exec(attributes)?.[1] || linkDefaults[href];
-    const decodedHref = (href || '').replaceAll('&amp;', '&');
-    const recordPath = decodedHref.split(/[?#]/)[0];
-    const record = /data-profile-record="(graduate|undergraduate)-(en|zh)"/.exec(attributes) || /^\/(graduate|undergraduate)-(record|cv)\.html$/.exec(recordPath);
-    if (record) {
-      if (record[1] === 'undergraduate' && attributes.includes('class="language"') && ['undergraduate-record.html', 'undergraduate-cv.html'].includes(path)) {
-        const destination = path === 'undergraduate-record.html' ? '/undergraduate-cv.html' : '/undergraduate-record.html';
-        return tag.replace(/href="[^"]*"/, 'href="' + destination + '"').replace(/>[^<]*<\/a>$/, '>' + (path === 'undergraduate-record.html' ? 'Language · 中文' : 'Language · EN') + '</a>');
-      }
-      const targetLang = ['zh', 'cv'].includes(record[2]) ? 'zh' : 'en';
-      const suffix = decodedHref.slice(recordPath.length);
-      const recordUrl = profile.stages[record[1]][targetLang].recordUrl;
-      const targetUrl = new URL(recordUrl, 'https://profile.invalid');
-      const originalUrl = new URL(recordPath + suffix, 'https://profile.invalid');
-      if (originalUrl.search) targetUrl.search = originalUrl.search;
-      if (originalUrl.hash) targetUrl.hash = originalUrl.hash;
-      const destination = recordUrl.startsWith('/') ? targetUrl.pathname + targetUrl.search + targetUrl.hash : targetUrl.href;
-      let updated = tag.replace(/href="[^"]*"/, () => 'href="' + esc(destination) + '"');
-      if (record[1] === 'undergraduate' && recordUrl.endsWith('.pdf')) updated = updated.replace(/>[^<]*<\/a>$/, '>' + (lang === 'zh' ? '本科简历 PDF ↗' : 'Undergraduate CV · PDF ↗') + '</a>');
-      if (!attributes.includes('data-profile-record')) updated = updated.replace('<a', '<a data-profile-record="' + record[1] + '-' + targetLang + '"');
-      return updated;
-    }
     if (!key) return tag;
     if (!profile.links[key]) return '';
     const updated = tag.replace(/href="[^"]*"/, () => 'href="' + esc(profile.links[key]) + '"');

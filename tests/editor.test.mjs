@@ -15,7 +15,7 @@ test('default fetch retains the browser global receiver',async()=>{
 });
 test('existing bilingual records validate and rendering is stable',()=>{ assert.deepEqual(validateContent(news,portfolio),[]); const out=renderSite(pages,news,portfolio); assert.deepEqual(renderSite(out,news,portfolio),out); });
 test('reject invalid dates and unsafe links',()=>{ assert.equal(validDate('2026.02.30'),false); assert.equal(validDate('≈2026.09'),true); for(const url of ['javascript:alert(1)','//evil.test','/\\evil.test','data:text/html,x']) assert.equal(safeUrl(url),false); const p=clone(portfolio); p.awards[0].stage='unknown'; assert.ok(validateContent(news,p).length); });
-test('rendered text is escaped and Measurement remains undergraduate',()=>{ const p=clone(portfolio); p.publications[0].en.title='<img src=x onerror=alert(1)>'; const out=renderSite(pages,news,p); assert.ok(out['research.html'].includes('&lt;img')); assert.ok(!out['research.html'].includes('<img src=x')); const measurement=portfolio.publications.find(r=>r.id==='measurement'); assert.equal(measurement.stage,'undergraduate'); assert.ok(!out['graduate-record.html'].includes('publication-measurement')); });
+test('rendered text is escaped and Measurement remains undergraduate',()=>{ const p=clone(portfolio); p.publications[0].en.title='<img src=x onerror=alert(1)>'; const out=renderSite(pages,news,p); assert.ok(out['research.html'].includes('&lt;img')); assert.ok(!out['research.html'].includes('<img src=x')); const measurement=portfolio.publications.find(r=>r.id==='measurement'); assert.equal(measurement.stage,'undergraduate'); assert.ok(out['research.html'].indexOf('publication-measurement') > out['research.html'].indexOf('id="undergraduate-research"')); });
 test('counted awards update totals without recounting imported history',()=>{ const p=clone(portfolio), start=p.totals.graduate.nationalAwards; const r={stage:'graduate',type:'national-award',quantity:1,counted:true}; adjustAwardTotals(p,null,r); assert.equal(p.totals.graduate.nationalAwards,start+1); adjustAwardTotals(p,r,{...r,quantity:2}); assert.equal(p.totals.graduate.nationalAwards,start+2); adjustAwardTotals(p,{...r,quantity:2},null); assert.equal(p.totals.graduate.nationalAwards,start); });
 test('empty graduate publication lists can be rendered repeatedly',()=>{ const p=clone(portfolio); p.publications=p.publications.filter(r=>r.stage!=='graduate'); const out=renderSite(pages,news,p); assert.deepEqual(renderSite(out,news,p),out); });
 test('replacement metacharacters remain literal text',()=>{ const p=clone(portfolio), n=clone(news); p.publications[0].en.title='Cost $& $$ research'; n.events[0].en.title='Cost $& $$ news'; const out=renderSite(pages,n,p); assert.ok(out['research.html'].includes('Cost $&amp; $$ research')); assert.ok(out['index.html'].includes('Cost $&amp; $$ news')); assert.deepEqual(renderSite(out,n,p),out); });
@@ -43,12 +43,12 @@ test('individual scholarship does not overwrite archived summaries or user-edite
   assert.deepEqual(n.grouped.find(r=>r.id==='old-scholarships'),aggregate);
   assert.deepEqual(n.events.find(r=>r.id==='manual-qualifications'),qualifications);
 });
-test('new publication status reaches the homepage, research page and electronic records',()=>{
+test('new publication status reaches the homepage and research page',()=>{
   const p=clone(portfolio);p.publications.find(r=>r.id==='measurement').status='accepted';p.publications.find(r=>r.id==='measurement').dateType='accepted';
   const out=renderSite(pages,news,p);
-  for(const path of ['research.html','undergraduate-record.html','undergraduate-cv.html']) assert.ok(out[path].includes('data-status="accepted"'),path);
+  assert.ok(out['research.html'].includes('data-status="accepted"'));
   assert.ok(out['index.html'].includes('1 accepted manuscript'));
-  assert.ok(out['cv.html'].includes('1 accepted manuscript'));
+  assert.ok(!out['cv.html'].includes('Full record'));
 });
 test('cumulative records are rejected as news while specific paper details remain linked',()=>{
   const n=clone(news);n.events[0]={...n.events[0],stage:'graduate',cumulative:true};

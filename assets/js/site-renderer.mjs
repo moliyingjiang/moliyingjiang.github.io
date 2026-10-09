@@ -1,6 +1,6 @@
-import { esc, byDate, SECTIONS, STATUSES, ROLES, DATE_TYPES, validateContent } from './content-model.mjs?v=20261007-practice';
-import { renderNewsPages } from './render-news.mjs?v=20261007-practice';
-import { applyProfile, validateProfile, parseEducationPeriod } from './profile-model.mjs?v=20261009-research';
+import { esc, byDate, SECTIONS, STATUSES, ROLES, DATE_TYPES, validateContent } from './content-model.mjs?v=20261009-trim';
+import { renderNewsPages } from './render-news.mjs?v=20261009-trim';
+import { applyProfile, validateProfile, parseEducationPeriod } from './profile-model.mjs?v=20261009-trim';
 
 const profileMark = (slot, value) => '<!-- profile:' + slot + ' -->' + esc(value) + '<!-- /profile:' + slot + ' -->';
 
@@ -38,7 +38,8 @@ function renderAwards(page, data, lang, profile) {
   const zh = lang === 'zh';
   const graduate = data.awards.some(item => item.stage === 'graduate');
   const main = '<main class="page-shell awards-page"><p class="eyebrow">' + (zh ? '竞赛、荣誉与创新实践' : 'AWARDS &amp; DISTINCTIONS') + '</p><h1>' + (zh ? '竞赛与荣誉' : 'Awards &amp; distinctions') + '</h1><p class="page-lead">' + (zh ? '按本科与硕士阶段记录竞赛、学业荣誉和创新成果。' : 'Competition results, academic honors, and innovation work, organized by undergraduate and graduate stages.') + '</p>' + stageHeading('undergraduate', lang) + overview(data.totals.undergraduate, lang) + '<div class="awards-context"><span class="news-date-symbol" title="≈">≈</span></div><div class="awards-layout"><aside class="awards-directory"><nav aria-label="' + (zh ? '荣誉分类' : 'Award categories') + '"><p>' + (zh ? '本科 · 太原学院' : 'UNDERGRADUATE · TYU') + '</p>' + Object.entries(SECTIONS).map(([key, title]) => '<a href="#' + key + '">' + esc(title[lang]) + '</a>').join('') + '<a class="graduate-link" href="#graduate">' + (zh ? '硕士阶段' : 'Master’s') + '</a></nav></aside><div class="awards-content" id="undergraduate">' + awardSections(data, 'undergraduate', lang, profile) + '<div class="phase-break"><span>' + (zh ? '硕士阶段 · 2026.08.30 起' : 'GRADUATE STAGE · FROM 2026.08.30') + '</span></div><section id="graduate" class="award-stage">' + stageHeading('graduate', lang) + (graduate ? '' : '<p><a href="' + recordLink(lang) + '">' + (zh ? '硕士阶段档案 →' : 'Graduate record →') + '</a></p>') + '</section>' + (graduate ? (Object.values(data.totals.graduate).some(Boolean) ? overview(data.totals.graduate, lang) : '') + awardSections(data, 'graduate', lang, profile) : '') + '<p class="awards-source"><!-- profile:undergraduate-pdf-link --><a href="/files/undergraduate-cv.pdf">' + (zh ? '本科简历 PDF' : 'Undergraduate CV · PDF') + '</a><!-- /profile:undergraduate-pdf-link --></p></div></div></main>';
-  return replaceMain(page, main).replace(/<p class="awards-source">[\s\S]*?<\/p>/, '');
+  const rendered = replaceMain(page, main).replace(/<p class="awards-source">[\s\S]*?<\/p>/, '');
+  return graduate ? rendered : rendered.replace(/<div class="phase-break">[\s\S]*?<\/div><section id="graduate" class="award-stage">[\s\S]*?<\/section>/, '').replace(/<a class="graduate-link" href="#graduate">[^<]*<\/a>/, '');
 }
 export function publicationRow(record, lang) {
   const zh = lang === 'zh', content = record[lang], index = zh ? 0 : 1;
@@ -85,7 +86,7 @@ function researchStage(page, stage, data, lang) {
   }
   next = next.replace(/<!-- research-projects:start -->[\s\S]*?<!-- research-projects:end -->/, '');
   next = next.replace('<!-- publications:end -->', '<!-- publications:end -->' + projectBlock);
-  if (stage === 'undergraduate') next = next.replace(/<p><a data-profile-record="undergraduate-(?:en|zh)"[^>]*>[^<]*<\/a><\/p>/, '');
+  next = next.replace(/<p><a data-profile-record="(?:undergraduate|graduate)-(?:en|zh)"[^>]*>[^<]*<\/a><\/p>/, '');
   return page.replace(section, () => next);
 }
 function projectRow(record, lang) {
@@ -99,7 +100,10 @@ function renderProjects(page, data, lang) {
   const rows = stage => data.projects.filter(item => item.stage === stage && !item.practice && !item.researchOnly).map(item => projectRow(item, lang)).join('\n');
   const graduateRows = rows('graduate') || '<p><a href="' + (zh ? '/zh' : '') + '/research.html#graduate-research">' + (zh ? '查看硕士阶段研究与论文 →' : 'Explore master’s research &amp; publications →') + '</a></p>';
   const main = '<main class="page-shell projects-page"><p class="eyebrow">' + (zh ? '研究与工程实践' : 'RESEARCH &amp; ENGINEERING') + '</p><h1>' + (zh ? '项目与技术实践' : 'Research &amp; engineering projects') + '</h1><p class="page-lead">' + (zh ? '本科阶段开展视觉诊断、工业检测与机器人系统实践；硕士阶段关注饮用水处理中的机器学习。' : 'Undergraduate work in visual diagnosis, industrial inspection, and robotic systems; graduate work in machine learning for drinking-water treatment.') + '</p><nav class="section-index" aria-label="' + (zh ? '项目阶段' : 'Project stages') + '"><a href="#undergraduate-projects">' + (zh ? '本科项目' : 'Undergraduate projects') + '</a><a href="#graduate-projects">' + (zh ? '硕士项目' : 'Master’s projects') + '</a></nav><section id="undergraduate-projects" class="study-stage">' + stageHeading('undergraduate', lang) + '<div class="project-page-list">' + rows('undergraduate') + '</div><p class="all-projects"><a data-profile-link="gitee" href="https://gitee.com/YJ-MoLi">' + (zh ? 'Gitee 全部仓库（国内） →' : 'All repositories on Gitee →') + '</a><a data-profile-link="github" href="https://github.com/moliyingjiang">' + (zh ? 'GitHub 全部仓库（国际） →' : 'All repositories on GitHub →') + '</a></p></section><div class="phase-break"><span>' + (zh ? '硕士阶段 · 2026.08.30 起' : 'GRADUATE STAGE · FROM 2026.08.30') + '</span></div><section id="graduate-projects" class="study-stage">' + stageHeading('graduate', lang) + '<div class="project-page-list">' + rows('graduate') + '</div><p><a href="' + recordLink(lang) + '">' + (zh ? '硕士阶段档案 →' : 'Graduate record →') + '</a></p></section></main>';
-  return replaceMain(page, main.replace('<div class="project-page-list"></div><p><a href="' + recordLink(lang), '<div class="project-page-list">' + graduateRows + '</div><p><a href="' + recordLink(lang)));
+  let rendered = replaceMain(page, main.replace('<div class="project-page-list"></div><p><a href="' + recordLink(lang), '<div class="project-page-list">' + graduateRows + '</div><p><a href="' + recordLink(lang)));
+  rendered = rendered.replace(/<p><a href="\/graduate-(?:record|cv)\.html">[^<]*<\/a><\/p>/, '');
+  if (!rows('graduate')) rendered = rendered.replace(/<div class="phase-break">[\s\S]*?<\/div><section id="graduate-projects" class="study-stage">[\s\S]*?<\/section>/, '').replace(/<nav class="section-index" aria-label="(?:项目阶段|Project stages)">[\s\S]*?<\/nav>/, '').replace(zh ? '本科阶段开展视觉诊断、工业检测与机器人系统实践；硕士阶段关注饮用水处理中的机器学习。' : 'Undergraduate work in visual diagnosis, industrial inspection, and robotic systems; graduate work in machine learning for drinking-water treatment.', zh ? '本科阶段的视觉诊断、工业检测与机器人系统实践。' : 'Undergraduate engineering work in visual diagnosis, industrial inspection, and robotic systems.');
+  return rendered;
 }
 
 function practiceSection(data, stage, lang) {
@@ -141,10 +145,7 @@ function renderUndergraduateRecord(page, data, lang) {
   return replaceMain(page, main).replace(/<p class="all-projects"><!-- profile:undergraduate-pdf-link -->[\s\S]*?<\/p>/, '');
 }
 function renderCvOverview(page, data, lang) {
-  const prefix = lang === 'zh' ? '/zh' : '';
-  let next = page.replace(/<!-- cv-summary:start -->[\s\S]*?<!-- cv-summary:end -->/g, '');
-  const summary = '<!-- cv-summary:start --><section class="record-section"><h2>' + (lang === 'zh' ? '阶段成果索引' : 'Research record by stage') + '</h2><div class="research-brief-grid">' + ['graduate', 'undergraduate'].map(stage => '<article><p class="brief-stage">' + esc(school(stage, lang).split(' · ')[0]) + ' · ' + profileMark(stage + '-school', school(stage, lang).split(' · ')[1]) + '</p><p>' + esc(publicationCounts(data, stage, lang)) + '</p><a href="' + prefix + '/research.html#' + stage + '-research">' + (lang === 'zh' ? '论文与研究 →' : 'Manuscripts &amp; research →') + '</a></article>').join('') + '</div></section><!-- cv-summary:end -->';
-  return next.replace('</main>', () => summary + '</main>');
+  return page.replace(/<!-- cv-summary:start -->[\s\S]*?<!-- cv-summary:end -->/g, '').replace('可查看简历 PDF 与阶段档案。', '本科简历 PDF 可在此查看。');
 }
 function replaceMain(page, main) {
   if (!/<main[\s\S]*?<\/main>/.test(page)) throw new Error('Page template missing.');
@@ -180,10 +181,6 @@ export function renderSite(pages, news, portfolio, profile) {
     out[prefix + 'practice.html'] = renderPractice(pages[prefix + 'practice.html'], portfolio, lang);
     out[prefix + 'index.html'] = renderHomeOverview(out[prefix + 'index.html'], portfolio, lang);
     out[prefix + 'cv.html'] = renderCvOverview(pages[prefix + 'cv.html'], portfolio, lang);
-    const undergraduate = lang === 'zh' ? 'undergraduate-cv.html' : 'undergraduate-record.html';
-    out[undergraduate] = renderUndergraduateRecord(pages[undergraduate], portfolio, lang);
-    const graduate = lang === 'zh' ? 'graduate-cv.html' : 'graduate-record.html';
-    out[graduate] = renderGraduateRecord(pages[graduate], portfolio, lang);
   }
   out['assets/data/news.json'] = JSON.stringify(news, null, 2) + '\n';
   out['assets/data/portfolio.json'] = JSON.stringify(portfolio, null, 2) + '\n';
@@ -194,7 +191,7 @@ export function renderSite(pages, news, portfolio, profile) {
     }
     out['assets/data/profile.json'] = JSON.stringify(profile, null, 2) + '\n';
   }
-  const languageScript = '<script type="module" src="/assets/js/language-routing.mjs?v=20261007-practice"></script>';
+  const languageScript = '<script type="module" src="/assets/js/language-routing.mjs?v=20261009-trim"></script>';
   for (const path of Object.keys(out).filter(path => path.endsWith('.html'))) {
     const zh = path.startsWith('zh/') || ['undergraduate-cv.html','graduate-cv.html'].includes(path);
     const practiceLink = '<a' + (path.endsWith('practice.html') ? ' class="active" aria-current="page"' : '') + ' href="' + (zh ? '/zh' : '') + '/practice.html">' + (zh ? '实践' : 'Experience') + '</a>';

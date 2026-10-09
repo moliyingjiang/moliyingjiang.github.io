@@ -1,4 +1,4 @@
-import { esc as escape, newsCategory } from './content-model.mjs?v=20261007-practice';
+import { esc as escape, newsCategory } from './content-model.mjs?v=20261009-trim';
 
 export function renderNewsPages(pages, data, portfolio, profile) {
 // A dated news item describes one occurrence. Summary figures belong on Awards.

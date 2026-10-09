@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import { EDITABLE_PATHS, PAGE_PATHS } from '../assets/js/content-model.mjs';
 import { renderSite } from '../assets/js/site-renderer.mjs';
 import { applyProfile, profileSlot, profileFromForm, validateProfile, upgradeDraftBase, PROFILE_PATH, parseEducationPeriod, syncEducationNews } from '../assets/js/profile-model.mjs';
-import { changeCount, previewPath } from '../admin/editor-model.mjs';
+import { changeCount, previewPath, workspaceProfileGroups, workspaceContains } from '../admin/editor-model.mjs';
 import { GitHub } from '../admin/github.mjs';
 const profile = JSON.parse(fs.readFileSync(PROFILE_PATH));
 const news = JSON.parse(fs.readFileSync('assets/data/news.json'));
@@ -45,18 +45,18 @@ test('inconsistent bilingual education dates are rejected rather than published'
   assert.throws(()=>profileFromForm(profile,[['stages.undergraduate.en.period','2021.10 — 2025.06'],['stages.undergraduate.zh.period','2021.10 — 2025.05']]),/中英文阶段起止日期须一致/);
 });
 
-test('edited project responsibilities and periods propagate to bilingual electronic records', () => {
+test('edited project responsibilities and periods propagate to bilingual project pages', () => {
   const next = structuredClone(portfolio);
   const project = next.projects.find(item => item.id === 'hand-eye');
   project.period = '2024.03 — 2025.09';
   project.en.text = 'Updated personal contribution: A < B & C.\nA second paragraph.';
   project.zh.text = '更新后的个人工作：A < B & C。\n第二段工作说明。';
   const output = renderSite(pages, news, next, profile);
-  for (const path of ['projects.html', 'undergraduate-record.html', 'zh/projects.html', 'undergraduate-cv.html']) {
+  for (const path of ['projects.html', 'zh/projects.html']) {
     assert.ok(output[path].includes('2024.03 — 2025.09'), path);
     assert.ok(output[path].includes('A &lt; B &amp; C'), path);
   }
-  assert.ok(output['undergraduate-record.html'].includes('id="experience-hand-eye"'));
+  assert.ok(output['projects.html'].includes('id="project-hand-eye"'));
   assert.ok(!output['zh/projects.html'].includes('/undergraduate-cv.html#experience-hand-eye'));
   assert.ok(output['zh/cv.html'].includes('/files/undergraduate-cv.pdf'));
   assert.deepEqual(renderSite(output, news, next, profile), output);
@@ -80,17 +80,31 @@ test('palm diagnosis is the research project, coagulant work is a publication, a
     assert.ok(!output[language].includes('/undergraduate-record.html'));
     assert.ok(!output[language].includes('/undergraduate-cv.html'));
   }
-  for (const language of ['awards.html', 'zh/awards.html', 'graduate-record.html', 'graduate-cv.html']) assert.ok(!output[language].includes('/files/undergraduate-cv.pdf'));
+  for (const language of ['awards.html', 'zh/awards.html']) assert.ok(!output[language].includes('/files/undergraduate-cv.pdf'));
   assert.equal(previewPath('projects', 'zh', portfolio.projects.find(item => item.id === 'palm-diagnosis')), 'zh/research.html');
 });
 
-test('editable record destinations preserve exact experience anchors and URL queries', () => {
-  const next = structuredClone(profile);
-  next.stages.undergraduate.en.recordUrl = '/custom-record.html';
-  const template = '<a data-profile-record="undergraduate-en" href="/undergraduate-record.html?lang=en&amp;ref=project#experience-hand-eye">Details</a>';
-  const output = applyProfile(template, 'en', next);
-  assert.ok(output.includes('href="/custom-record.html?lang=en&amp;ref=project#experience-hand-eye"'));
-  assert.equal(applyProfile(output, 'en', next), output);
+test('undergraduate and graduate profile edits remain independent', () => {
+  const next = profileFromForm(profile, [['stages.graduate.zh.researchSummary', '新的硕士研究方向']]);
+  assert.equal(next.stages.graduate.zh.researchSummary, '新的硕士研究方向');
+  assert.deepEqual(next.stages.undergraduate, profile.stages.undergraduate);
+});
+
+test('graduate status uses the verified 083000 field without claiming an awarded science degree', () => {
+  const output = renderSite(pages, news, portfolio, profile);
+  assert.ok(output['cv.html'].includes('Environmental Science and Engineering (083000)'));
+  assert.ok(output['zh/cv.html'].includes('环境科学与工程（083000）'));
+  for (const page of ['index.html', 'milestones.html', 'cv.html']) assert.ok(!output[page].includes('M.Sc.'));
+});
+
+test('backend workspaces keep undergraduate, graduate and shared records distinct', () => {
+  assert.deepEqual(workspaceProfileGroups('undergraduate'), ['undergraduate']);
+  assert.deepEqual(workspaceProfileGroups('graduate'), ['graduate']);
+  assert.deepEqual(workspaceProfileGroups('global'), ['identity', 'links']);
+  assert.equal(workspaceContains({stage:'continuation'}, 'undergraduate'), true);
+  assert.equal(workspaceContains({stage:'graduate'}, 'undergraduate'), false);
+  assert.equal(workspaceContains({stage:'undergraduate'}, 'graduate'), false);
+  assert.equal(workspaceContains({stage:'graduate'}, 'graduate'), true);
 });
 
 test('all generated pages remain stable and later identity edits replace the original names', () => {
@@ -116,11 +130,11 @@ test('advisor, school, research and CV changes propagate to their public destina
   next.stages.graduate.en.researchTitle = 'Updated research direction';
   next.stages.undergraduate.en.cvUrl = '/files/updated-cv.pdf';
   const output = renderSite(pages, news, portfolio, next);
-  for (const path of ['index.html','research.html','cv.html','graduate-record.html','awards.html','projects.html','milestones.html']) assert.ok(output[path].includes('Updated University'), path);
-  for (const path of ['cv.html','graduate-record.html']) assert.ok(output[path].includes('Updated Advisor'), path);
+  for (const path of ['index.html','research.html','cv.html','milestones.html','practice.html']) assert.ok(output[path].includes('Updated University'), path);
+  assert.ok(output['cv.html'].includes('Updated Advisor'));
   assert.ok(output['index.html'].includes('Updated research direction'));
   assert.ok(output['cv.html'].includes('/files/updated-cv.pdf'));
-  assert.ok(!output['undergraduate-record.html'].includes('/files/updated-cv.pdf'));
+  assert.ok(!output['research.html'].includes('/files/updated-cv.pdf'));
   assert.ok(!output['awards.html'].includes('/files/updated-cv.pdf'));
   assert.deepEqual(renderSite(output, news, portfolio, next), output);
 });

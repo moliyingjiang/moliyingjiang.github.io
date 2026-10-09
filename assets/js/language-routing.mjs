@@ -6,9 +6,7 @@ const FAILURE_TTL = 5 * 60 * 1000;
 
 export const LANGUAGE_PAIRS = [
   ['/', '/zh/'],
-  ...['milestones', 'research', 'projects', 'practice', 'awards', 'cv'].map(name => ['/' + name + '.html', '/zh/' + name + '.html']),
-  ['/undergraduate-record.html', '/undergraduate-cv.html'],
-  ['/graduate-record.html', '/graduate-cv.html']
+  ...['milestones', 'research', 'projects', 'practice', 'awards', 'cv'].map(name => ['/' + name + '.html', '/zh/' + name + '.html'])
 ];
 export const validLanguage = value => value === 'en' || value === 'zh';
 const canonicalPath = path => ({ '/index.html': '/', '/zh': '/zh/', '/zh/index.html': '/zh/' })[path] || path;

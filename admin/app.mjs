@@ -1,8 +1,8 @@
-import { EDITABLE_PATHS, PAGE_PATHS, TYPES, STATUSES, ROLES, DATE_TYPES, NEWS_CATEGORIES, esc, clone, newId, today, validDate, byDate, validateContent, adjustAwardTotals, syncLinkedNews, findLinkedNews, canLinkNews, sourceEvent, newsCategory, detachLinkedNews, upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261007-practice';
-import { renderSite } from '../assets/js/site-renderer.mjs?v=20261009-research';
-import { PROFILE_PATH, PROFILE_GROUPS, validateProfile, profileFromForm, upgradeDraftBase, syncEducationNews } from '../assets/js/profile-model.mjs?v=20261009-research';
+import { EDITABLE_PATHS, PAGE_PATHS, TYPES, STATUSES, ROLES, DATE_TYPES, NEWS_CATEGORIES, esc, clone, newId, today, validDate, byDate, validateContent, adjustAwardTotals, syncLinkedNews, findLinkedNews, canLinkNews, sourceEvent, newsCategory, detachLinkedNews, upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261009-trim';
+import { renderSite } from '../assets/js/site-renderer.mjs?v=20261009-trim';
+import { PROFILE_PATH, PROFILE_GROUPS, validateProfile, profileFromForm, upgradeDraftBase, syncEducationNews } from '../assets/js/profile-model.mjs?v=20261009-trim';
 import { GitHub } from './github.mjs?v=20261007-practice';
-import { KIND_NAMES, PAGE_NAMES, previewPath, recordAnchor, findSource, destination, changeCount, newsState, upgradeContentBase, createConfirmation, assertPublicationBaseline, createConnectionAttempts } from './editor-model.mjs?v=20261009-research';
+import { KIND_NAMES, PAGE_NAMES, workspaceProfileGroups, workspaceContains, previewPath, recordAnchor, findSource, destination, changeCount, newsState, upgradeContentBase, createConfirmation, assertPublicationBaseline, createConnectionAttempts } from './editor-model.mjs?v=20261009-trim';
 
 const $ = selector => document.querySelector(selector);
 const requestConfirmation = createConfirmation($('#confirm-dialog'), $('#confirm-message'));
@@ -14,7 +14,7 @@ const confirmAction = async message => {
 const key = 'portfolio-editor-v1';
 const labels = { title:'完整名称 / 具体事件标题', text:'这次事件的具体内容', result:'奖项 / 等级 / 成绩', rankLabel:'排名口径（如全国决赛 / 省级评选）', rank:'名次（如 3 / 65）', journal:'期刊', metrics:'分区与年份（如 JCR 2025 · Q1）', summary:'研究说明', category:'研究方向', moreLabel:'附加链接文字', moreUrl:'附加链接' };
 const eventStates = { linked: '关联来源', independent: '独立事件', detached: '独立历史 · 已解除关联', archived: '旧版汇总归档' };
-let files, news, portfolio, profile, base, client, snapshot, kind = 'profile', editing, bucket;
+let files, news, portfolio, profile, base, client, snapshot, kind = 'profile', editing, bucket, workspace = 'undergraduate';
 let dirty = false, draft = false;
 const status = message => { $('#status').textContent = message; };
 const parse = source => {
@@ -41,17 +41,19 @@ function assertValid(n, p, pr = profile) {
   const errors = [...validateContent(n, p), ...validateProfile(pr)];
   if (errors.length) throw new Error(errors.join('\n'));
 }
-function records() { return kind === 'profile' ? Object.keys(PROFILE_GROUPS).map(id => ({id})) : kind === 'news' ? allNews() : portfolio[kind]; }
+const profileGroups = () => workspaceProfileGroups(workspace);
+function records() { return kind === 'profile' ? profileGroups().map(id => ({id})) : kind === 'news' ? allNews() : portfolio[kind]; }
 function list() {
-  const count = id => id === 'profile' ? '4' : id === 'news' ? news.events.length : portfolio[id].length;
-  $('#nav').innerHTML = Object.entries(KIND_NAMES).map(([id, name]) =>
+  const belongs = record => workspaceContains(record, workspace);
+  const count = id => id === 'profile' ? profileGroups().length : id === 'news' ? news.events.filter(belongs).length : portfolio[id].filter(belongs).length;
+  $('#nav').innerHTML = Object.entries(KIND_NAMES).filter(([id]) => workspace !== 'global' || id === 'profile').map(([id, name]) =>
     '<button type="button" data-kind="' + id + '" class="' + (id === kind ? 'selected' : '') + '" aria-pressed="' + (id === kind) + '">' + name + '<span>' + count(id) + '</span></button>').join('');
   $('.filters').hidden = kind === 'profile';
   $('#event-filters').hidden = kind !== 'news';
   $('#add').hidden = kind === 'profile';
   if (kind === 'profile') {
-    $('#list').innerHTML = Object.entries(PROFILE_GROUPS).map(([id, names]) => '<button type="button" data-id="' + id + '" class="' + (editing?.id === id ? 'selected' : '') + '">' + names[0] + '<small>' + names[1] + '</small></button>').join('');
-    $('#list-caption').textContent = '个人资料 · 中英文分别维护';
+    $('#list').innerHTML = profileGroups().map(id => '<button type="button" data-id="' + id + '" class="' + (editing?.id === id ? 'selected' : '') + '">' + PROFILE_GROUPS[id][0] + '<small>' + PROFILE_GROUPS[id][1] + '</small></button>').join('');
+    $('#list-caption').textContent = (workspace === 'global' ? '公共资料' : workspace === 'graduate' ? '硕士资料' : '本科资料') + ' · 中英文分别维护';
     return;
   }
   const stage = $('#filter').value, query = $('#search').value.trim().toLowerCase(), eventFilter = $('#event-filter').value, categoryFilter = $('#category-filter').value;
@@ -75,20 +77,20 @@ const select = (name, value, label, options) =>
     '<option value="' + esc(v) + '" ' + (value === v ? 'selected' : '') + '>' + esc(Array.isArray(l) ? l[0] : l) + '</option>'
   ).join('') + '</select></label>';
 
-function editProfile(id = 'identity') {
+function editProfile(id = workspace === 'global' ? 'identity' : workspace) {
   editing = { id }; dirty = false;
   const group = PROFILE_GROUPS[id];
-  let html = '<div class="editor-heading"><div><p class="overline">PROFILE & IDENTITY</p><h2>' + group[0] + '</h2></div><span class="record-id">中英文同步发布</span></div><div class="destination"><strong>显示位置：' + group[1] + '</strong><p>姓名、介绍、教育背景与研究方向统一维护。中英文分别填写；保存草稿后预览，再发布到网站。</p></div>';
+  let html = '<div class="editor-heading"><div><p class="overline">' + (id === 'undergraduate' ? 'UNDERGRADUATE' : id === 'graduate' ? 'MASTER’S' : 'SHARED PROFILE') + '</p><h2>' + group[0] + '</h2></div><span class="record-id">中英文同步发布</span></div><div class="destination"><strong>显示位置：' + group[1] + '</strong><p>' + (['undergraduate','graduate'].includes(id) ? '只维护当前学习阶段的资料；另一阶段的资料不会被此表单改动。' : '维护全站共用资料；中英文分别填写。') + '保存草稿后预览，再发布到网站。</p></div>';
   if (id === 'links') {
     html += '<div class="profile-avatar-preview"><img src="' + esc(profile.avatar) + '" alt="当前肖像"><div>' + field('avatar', profile.avatar, '肖像图片地址') + '<p class="field-help">填写已有图片的站内地址（如 /assets/images/profile.png）或 HTTPS 链接。</p></div></div><div class="form-grid">' + Object.entries({ orcid:'ORCID', scholar:'Google Scholar', github:'GitHub 主页 · 国际访问', gitee:'Gitee 主页 · 国内访问' }).map(([key, label]) => field('links.' + key, profile.links[key], label)).join('') + '</div>';
   } else {
     html += '<div class="languages">' + ['zh', 'en'].map(lang => {
       const prefix = id === 'identity' ? lang : 'stages.' + id + '.' + lang;
       const item = id === 'identity' ? profile[lang] : profile.stages[id][lang];
-      const definitions = id === 'identity' ? [['name','公开署名'], ['role','身份与专业'], ['affiliation','所在学校 / 机构'], ['bio','个人介绍（空行分段）', true], ['description','搜索与分享摘要', true], ['footer','页脚文字']] : [['school','学校'], ['degree','学历与专业'], ['period','阶段时间'], ['advisor','导师与学术背景', true], ['researchTitle','研究方向标题'], ['researchSummary','研究方向说明', true], ['cvSummary','简历介绍', true], ['cvUrl','简历 PDF 地址（可留空）'], ...(id === 'undergraduate' ? [] : [['recordUrl','电子档案地址']])];
+      const definitions = id === 'identity' ? [['name','公开署名'], ['role','身份与专业'], ['affiliation','所在学校 / 机构'], ['bio','个人介绍（空行分段）', true], ['description','搜索与分享摘要', true], ['footer','页脚文字']] : [['school','学校'], ['degree','学历与专业'], ['period','阶段时间'], ['advisor','导师与学术背景', true], ['researchTitle','研究方向标题'], ['researchSummary','研究方向说明', true], ['cvSummary','简历介绍', true], ['cvUrl','简历 PDF 地址（可留空）']];
       return '<div><h3>' + (lang === 'zh' ? '中文版本' : 'English version') + '</h3>' + definitions.map(([key, label, area]) => field(prefix + '.' + key, key === 'bio' ? item.bio.join('\n\n') : item[key], label, area)).join('') + '</div>';
     }).join('') + '</div>';
-    if (id !== 'identity') html += '<p class="field-help">阶段时间请至少填写到月份，例如 2021.10 — 2025.07 或 2026.08.30 — 至今。中英文日期自动对齐，并同步对应入学、毕业动态。' + (id === 'undergraduate' ? '本科仅展示 PDF 简历。' : '简历 PDF 可填写已有文件的站内地址或 HTTPS 地址；留空时只展示电子档案入口。') + '</p>';
+    if (id !== 'identity') html += '<p class="field-help">阶段时间请至少填写到月份，例如 2021.10 — 2025.07 或 2026.08.30 — 至今。中英文日期自动对齐，并同步对应入学、毕业动态。简历 PDF 可填写已有文件的站内地址或 HTTPS 地址。</p>';
   }
   html += '<div class="actions"><small>保存后可预览中文与英文页面。</small><button class="primary" type="submit">保存草稿</button><button type="button" id="editor-preview">预览页面</button></div>';
   $('#editor').innerHTML = html; list(); updateState();
@@ -116,7 +118,7 @@ function edit(record) {
   const canSync = canLinkNews(kind, record);
   const sync = !!linked || !existing && canSync;
   let html = '<div class="editor-heading"><div><p class="overline">' + (existing ? 'EDIT RECORD' : 'NEW RECORD') + '</p><h2>' + (existing ? '编辑' : '新增') + KIND_NAMES[kind] + '</h2></div><span class="record-id">' + esc(record.id) + '</span></div>' + context(record);
-  html += '<div class="form-grid">' + select('stage', record.stage, '所属阶段', { undergraduate:'本科', graduate:'硕士', ...(kind === 'news' ? { continuation:'本科研究后续' } : {}) });
+  html += '<div class="form-grid">' + select('stage', record.stage, '所属阶段', { undergraduate:'本科', graduate:'硕士', ...(kind === 'news' ? { continuation:'本科研究后续' } : {}) }).replace('<select name="stage">', '<select disabled>') + '<input type="hidden" name="stage" value="' + esc(record.stage) + '">';
   html += field(kind === 'projects' ? 'period' : 'date', kind === 'projects' ? record.period || '' : record.date || '', kind === 'projects' ? '项目时间（如 2026.09 — 至今）' : '本次事件日期（YYYY.MM.DD 或 YYYY.MM）') + '</div>';
   html += '<p class="field-help">' + (kind === 'projects' ? '同步动态时，使用项目时间的起始日期；未填时间的项目也可单独发布。' : '约定日期在前面加 ≈，例如 ≈2024.06。') + '</p>';
   if (kind === 'awards') {
@@ -154,13 +156,13 @@ async function choose(nextKind, id) {
   if (nextKind !== kind) $('#search').value = '';
   if (nextKind !== kind) { $('#event-filter').value = ''; $('#category-filter').value = ''; }
   kind = nextKind;
-  if (kind === 'profile') return editProfile(id || 'identity');
+  if (kind === 'profile') return editProfile(id || (workspace === 'global' ? 'identity' : workspace));
   const record = records().find(item => item.id === id);
   if (record) {
     $('#search').value = '';
     if (kind === 'news') { $('#event-filter').value = record.cumulative ? 'archived' : ''; $('#category-filter').value = ''; }
     const stage = $('#filter').value;
-    if (stage && (stage === 'graduate') !== (record.stage === 'graduate')) $('#filter').value = '';
+    if (stage && (stage === 'graduate') !== (record.stage === 'graduate')) { workspace = record.stage === 'graduate' ? 'graduate' : 'undergraduate'; $('#workspace').value = workspace; $('#filter').value = workspace; }
     edit(record);
   } else { clearEditor(); list(); }
 }
@@ -173,6 +175,13 @@ $('#list').onclick = event => {
   if (id) choose(kind, id);
 };
 $('#search').oninput = list; $('#filter').onchange = list; $('#event-filter').onchange = list; $('#category-filter').onchange = list;
+$('#workspace').onchange = async event => {
+  const next = event.target.value;
+  if (!await leave()) { event.target.value = workspace; return; }
+  workspace = next; $('#filter').value = next === 'global' ? 'undergraduate' : next;
+  $('#search').value = ''; $('#event-filter').value = ''; $('#category-filter').value = '';
+  kind = 'profile'; editProfile(next === 'global' ? 'identity' : next);
+};
 $('#category-filter').innerHTML = '<option value="">全部事件分类</option>' + Object.entries(NEWS_CATEGORIES).map(([id, title]) => '<option value="' + id + '">' + title + '</option>').join('');
 $('#add').onclick = async () => {
   if (!await leave()) return;
@@ -354,13 +363,13 @@ function preview() {
 function showPreview() {
   try {
     if (dirty) throw Error('请先保存当前表单，再预览这条记录。');
-    const language = $('#preview-page').value.startsWith('zh/') || ['graduate-cv.html','undergraduate-cv.html'].includes($('#preview-page').value) ? 'zh' : 'en';
+    const language = $('#preview-page').value.startsWith('zh/') ? 'zh' : 'en';
     $('#preview-page').value = previewPath(kind, language, editing);
     preview(); $('#preview-dialog').showModal();
   } catch(error) { status(error.message); }
 }
 $('#preview').onclick = showPreview;
-$('#preview-page').innerHTML = PAGE_PATHS.filter(path => !['undergraduate-record.html','undergraduate-cv.html'].includes(path)).map(path => '<option value="' + path + '">' + esc(PAGE_NAMES[path] || path) + '</option>').join('');
+$('#preview-page').innerHTML = PAGE_PATHS.map(path => '<option value="' + path + '">' + esc(PAGE_NAMES[path] || path) + '</option>').join('');
 $('#preview-page').onchange = () => { try { preview(); } catch(error) { status(error.message); } };
 $('#close-preview').onclick = () => $('#preview-dialog').close();
 $('#publish').onclick = async () => {
@@ -394,7 +403,7 @@ try {
     const saved = JSON.parse(localStorage.getItem(key));
     if (saved) { const savedProfile = saved.profile || profile; upgradeLinkedNews(saved.news, saved.portfolio); assertValid(saved.news,saved.portfolio,savedProfile); base = upgradeContentBase(upgradeDraftBase(saved.base,profile),profile); news = saved.news; portfolio = saved.portfolio; profile = savedProfile; draft = true; }
   } catch { failedDraft = true; }
-  clearEditor(); list();
+  $('#filter').value = workspace; clearEditor(); list();
   status(failedDraft ? '旧草稿无法读取，已加载线上内容。原草稿未删除。' : draft ? '已恢复本设备草稿。预览确认后连接 GitHub 发布。' : '已加载线上内容。编辑 → 保存草稿 → 预览 → 发布更新。');
 } catch(error) {
   status(error.message);

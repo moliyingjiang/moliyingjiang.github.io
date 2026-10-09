@@ -78,8 +78,8 @@ function windowMock(path = '/', config = {}) {
   return win;
 }
 
-test('all nine public route pairs preserve query and fragment in both directions', () => {
-  assert.equal(LANGUAGE_PAIRS.length, 9);
+test('all seven public route pairs preserve query and fragment in both directions', () => {
+  assert.equal(LANGUAGE_PAIRS.length, 7);
   for (const [en, zh] of LANGUAGE_PAIRS) {
     assert.equal(pageLanguage(en), 'en');
     assert.equal(pageLanguage(zh), 'zh');
@@ -353,7 +353,7 @@ test('iframe previews do not write even an explicit language preference', async 
   assert.equal(win.document.listeners.size, 0);
 });
 
-test('rendering all sixteen public pages inserts one routing module and is idempotent', () => {
+test('rendering all fourteen public pages inserts one routing module and is idempotent', () => {
   const readFile = path => fs.readFileSync(new URL('../' + path, import.meta.url), 'utf8');
   const pages = Object.fromEntries(PAGE_PATHS.map(path => [path, readFile(path)]));
   const news = JSON.parse(readFile('assets/data/news.json'));
@@ -362,8 +362,8 @@ test('rendering all sixteen public pages inserts one routing module and is idemp
   const stale = '<script type="module" src="/assets/js/language-routing.mjs?v=old"></script>';
   for (const path of PAGE_PATHS) pages[path] = pages[path].replace('</head>', stale + stale + '</head>');
   const output = renderSite(pages, news, portfolio, profile);
-  assert.equal(PAGE_PATHS.length, 18);
-  assert.equal(Object.keys(output).filter(path => path.endsWith('.html')).length, 18);
+  assert.equal(PAGE_PATHS.length, 14);
+  assert.equal(Object.keys(output).filter(path => path.endsWith('.html')).length, 14);
   for (const path of PAGE_PATHS) {
     const matches = [...output[path].matchAll(/<script\b[^>]*src="\/assets\/js\/language-routing\.mjs(?:\?[^"]*)?"[^>]*><\/script>/g)];
     assert.equal(matches.length, 1, path);

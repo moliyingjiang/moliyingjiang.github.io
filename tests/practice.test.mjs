@@ -20,6 +20,6 @@ test('practice is separate from projects, bilingual and editable in preview', ()
   record.zh.text = '更新班长实践说明';
   const updated = renderSite(output, JSON.parse(read('assets/data/news.json')), portfolio, JSON.parse(read('assets/data/profile.json')));
   assert.ok(updated['zh/practice.html'].includes('更新班长实践说明'));
-  assert.ok(updated['graduate-cv.html'].includes('更新班长实践说明'));
+  assert.ok(updated['zh/practice.html'].includes('更新班长实践说明'));
   assert.deepEqual(renderSite(updated, JSON.parse(read('assets/data/news.json')), portfolio, JSON.parse(read('assets/data/profile.json'))), updated);
 });

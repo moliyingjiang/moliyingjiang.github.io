@@ -1,5 +1,5 @@
 export const DATA_PATHS = ['assets/data/news.json', 'assets/data/portfolio.json', 'assets/data/profile.json'];
-export const PAGE_PATHS = ['index.html', 'zh/index.html', 'milestones.html', 'zh/milestones.html', 'awards.html', 'zh/awards.html', 'research.html', 'zh/research.html', 'projects.html', 'zh/projects.html', 'practice.html', 'zh/practice.html', 'graduate-record.html', 'graduate-cv.html', 'cv.html', 'zh/cv.html', 'undergraduate-record.html', 'undergraduate-cv.html'];
+export const PAGE_PATHS = ['index.html', 'zh/index.html', 'milestones.html', 'zh/milestones.html', 'awards.html', 'zh/awards.html', 'research.html', 'zh/research.html', 'projects.html', 'zh/projects.html', 'practice.html', 'zh/practice.html', 'cv.html', 'zh/cv.html'];
 export const EDITABLE_PATHS = [...DATA_PATHS, ...PAGE_PATHS];
 export const TYPES = {
   'national-award': ['国家级竞赛奖', 'national', 'nationalAwards'],

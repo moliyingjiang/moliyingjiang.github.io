@@ -6,10 +6,10 @@ export const PAGE_NAMES = {
   'research.html': '研究与论文 · English', 'zh/research.html': '研究与论文 · 中文',
   'projects.html': '研究项目 · English', 'zh/projects.html': '研究项目 · 中文',
   'practice.html': '实践经历 · English', 'zh/practice.html': '实践经历 · 中文',
-  'graduate-record.html': '硕士档案 · English', 'graduate-cv.html': '硕士档案 · 中文',
   'cv.html': '简历索引 · English', 'zh/cv.html': '简历索引 · 中文',
-  'undergraduate-record.html': '本科档案 · English', 'undergraduate-cv.html': '本科档案 · 中文'
 };
+export const workspaceProfileGroups = workspace => workspace === 'global' ? ['identity', 'links'] : [workspace];
+export const workspaceContains = (record, workspace) => workspace === 'graduate' ? record.stage === 'graduate' : workspace === 'undergraduate' ? record.stage !== 'graduate' : false;
 export function previewPath(kind, language = 'en', record) {
   if (kind === 'projects' && record?.practice) return (language === 'zh' ? 'zh/' : '') + 'practice.html';
   if (kind === 'projects' && record?.researchOnly) return (language === 'zh' ? 'zh/' : '') + 'research.html';
@@ -81,7 +81,7 @@ export function changeCount(base, news, portfolio, profile) {
   const before = flatten(...original), after = flatten(news, portfolio, profile);
   return [...new Set([...before.keys(), ...after.keys()])].filter(id => before.get(id) !== after.get(id)).length;
 }
-import { upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261007-practice';
+import { upgradeLinkedNews } from '../assets/js/content-model.mjs?v=20261009-trim';
 export function createConfirmation(dialog, messageElement) {
   let pending = false;
   return async message => {
